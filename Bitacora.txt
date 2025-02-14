@@ -1,0 +1,24 @@
+CURIOSIDADES
+-DTO significa Data Transfer Object (Objeto de Transferencia de Datos)
+-para pasar const set por parametro: setSelected: React.Dispatch<React.SetStateAction<string>>
+-cambiar solo un campo de un objeto sin cambiarlo entero
+ setUser(prevUser => {
+                if (prevUser) {
+                  return {
+                    ...prevUser,  // Mantiene los otros campos
+                    recibo: idRecibo // Cambia solo el campo 'name'
+                  };
+                }
+                return prevUser;  // En caso de que `user` sea null, se devuelve tal cual
+              });
+
+ |   
+
+ []
+
+COSAS:
+- hacer mas .tsx con objetos comunes
+-hacer pagina myday
+
+
+
