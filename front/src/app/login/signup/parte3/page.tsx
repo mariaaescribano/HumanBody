@@ -2,20 +2,8 @@
 // Chakra imports
 import {
   Box,
-  Button,
-  Card,
   Flex,
   HStack,
-  Icon,
-  Select,
-  SimpleGrid,
-  Spinner,
-  Stack,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
   Text,
   useColorModeValue,
   VStack,
@@ -23,39 +11,44 @@ import {
 import axios from 'axios';
 // Custom components
 import React, { useEffect, useState, useRef } from 'react';
-import { API_URL, exerciseFrequencyList, StringIsNull, objectivesList, ObjectIsNull, getTamanyoPantalla } from '../../../../../GlobalHelper';
-import { createUser } from '../../../../../../backend/src/dto/usuarios.dto';
-import { MdArrowBack } from 'react-icons/md';
+import { API_URL, ObjectIsNull, getTamanyoPantalla } from '../../../../../GlobalHelper';
+import { createUserSkeleton, realUser } from '../../../../../../backend/src/dto/usuarios.dto';
 import PurpleSpinner from '@/components/global/Spinner';
-import { reciboSkeleton } from '@/dto/recibo.dto';
 import MeryTooltip from '@/components/global/MeryToolTip';
 import EBookButton from '@/components/global/EBookButton';
 import CustomCard from '@/components/global/CustomCard';
+import TitleCard from '@/components/signin/TitleCard';
+import MacroNutrCard from '@/components/signin/MacroNutrCard';
+import { reciboSkeleton, showMacroNutrSignUp } from '../../../../../../backend/src/dto/recibos.dto';
+import { fichaSkeleton } from '../../../../../../backend/src/dto/fichas.dto';
+import { showEbook } from '../../../../../../backend/src/dto/ebook.dto';
 
 export default function SignUp3() 
 {
     const textColor = useColorModeValue('secondaryGray.900', 'white');
-    const [user, setUser] = useState<createUser | null>(null);
+    const [user, setUser] = useState<createUserSkeleton | null>(null);
     const [recibo, setrecibo] = useState<reciboSkeleton | null>(null);
     const [screenSize, setscreenSize] = useState<string>("");
     const objectiveIndex = useRef<number>(0);
 
-
+    
+    // coge datos del user de sessionstorage para poder adaptar bien los macros
+    // tb setscreensize
     useEffect(() => 
     {
         const userStr = sessionStorage.getItem("user");
         getTamanyoPantalla(setscreenSize)
         if (userStr) 
         {
-        const user = JSON.parse(userStr); 
-        setUser(user)
-
-        let index = sessionStorage.getItem("objectiveIndex");
-        if(index)
-        {
-            objectiveIndex.current = parseInt(index, 10);
-            calculaMacros(parseInt(user.calorias_objetivo, 10));
-        }
+            const user = JSON.parse(userStr); 
+            setUser(user)
+        
+            let index = sessionStorage.getItem("objectiveIndex");
+            if(index)
+            {
+                objectiveIndex.current = parseInt(index, 10);
+                calculaMacros(parseInt(user.calorias_objetivo, 10));
+            }
         }
         else
         location.href = '../signup/parte2';
@@ -128,44 +121,58 @@ export default function SignUp3()
     };
 
 
-    // xxx cuando el usuario lo acepta, se crea un recibo, una ficha y esos ids se guardan en la tabla usuarios
+
+    // cuando el usuario lo acepta, se crea un recibo, una ficha y esos ids se guardan en la tabla usuarios
     const letsgo = () =>
     {
-        //borrar session
-        sessionStorage.clear();
         crear();
-    
     };
 
     const crear = async () => 
     {
-        if(recibo!= null)
+        if(!ObjectIsNull(recibo) && user)
         {
             let idRecibo = await crearRecibo();
-            if(idRecibo)
+            //creamos ficha
+            const ficha: fichaSkeleton =
             {
-                setUser(prevUser => {
-                    if (prevUser) {
-                    return {
-                        ...prevUser,  // Mantiene los otros campos
-                        recibo: idRecibo // Cambia solo el campo 'name'
-                    };
-                    }
-                    return prevUser;  // En caso de que `user` sea null, se devuelve tal cual
-                });
+                peso: user.peso,
+                altura:user.altura,
+                nivel_actividad:user.nivel_actividad,
+                calorias_objetivo:user.calorias_objetivo,
+                objetivo:user.objetivo,
+                genero:user.genero,
+                edad:user.edad,
+                reciboId:idRecibo
             }
+            let idFicha = await crearFicha(ficha);
+            let date = getCurrentDate();
+            // creamos por fin al usuario q se insertara
+            const userAinsertar: realUser =
+            {
+                nombre:user.nombre,
+                contra:user.contra,
+                dias_ids:"",
+                ficha_id:idFicha,
+                fecha_registro: date
+            }
+            await crearUsuario(userAinsertar);
+            //borrar session
+            sessionStorage.clear();
+            location.href="../../myday"
         }
     };
 
-    useEffect(() => 
+    const getCurrentDate = () => 
     {
-        if(user!= null && !Number.isNaN(user?.recibo))
-            crearUsuario();
+        const date = new Date();
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Añade 1 porque los meses van de 0 a 11
+        const day = String(date.getDate()).padStart(2, '0');
         
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [user]);
+        return `${year}-${month}-${day}`;
+      }
     
-
     const crearRecibo = async () => 
     {
         try{
@@ -186,13 +193,33 @@ export default function SignUp3()
         }
     };
 
+    const crearFicha = async (ficha:fichaSkeleton) => 
+    {
+        try{
+        const response = await axios.post(
+            `${API_URL}/fichas/createFicha`,
+            ficha,
+            {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            }
+        );
+        if(response.data != null)
+            return response.data;
+        }
+        catch (error) {
+        console.error('Error fetching data:', error);
+        }
+    };
 
-    const crearUsuario = async () => 
+
+    const crearUsuario = async (userAinsertar:realUser) => 
     {
         try{
         const createNewUser = await axios.post(
             `${API_URL}/usuarios/createUser`,
-            user,
+            userAinsertar,
             {
             headers: {
                 'Content-Type': 'application/json'
@@ -208,6 +235,112 @@ export default function SignUp3()
 
 
 
+    // listas usadas para mostrar datos
+
+    const proteinEbooks: showEbook[] = [
+    {
+        title: "What are amino acids?",
+        onclick: undefined
+    },
+    {
+        title: "How proteins repair my cells?",
+        onclick: undefined
+    }
+    ];
+
+    let proteinButtons: showMacroNutrSignUp[] = [];
+
+    if (recibo != null) 
+    {
+        proteinButtons = [
+            { 
+            label: "Complete proteins", 
+            price: `${recibo.completo} grams`, 
+            tooltip: "Contain all essential amino acids your body needs for regeneration." 
+            },
+            { 
+            label: "Incomplete proteins", 
+            price: `${recibo.incompleto} grams`, 
+            tooltip: "Lack one or more essential amino acids needed for regeneration." 
+            }
+        ];
+    }
+
+    const fatEbooks: showEbook[] = [
+        {
+          title: "How monounsaturated fats help me?",
+          onclick: undefined
+        },
+        {
+          title: "How polyunsaturated fats help me?",
+          onclick: undefined
+        },
+        {
+          title: "Why saturated fats can hurt me?",
+          onclick: undefined
+        }
+    ];
+    
+    let fatButtons: showMacroNutrSignUp[] = [];
+    
+    if (recibo != null) {
+    fatButtons = [
+        {
+        label: "Monounsaturated",
+        price: `${recibo.monoinsaturadas} grams`,
+        tooltip: "Heart-friendly fats that support cholesterol balance and overall health."
+        },
+        {
+        label: "Polyunsaturated",
+        price: `${recibo.poliinsaturadas} grams`,
+        tooltip: "Essential fats, including omega-3 and omega-6, crucial for brain and cell function."
+        },
+        {
+        label: "Saturated",
+        price: `${recibo.saturadas} grams`,
+        tooltip: "Stable fats that provide energy but should be consumed in moderation."
+        }
+    ];
+    }
+      
+    const carbEbooks: showEbook[] = [
+    {
+        title: "Why I need complex carbs?",
+        onclick: undefined
+    },
+    {
+        title: "Do I need simple carbs?",
+        onclick: undefined
+    },
+    {
+        title: "Why fiber is essential?",
+        onclick: undefined
+    }
+    ];
+    
+    let carbButtons: showMacroNutrSignUp[] = [];
+    
+    if (recibo != null) {
+    carbButtons = [
+        {
+        label: "Fiber",
+        price: `${recibo.fibra} grams`,
+        tooltip: "Fiber promotes healthy digestion, supports heart health, helps regulate blood sugar levels and supports neuron and brain activity."
+        },
+        {
+        label: "Complex",
+        price: `${recibo.complejos} grams`,
+        tooltip: "Provide long-lasting energy and fiber, digesting slowly."
+        },
+        {
+        label: "Simples",
+        price: `${recibo.simples} grams`,
+        tooltip: "Digest quickly, giving a fast but short energy boost."
+        }
+    ];
+    }
+
+
     return (
         <Flex
         direction="column"
@@ -220,317 +353,47 @@ export default function SignUp3()
         position={"relative"}
         >
 
-
             {!ObjectIsNull(recibo) && recibo != null && 
             <CustomCard hijo={ 
-                <Flex 
-                align="center"
-                w="100%"
-                fontSize={{ base: "md", sm: "lg" }} // Cambia el tamaño de la fuente en pantallas pequeñas
-                direction="column" // En pantallas pequeñas, los elementos se apilan verticalmente, en pantallas grandes horizontalmente
-                justify="center" // Alinea todo a la izquierda
-            >
-                <HStack justify="start" gap="5px" align="start" mb="10px">
-                <Text color={textColor} fontSize="2xl" fontWeight="700">
-                Personal designed plan
-                </Text>
-                    <MeryTooltip texto={"This is a science-based plan, but if you feel uncomfortable, feel free to change it or talk with an expert :)"} />
-                </HStack>
-                <HStack 
-                    align="center"
-                    justify="center" 
-                    spacing="10px"
-                    p="5px"
-                >
-                    <Button
-                        variant="darkBrand"
-                        fontSize="sm"
-                        borderRadius="16px"
-                        bg="purple.100"
-                        w={{ base: '128px', md: '148px' }}
-                        h="46px"
-                        _hover={{ bg: "gray.100" }}
-                        onClick={() => location.href = "./parte2"}
-                        leftIcon={<Icon as={MdArrowBack} />}
-                    >
-                        No, go back
-                    </Button>
-                    <Button
-                        variant="darkBrand"
-                        fontSize="sm"
-                        borderRadius="16px"
-                        bg="purple.100"
-                        w={{ base: '128px', md: '148px' }}
-                        h="46px"
-                        onClick={letsgo}
-                        _hover={{ bg: "gray.100" }}
-                        leftIcon={<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="m536-84-56-56 142-142-340-340-142 142-56-56 56-58-56-56 84-84-56-58 56-56 58 56 84-84 56 56 58-56 56 56-142 142 340 340 142-142 56 56-56 58 56 56-84 84 56 58-56 56-58-56-84 84-56-56-58 56Z"/></svg>}
-                    >
-                        Yes, let's go!
-                    </Button>
-                </HStack>
-            </Flex>} >
+                <TitleCard title={"PERSONAL DESIGNED PLAN"} letsgo={letsgo} goback={()=> location.href = "../login/parte2"} tooltip={"This is a science-based plan, but if you feel uncomfortable, feel free to change it or talk with an expert :)"}></TitleCard>} >
             </CustomCard>}
 
-
             {!ObjectIsNull(recibo) && recibo != null && 
             <CustomCard hijo={ 
-                <Flex direction="column" w="100%">
-                    {/* PROTEINS */}
-                    <div>
-                    {/* Total large screen */}
-                        <Flex justify="center" gap="20px" mb="30px" w="100%" fontSize="xl" fontWeight={"bold"} wrap="wrap">
-                            <EBookButton texto={'What are amino acids?'}></EBookButton>
-                            <EBookButton texto={'How proteins repair my cells?'}></EBookButton>
-                        </Flex>
-                        <Box w="100%" borderBottom="2px solid black" my="20px" />
-
-                        {screenSize!= "" && (screenSize == "md" || screenSize == "xl") && 
-                
-                        <Flex direction="column" w="100%">
-                        {[
-                            { label: "Complete proteins", price: `${recibo.completo} grams`, tooltip: "Contain all essential amino acids your body needs for regeneration." },
-                            { label: "Incomplete proteins", price: `${recibo.incompleto} grams`, tooltip: "Lack one or more essential amino acids needed for regeneration."},].map((item, index) => (
-                            <Flex
-                                key={index}
-                                align="center"
-                                w="100%"
-                                fontSize={{ base: "md", sm: "lg" }} // Cambia el tamaño de la fuente en pantallas pequeñas
-                                mb="20px"
-                                direction={{ base: "column", sm: "row" }} // En pantallas pequeñas, los elementos se apilan verticalmente, en pantallas grandes horizontalmente
-                                justify="start" // Alinea todo a la izquierda
-                            >
-                                <HStack justify="start" gap={{ sm: "2px", md:"5px" }} align="start">
-                                    <Text flexShrink={0} width={{ base: "100%", sm: "auto" }}>
-                                        {item.label}
-                                    </Text>
-                                    <MeryTooltip texto={item.tooltip} />
-                                </HStack>
-
-                                <Text
-                                    flex="1"
-                                    mx="8px"
-                                    whiteSpace="nowrap"
-                                    overflow="hidden"
-                                    display={{ base: "none", sm: "block" }} // Oculta la línea punteada en pantallas pequeñas
-                                >
-                                    ........................................................................................................................................................
-                                </Text>
-                                <Text flexShrink={0} width={{ base: "100%", sm: "auto" }}>
-                                    {item.price}
-                                </Text>
-                            </Flex>
-                        ))}
-                        </Flex>}
-
-                        {/* Total small screen */}
-                        {screenSize!= "" && screenSize == "sm" && 
-                        <Flex direction="column" w="100%" mb="10px">
-                        {[
-                            { label: "Complete proteins", price: `${recibo.completo} grams`, tooltip: "Contain all essential amino acids your body needs for regeneration." },
-                            { label: "Incomplete proteins", price: `${recibo.incompleto} grams`, tooltip: "Lack one or more essential amino acids needed for regeneration."},].map((item, index) => (
-                            <VStack
-                                key={index}
-                                align="center"
-                            
-                                fontSize={{ base: "md", sm: "lg" }}
-                                mb="20px"
-                                justify="center" 
-                            >
-                                <HStack justify="start" align="start">
-                                    <Text flexShrink={0} width={{ base: "100%", sm: "auto" }}>
-                                        {item.label} : {item.price}
-                                    </Text>
-                                    <MeryTooltip texto={item.tooltip} />
-                                </HStack>
-                            </VStack>
-                        ))}
-                        </Flex>}
-
-                        <Box w="100%" borderBottom="2px solid black" my="20px" />
-                        <Flex justify="space-between" w="100%" fontSize="xl" fontWeight={"bold"}>
-                            <Text>TOTAL PROTEINS </Text>
-                            <Text>{recibo.prote} grams</Text>
-                        </Flex> 
-                    
-                    </div>
-                </Flex>} >
+                <MacroNutrCard title={'PROTEINS'} totalMacro={recibo.prote} total={'TOTAL PROTEINS'} infoLista={proteinButtons} screenSize={screenSize} ebooklista={proteinEbooks}></MacroNutrCard>} >
             </CustomCard>} 
 
 
             {!ObjectIsNull(recibo) && recibo != null && 
-            <CustomCard hijo={ 
-                <Flex direction="column" w="100%">
-                    {/* FAT */}
-                    <div>
-                    {/* Total large screen */}
-                    {screenSize!= "" && (screenSize == "md" || screenSize == "xl") && 
-                    <Flex direction="column" w="100%">
-                    {[
-                        { label: "Monounsaturated", price: `${recibo.monoinsaturadas} grams`, tooltip: "Heart-friendly fats that support cholesterol balance and overall health." },
-                        { label: "Polyunsaturated", price: `${recibo.poliinsaturadas} grams`, tooltip: "Essential fats, including omega-3 and omega-6, crucial for brain and cell function."},
-                        { label: "Saturated", price: `${recibo.saturadas} grams`, tooltip: "Stable fats that provide energy but should be consumed in moderation."},].map((item, index) => (
-                        <Flex
-                            key={index}
-                            align="center"
-                            w="100%"
-                            fontSize={{ base: "md", sm: "lg" }} 
-                            mb="20px"
-                            direction={{ base: "column", sm: "row" }} 
-                            justify="start"
-                        >
-                            <HStack justify="start" gap="5px" align="start">
-                                <Text flexShrink={0} width={{ base: "100%", sm: "auto" }}>
-                                    {item.label}
-                                </Text>
-                                <MeryTooltip texto={item.tooltip} />
-                            </HStack>
-
-                            <Text
-                                flex="1"
-                                mx="8px"
-                                whiteSpace="nowrap"
-                                overflow="hidden"
-                                display={{ base: "none", sm: "block" }} // Oculta la línea punteada en pantallas pequeñas
-                            >
-                                ........................................................................................................................................................
-                            </Text>
-                            <Text flexShrink={0} width={{ base: "100%", sm: "auto" }}>
-                                {item.price}
-                            </Text>
-                        </Flex>
-                    ))}
-                    </Flex>}
-
-                {/* Total small screen */}
-                {screenSize!= "" && screenSize == "sm" && 
-                <Flex direction="column" w="100%" mb="10px">
-                {[
-                    { label: "Monounsaturated", price: `${recibo.monoinsaturadas} grams`, tooltip: "Heart-friendly fats that support cholesterol balance and overall health." },
-                    { label: "Polyunsaturated", price: `${recibo.poliinsaturadas} grams`, tooltip: "Essential fats, including omega-3 and omega-6, crucial for brain and cell function."},
-                    { label: "Saturated", price: `${recibo.saturadas} grams`, tooltip: "Stable fats that provide energy but should be consumed in moderation."},].map((item, index) => (
-                    <VStack
-                        key={index}
-                        align="center"
-                        w="100%"
-                        fontSize={{ base: "md", sm: "lg" }}
-                        mb="20px"
-                        justify="center" 
-                    >
-                        <HStack justify="start" gap="5px" align="start">
-                            <Text flexShrink={0} width={{ base: "100%", sm: "auto" }}>
-                            {item.label} : {item.price}
-                            </Text>
-                            <MeryTooltip texto={item.tooltip} />
-                        </HStack>
-                    </VStack>
-                ))}
-                </Flex>}
-
-                <Box w="100%" borderBottom="2px solid black" my="20px" />
-                <Flex justify="space-between" w="100%" fontSize="xl" fontWeight={"bold"} mb="30px" >
-                    <Text>TOTAL FATS </Text>
-                    <Text>{recibo.grasas} grams</Text>
-                </Flex> 
-                <Flex justify="center" gap="20px" w="100%" fontSize="xl" fontWeight={"bold"} wrap="wrap">
-                    <EBookButton texto={'How monounsaturated fats helps me?'}></EBookButton>
-                    <EBookButton texto={'How polyunsaturated fats helps me?'}></EBookButton>
-                    <EBookButton texto={'Why saturated fats can hurt me?'}></EBookButton>
-                </Flex>
-                </div>
-                </Flex>} >
-            </CustomCard>} 
-
-            
+                <CustomCard 
+                hijo={ 
+                    <MacroNutrCard 
+                    title={'FATS'} 
+                    totalMacro={recibo.grasas}
+                    total={'TOTAL FATS'} 
+                    infoLista={fatButtons} 
+                    screenSize={screenSize} 
+                    ebooklista={fatEbooks} 
+                    />
+                } 
+                />
+            }
 
             {!ObjectIsNull(recibo) && recibo != null && 
-            <CustomCard hijo={ 
-                <Flex direction="column" w="100%">
-                    {/* CARBS */}
-                    <div>
-                    {/* Total large screen */}
-                    {screenSize!= "" && (screenSize == "md" || screenSize == "xl") && 
-                    <Flex direction="column" w="100%">
-                    {[
-                        { label: "Fiber", price: `${recibo.fibra} grams`, tooltip: "Fiber promotes healthy digestion, supports heart health, helps regulate blood sugar levels and support neuron and brain activity."},
-                        { label: "Complex", price: `${recibo.complejos} grams`, tooltip: "Provide long-lasting energy and fiber, digesting slowly."},
-                        { label: "Simples", price: `${recibo.simples} grams`, tooltip: "Digest quickly, giving a fast but short energy boost."},].map((item, index) => (
-                        <Flex
-                            key={index}
-                            align="center"
-                            w="100%"
-                            fontSize={{ base: "md", sm: "lg" }} 
-                            mb="20px"
-                            direction={{ base: "column", sm: "row" }} 
-                            justify="start"
-                        >
-                            <HStack justify="start" gap="5px" align="start">
-                                <Text flexShrink={0} width={{ base: "100%", sm: "auto" }}>
-                                    {item.label}
-                                </Text>
-                                <MeryTooltip texto={item.tooltip} />
-                            </HStack>
-
-                            <Text
-                                flex="1"
-                                mx="8px"
-                                whiteSpace="nowrap"
-                                overflow="hidden"
-                                display={{ base: "none", sm: "block" }} // Oculta la línea punteada en pantallas pequeñas
-                            >
-                                ........................................................................................................................................................
-                            </Text>
-                            <Text flexShrink={0} width={{ base: "100%", sm: "auto" }}>
-                                {item.price}
-                            </Text>
-                        </Flex>
-                    ))}
-                    </Flex>}
-
-                    {/* Total small screen */}
-                    {screenSize!= "" && screenSize == "sm" && 
-                    <Flex direction="column" w="100%" mb="10px">
-                    {[
-                        { label: "Fiber", price: `${recibo.fibra} grams`, tooltip: "Fiber promotes healthy digestion, supports heart health, helps regulate blood sugar levels and support neuron and brain activity."},
-                        { label: "Complex", price: `${recibo.complejos} grams`, tooltip: "Provide long-lasting energy and fiber, digesting slowly."},
-                        { label: "Simples", price: `${recibo.simples} grams`, tooltip: "Digest quickly, giving a fast but short energy boost."},].map((item, index) => (
-                        <VStack
-                            key={index}
-                            align="center"
-                            w="100%"
-                            fontSize={{ base: "md", sm: "lg" }}
-                            mb="20px"
-                            justify="center" 
-                        >
-                            <HStack justify="start" gap="5px" align="start">
-                                <Text flexShrink={0} width={{ base: "100%", sm: "auto" }}>
-                                {item.label} : {item.price}
-                                </Text>
-                                <MeryTooltip texto={item.tooltip} />
-                            </HStack>
-                            
-                        </VStack>
-                    ))}
-                    </Flex>}
-
-                    <Box w="100%" borderBottom="2px solid black" my="20px" />
-                    {/* <Flex justify="space-between" w="100%" fontSize="xl" fontWeight={"bold"} mb="30px">
-                        <Text>TOTAL CARBS </Text>
-                        <Text>{recibo.carbs} grams</Text>
-                    </Flex>  */}
-
-                    <Flex justify="center" gap="20px" w="100%" fontSize="xl" fontWeight={"bold"} wrap="wrap">
-                        <EBookButton texto={'Why I need complex carbs?'}></EBookButton>
-                        <EBookButton texto={'Do I need simple carbs?'}></EBookButton>
-                        <EBookButton texto={'Why fiber is essential?'}></EBookButton>
-                    </Flex>  
-                    </div>
-                </Flex>} >
-            </CustomCard>}
-
-
+                <CustomCard mb="50px"
+                hijo={ 
+                    <MacroNutrCard 
+                    title={'CARBS'} 
+                    totalMacro={recibo.carbs}
+                    total={'TOTAL CARBS'} 
+                    infoLista={carbButtons} 
+                    screenSize={screenSize} 
+                    ebooklista={carbEbooks} 
+                    />
+                } 
+                />
+            }
             {user == null && <PurpleSpinner></PurpleSpinner>}
-            
         </Flex>
     );
 

@@ -26,7 +26,7 @@ import { API_URL } from '../../../../../GlobalHelper';
 import { StringIsNull } from '../../../../../GlobalHelper';
 import PopUpMessage from '@/components/global/PopUpMessage';
 import PopUpErrorMessage from '@/components/global/PopUpErrorMessage';
-import { createUser } from '../../../../../../backend/src/dto/usuarios.dto';
+import { createUserSkeleton } from '../../../../../../backend/src/dto/usuarios.dto';
 import PurpleSpinner from '@/components/global/Spinner';
 
 export default function SignUp1() 
@@ -93,7 +93,7 @@ export default function SignUp1()
         let nombreSinComillas = nom.replace(/^"|"$/g, '');
         let contraSinComillas = contra.replace(/^"|"$/g, '');
 
-       const user:createUser = {
+       const user:createUserSkeleton = {
         nombre:nombreSinComillas,
         contra:contraSinComillas,
         peso:pesoSinComillas,
@@ -133,7 +133,7 @@ export default function SignUp1()
 
       {datosAntes !== undefined && <Card p="30px" width={{base:"80%", md: "100%"}} mb={{sd:"20px", md: "200px"}} maxWidth={"800px"} mt="20px" align="center" justify="center" borderRadius={"20px"}>
           <Text color={textColor} fontSize="2xl" fontWeight="700" mb="60px">
-              Creating an account
+              CREATING AN ACCOUNT
           </Text>
           <Flex direction="column" w="100%">
           <Stack direction="column" spacing="20px">

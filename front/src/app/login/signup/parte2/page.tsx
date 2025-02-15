@@ -24,15 +24,17 @@ import axios from 'axios';
 // Custom components
 import React, { useEffect, useState, useRef } from 'react';
 import { API_URL, exerciseFrequencyList, StringIsNull, objectivesList, ObjectIsNull, getTamanyoPantalla } from '../../../../../GlobalHelper';
-import { createUser } from '../../../../../../backend/src/dto/usuarios.dto';
+import { createUserSkeleton } from '../../../../../../backend/src/dto/usuarios.dto';
 import { MdArrowBack, MdHdrStrong } from 'react-icons/md';
 import PurpleSpinner from '@/components/global/Spinner';
 import MeryTooltip from '@/components/global/MeryToolTip';
+import CustomCard from '@/components/global/CustomCard';
+import TitleCard from '@/components/signin/TitleCard';
 
 export default function SignUp2() 
 {
   const textColor = useColorModeValue('secondaryGray.900', 'white');
-  const [user, setUser] = useState<createUser | null>(null);
+  const [user, setUser] = useState<createUserSkeleton | null>(null);
   const [screenSize, setscreenSize] = useState<string>("");
   const [activityLevelIndex, setactivityLevelIndex] = useState<number>(-1);
   const objectiveIndex = useRef<number>(0);
@@ -56,7 +58,7 @@ export default function SignUp2()
 
       let calorias = calculaCalorias(user.peso, user.altura, user.edad, user.genero, activityLevelIndex);
 
-      const userWithCalories :createUser = {
+      const userWithCalories :createUserSkeleton = {
         nombre:user.nombre,
         contra:user.contra,
         peso:user.peso,
@@ -163,59 +165,17 @@ export default function SignUp2()
     position={"relative"}
 >
     {!ObjectIsNull(user) && user != null && !StringIsNull(user.calorias_objetivo) && activityLevelIndex!= -1 &&
-    <Card 
-        p="30px" 
-        width={{ base: "80%", md: "100%" }} 
-        mb="10px" 
-        maxWidth={"800px"} 
-        mt="20px" 
-        align="center" 
-        justify="center" 
-        borderRadius={"20px"}
-    >
-         <Text color={textColor} fontSize="2xl" fontWeight="700" mb="10px">
-          {user.nombre}, is this what you want?
-        </Text>
+    <CustomCard mb={"10px"} hijo={ 
+      <TitleCard title={`${user.nombre}, is this what you want?`} letsgo={letsgo} goback={() => location.href = "../login/parte1"} tooltip={''}></TitleCard>} >
+    </CustomCard>}
 
-        <HStack 
-          bottom="0" 
-          align="center"
-          justify="center" 
-          spacing="10px"
-          p="20px"
-          >
-              <Button
-                  variant="darkBrand"
-                  fontSize="sm"
-                  borderRadius="16px"
-                  bg="purple.100"
-                  w={{ base: '128px', md: '148px' }}
-                  h="46px"
-                  _hover={{ bg: "gray.100" }}
-                  onClick={() => location.href = "./parte1"}
-                  leftIcon={<Icon as={MdArrowBack} />}
-              >
-                  No, go back
-              </Button>
-              <Button
-                  variant="darkBrand"
-                  fontSize="sm"
-                  borderRadius="16px"
-                  bg="purple.100"
-                  w={{ base: '128px', md: '148px' }}
-                  h="46px"
-                  onClick={letsgo}
-                  _hover={{ bg: "gray.100" }}
-                  leftIcon={<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="m536-84-56-56 142-142-340-340-142 142-56-56 56-58-56-56 84-84-56-58 56-56 58 56 84-84 56 56 58-56 56 56-142 142 340 340 142-142 56 56-56 58 56 56-84 84 56 58-56 56-58-56-84 84-56-56-58 56Z"/></svg>}
-              >
-                  Yes, let's go!
-              </Button>
-        </HStack>
-
+    {!ObjectIsNull(user) && user != null && !StringIsNull(user.calorias_objetivo) && activityLevelIndex!= -1 &&
+    <CustomCard  mb={"100px"} hijo={ 
+      <>
         <Box w="100%" borderBottom="2px solid black" my="20px" />
 
 
-        <Flex direction="column" w="100%">
+        <Flex direction="column" w="100%" >
             {[
                 { label: "Gender", price:  user.genero },
                 { label: "Weight", price: user.peso +" kg" },
@@ -254,7 +214,7 @@ export default function SignUp2()
                   align="center"
                   w="100%"
                   fontSize={{ base: "md", sm: "lg" }} // Cambia el tamaño de la fuente en pantallas pequeñas
-                  mb="20px"
+    
                   direction={{ base: "column", sm: "row" }} // En pantallas pequeñas, los elementos se apilan verticalmente, en pantallas grandes horizontalmente
                   justify="start" // Alinea todo a la izquierda
               >
@@ -322,9 +282,12 @@ export default function SignUp2()
               <Text>{caloriesWithObjective.current} kcal</Text>
           </Flex>
 
-         
+        
         </Flex>
-    </Card>}
+      </>} >
+    </CustomCard>}
+
+        
 
     {user == null && activityLevelIndex == -1 &&
       <PurpleSpinner></PurpleSpinner>}

@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Body, Param } from '@nestjs/common';
-import { reciboSkeleton } from 'src/dto/recibo.dto';
+import { reciboSkeleton } from 'src/dto/recibos.dto';
 import { RecibosService } from './recibos.service';
 
 @Controller('recibos')  // Ruta base para este controlador

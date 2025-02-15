@@ -8,19 +8,21 @@ interface CardProps {
   hijo: React.ReactNode; // Permite cualquier tipo de contenido JSX
   bgColor?: string;      // Propiedad opcional para color de fondo
   borderRadius?: string; // Border-radius opcional
+  mb?: string;
 }
 
 export default function CustomCard({
   hijo,
   bgColor = "white",     // Valor por defecto para el color de fondo
   borderRadius = "20px", // Border-radius por defecto
+  mb="10px"
 }: CardProps) {
 
   return (
     <Card
       p={"40px"} 
       width={{ base: "80%", md: "100%" }} 
-      mb={{ base: "20px", md: "10px" }} 
+      mb={mb} 
       maxWidth="800px" 
       mt="20px" 
       align="center" 

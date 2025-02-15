@@ -65,7 +65,7 @@ export default function login()
     >
         <Card p="30px" width={{base:"80%", md: "100%"}} maxWidth={"500px"} mt="90px" align="center" justify="center" borderRadius={"20px"}>
             <Text color={textColor} fontSize="2xl" fontWeight="700" mb="20px">
-            Log in
+            LOG IN
             </Text>
             <Flex direction="column" w="100%">
             <Stack direction="column" spacing="20px">

@@ -14,11 +14,16 @@ CURIOSIDADES
 
  |   
 
- []
+[] 
+
+{}
 
 COSAS:
 - hacer mas .tsx con objetos comunes
 -hacer pagina myday
 
 
+IMPORTANTE: ESTRUCTURACIÓN
+-En dto y en back las entidades van en plural, NO es recibo es recibos
+-Pero en la bd SÍ están en singular
 

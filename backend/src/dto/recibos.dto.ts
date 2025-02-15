@@ -14,3 +14,10 @@ export interface reciboSkeleton
     fibra:string;
 
 };
+
+export interface showMacroNutrSignUp 
+{
+    label:string;
+    price:string;
+    tooltip:string;
+};

@@ -1,5 +1,5 @@
 // para crear usuario en bd (se registra por 1 vez)
-export interface createUser 
+export interface createUserSkeleton 
 {
     nombre:string;
     contra:string;
@@ -11,4 +11,14 @@ export interface createUser
     recibo:number; //tiene asociado un Recibo como objetivos tangibles
     genero:string;
     edad:string;
+};
+
+export interface realUser 
+{
+    nombre:string;
+    contra:string;
+    dias_ids:string; 
+    ficha_id:string; 
+    fecha_registro:string; 
+
 };

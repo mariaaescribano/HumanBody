@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseService } from '../Database/database.service';
-import { reciboSkeleton } from 'src/dto/recibo.dto';
+import { reciboSkeleton } from 'src/dto/recibos.dto';
 
 @Injectable()
 export class RecibosService {

@@ -7,4 +7,4 @@ import { DatabaseModule } from '../Database/database.module';
   providers: [RecibosService],
   exports: [RecibosService],  // Exportamos el servicio para usarlo en otros módulos si es necesario
 })
-export class CatsModule {}
+export class RecibosModule {}
