@@ -19,37 +19,35 @@ import axios from 'axios';
 // Custom components
 import InputField from '../../../components/global/InputField';
 import React, { useEffect, useState } from 'react';
+import { API_URL } from '../../../../GlobalHelper';
 
 
 export default function login() 
 {
   const textColor = useColorModeValue('secondaryGray.900', 'white');
-  const [activeBullets, setActiveBullets] = useState({
-    user: true,
-    address: false,
-    profile: false,
-  });
+  const [nom, setnom] = useState<string>("");
+  const [contra, setcontra] = useState<string>("");
 
-  useEffect(() => {
-    dameVotingDates();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const dameVotingDates = async () => {
-    try 
-    { 
-      const response = await axios.get(
-        `http://localhost:3001/usuarios`,
-        {
+  const existeUser = async () => {
+    try{
+      const response = await axios.post(
+          `${API_URL}/usuarios/login`,
+          {nom: nom, pass:contra},
+          {
           headers: {
-            'Content-Type': 'application/json'
+              'Content-Type': 'application/json'
           },
-        }
+          }
       );
-      console.log(response.data)
-    } catch (error) {
-      console.error('Error fetching states:', error);
-    }
+        if(response.data != null)
+        {
+          if(response.data.exists == true)
+            location.href = "../../myday"
+        }
+      }
+      catch (error) {
+      console.error('Error fetching data:', error);
+      }
   };
 
   return (
@@ -75,6 +73,7 @@ export default function login()
                     id="first"
                     placeholder="eg. Esthera"
                     label="User name"
+                    onChange={(e:any) => setnom(e.target.value)}
                 />
                 <InputField
                     mb="0px"
@@ -82,6 +81,7 @@ export default function login()
                     type="password"
                     placeholder="eg. ****"
                     label="Password"
+                    onChange={(e:any) => setcontra(e.target.value)}
                 />
                 </SimpleGrid>
             </Stack>
@@ -95,7 +95,7 @@ export default function login()
                 h="46px"
                 ms="auto"
                 _hover={{bg:"gray.100"}}
-                // onClick={() => addressTab.current.click()}
+                onClick={existeUser}
                 >
                 Next
                 </Button>

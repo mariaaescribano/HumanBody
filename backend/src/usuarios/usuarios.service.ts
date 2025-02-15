@@ -17,4 +17,18 @@ export class UsuariosService {
     const params = [body.nombre, body.contra, body.dias_ids, body.ficha_id, body.fecha_registro];
     return await this.databaseService.query(sql, params);
   }
+
+  // encontrar por nombre
+  async findByName(nombre: string) {
+    const sql = 'SELECT * FROM usuarios WHERE nombre = ?';
+    const result = await this.databaseService.query(sql, [nombre]);
+    return result.length > 0 ? true : false;
+  }
+
+  async userValidCredentials(body: { nom: string; pass: string } ) {
+    const sql = 'SELECT * FROM usuarios WHERE nombre = ? and contra = ?';
+    const params = [body.nom, body.pass];
+    const result = await this.databaseService.query(sql, params);
+    return result.length > 0 ? true : false;
+  }
 }

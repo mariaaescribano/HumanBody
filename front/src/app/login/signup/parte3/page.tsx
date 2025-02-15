@@ -355,7 +355,7 @@ export default function SignUp3()
 
             {!ObjectIsNull(recibo) && recibo != null && 
             <CustomCard hijo={ 
-                <TitleCard title={"PERSONAL DESIGNED PLAN"} letsgo={letsgo} goback={()=> location.href = "../login/parte2"} tooltip={"This is a science-based plan, but if you feel uncomfortable, feel free to change it or talk with an expert :)"}></TitleCard>} >
+                <TitleCard title={"PERSONAL DESIGNED PLAN"} letsgo={letsgo} goback={()=> location.href = "../signup/parte2"} tooltip={"This is a science-based plan, but if you feel uncomfortable, feel free to change it or talk with an expert :)"}></TitleCard>} >
             </CustomCard>}
 
             {!ObjectIsNull(recibo) && recibo != null && 

@@ -1,17 +1,20 @@
 'use client'
 // Chakra imports
 import { Flex, FormLabel, Input, Text, useColorModeValue } from '@chakra-ui/react';
+import MeryTooltip from './MeryToolTip';
 // Custom components
 
-export default function Default(props: {
+export default function InputField(props: {
 	id?: string;
 	label?: string;
 	extra?: JSX.Element;
 	placeholder?: string;
 	type?: string;
+	toolTipText?:string;
+	mb?:string;
 	[x: string]: any;
 }) {
-	const { id, label, extra, placeholder, type, mb, ...rest } = props;
+	const { id, label, extra, placeholder, type, toolTipText, mb, ...rest } = props;
 	// Chakra Color Mode
 	const textColorPrimary = useColorModeValue('secondaryGray.900', 'white');
 
@@ -28,6 +31,7 @@ export default function Default(props: {
 				<Text fontSize='sm' fontWeight='400' ms='2px'>
 					{extra}
 				</Text>
+				{toolTipText != null && <MeryTooltip texto={toolTipText}></MeryTooltip>}
 			</FormLabel>
 			<Input
 				{...rest}

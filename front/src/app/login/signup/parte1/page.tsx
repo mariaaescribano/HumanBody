@@ -43,6 +43,7 @@ export default function SignUp1()
   const [edad, setedad] = useState<string>("");
 
   const [filled, setfilled] = useState<boolean>(true);
+  const [nomExiste, setnomExiste] = useState<boolean>(false);
   const [datosAntes, setDatosAntes] = useState<boolean | undefined>(undefined);
 
   useEffect(() => 
@@ -83,7 +84,7 @@ export default function SignUp1()
     && !StringIsNull(objetivo)
     && !StringIsNull(nom)
     && !StringIsNull(contra)
-    && !StringIsNull(genero))
+    && !StringIsNull(genero) && nomExiste== false)
     {
         // quitar comillas
         let pesoSinComillas = peso.replace(/^"|"$/g, '');
@@ -116,7 +117,36 @@ export default function SignUp1()
     {
       setfilled(false);
     }
-  }
+  };
+
+  const writingName = (e:any) =>
+  {
+    let nom =e.target.value;
+    setnom(nom)
+    if(nom!= "")
+      existeName(nom);
+  };
+
+  const existeName = async (nombre:string) =>
+  {
+    try{
+    const response = await axios.get(
+      `${API_URL}/usuarios/userExist/${nombre}`,
+      {
+        headers: {
+            'Content-Type': 'application/json'
+        },
+      }
+    );
+      if(response.data != null)
+      {
+        setnomExiste(response.data.exists);
+      }
+    }
+    catch (error) {
+    console.error('Error fetching data:', error);
+    }
+  } 
 
   return (
     <Flex
@@ -139,13 +169,14 @@ export default function SignUp1()
           <Stack direction="column" spacing="20px">
               <SimpleGrid columns={{ base: 1, md: 2 }} gap="20px">
                   <InputField
-                      mb="0px"
-                      id="first"
-                      placeholder="eg. Esthera"
-                      label="User name"
-                      value={nom}
-                      onChange={(e:any) => setnom(e.target.value)}
-                  />
+                    mb="0px"
+                    id="first"
+                    placeholder="eg. Esthera"
+                    label="User name"
+                    value={nom}
+                    bg={nomExiste ? "red.200" : "white"}
+                    onChange={(e: any) => writingName(e)} toolTipText={'Name already exists.'}/>
+
                   <InputField
                       mb="0px"
                       id="last"

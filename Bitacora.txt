@@ -12,18 +12,23 @@ CURIOSIDADES
                 return prevUser;  // En caso de que `user` sea null, se devuelve tal cual
               });
 
- |   
+
+
+FACILITADORES
+|   
 
 [] 
 
 {}
 
-COSAS:
-- hacer mas .tsx con objetos comunes
--hacer pagina myday
+const crearRecibo = async () => 
+
+
 
 
 IMPORTANTE: ESTRUCTURACIÓN
 -En dto y en back las entidades van en plural, NO es recibo es recibos
 -Pero en la bd SÍ están en singular
 
+PARA HOY
+- my day: diseño y llamadas
