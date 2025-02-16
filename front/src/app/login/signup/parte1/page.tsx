@@ -168,15 +168,17 @@ export default function SignUp1()
           <Flex direction="column" w="100%">
           <Stack direction="column" spacing="20px">
               <SimpleGrid columns={{ base: 1, md: 2 }} gap="20px">
-                  <InputField
-                    mb="0px"
-                    id="first"
-                    placeholder="eg. Esthera"
-                    label="User name"
-                    value={nom}
-                    bg={nomExiste ? "red.200" : "white"}
-                    onChange={(e: any) => writingName(e)} toolTipText={'Name already exists.'}/>
-
+                <InputField
+                  mb="0px"
+                  id="first"
+                  placeholder="eg. Esthera"
+                  label="User name"
+                  value={nom}
+                  bg={nomExiste ? "red.200" : "white"}
+                  onChange={(e: any) => writingName(e)}
+                  toolTipText={nomExiste == true ? 'Name already exists.' : null}
+                />
+                
                   <InputField
                       mb="0px"
                       id="last"

@@ -20,6 +20,7 @@ import axios from 'axios';
 import InputField from '../../../components/global/InputField';
 import React, { useEffect, useState } from 'react';
 import { API_URL } from '../../../../GlobalHelper';
+import PopUpErrorMessage from '@/components/global/PopUpErrorMessage';
 
 
 export default function login() 
@@ -27,6 +28,7 @@ export default function login()
   const textColor = useColorModeValue('secondaryGray.900', 'white');
   const [nom, setnom] = useState<string>("");
   const [contra, setcontra] = useState<string>("");
+  const [existe, setexiste] = useState<boolean>(true);
 
   const existeUser = async () => {
     try{
@@ -43,6 +45,8 @@ export default function login()
         {
           if(response.data.exists == true)
             location.href = "../../myday"
+          else
+            setexiste(false)
         }
       }
       catch (error) {
@@ -61,6 +65,7 @@ export default function login()
         minH="100vh"
         position={"relative"}
     >
+         {existe == false && <PopUpErrorMessage cancel={existe} setCancel={setexiste} title={'Error'} texto={'Wrong user or password'} ></PopUpErrorMessage>}
         <Card p="30px" width={{base:"80%", md: "100%"}} maxWidth={"500px"} mt="90px" align="center" justify="center" borderRadius={"20px"}>
             <Text color={textColor} fontSize="2xl" fontWeight="700" mb="20px">
             LOG IN

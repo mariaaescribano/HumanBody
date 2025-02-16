@@ -23,6 +23,7 @@ export default function CustomCard({
       p={"40px"} 
       width={{ base: "80%", md: "100%" }} 
       mb={mb} 
+      height="auto"
       maxWidth="800px" 
       mt="20px" 
       align="center" 

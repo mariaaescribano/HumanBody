@@ -17,7 +17,7 @@ export function ObjectIsNull(object:any)
 };
 
 
-// para pagina de registro
+//////////// LISTAS  para pagina de registro //////////// 
 export const exerciseFrequencyList = [
   { value: '0', label: 'No exercise' },
   { value: '1', label: '1-3 days of exercise' },
@@ -25,16 +25,31 @@ export const exerciseFrequencyList = [
   { value: '3', label: '6-7 days of exercise' },
   { value: '4', label: 'Exercise every day' },
 ];
-
-
 export const objectivesList = [
   { value: '0', label: 'Lose fat' },
   { value: '1', label: 'Gain muscle' },
   { value: '2', label: 'Maintain weight' },
 ];
+//////////// END LISTAS  para pagina de registro //////////// 
 
 
+// obtener día local
+export async function getInternetDateParts() {
+  try {
+    const response = await fetch("https://worldtimeapi.org/api/timezone/Etc/UTC");
+    const data = await response.json();
+    const dateTime = new Date(data.datetime); // Convertir la fecha ISO a objeto Date
 
+    const day = dateTime.getUTCDate(); // Día del mes (1-31)
+    const month = dateTime.getUTCMonth() + 1; // Mes (0-11, sumamos 1)
+    const year = dateTime.getUTCFullYear(); // Año (ej: 2025)
+
+    return { day, month, year };
+  } catch (error) {
+    console.error("Error al obtener la fecha y hora de internet:", error);
+    return null;
+  }
+}
 
 
 
