@@ -29,28 +29,20 @@ import PopUpMessage from '@/components/global/PopUpMessage';
 import PopUpErrorMessage from '@/components/global/PopUpErrorMessage';
 import PurpleSpinner from '@/components/global/Spinner';
 import CustomCard from '@/components/global/CustomCard';
-import { getInternetDateParts } from '../../../GlobalHelper';
+import { getInternetDateParts } from '../../../../GlobalHelper';
 import { CircProgressMini } from '@/components/myday/CircProgressMini';
 import MacroCalView from '@/components/myday/MacroCalView';
 import ElementoPrimero from '@/components/myday/ElementoPrimero';
-import { ArrowLeftIcon, ArrowRightIcon } from "@chakra-ui/icons";
+import { AddIcon, ArrowLeftIcon, ArrowRightIcon } from "@chakra-ui/icons";
 import MacroNutrCard from '@/components/signin/MacroNutrCard';
+import Buscador from '@/components/addfood/buscarAlimento/Buscador';
+import Barra from '@/components/addfood/buscarAlimento/Barra';
+import AlimentoMiniCard from '@/components/addfood/buscarAlimento/AlimentoMiniCard';
 
-export default function MyDay() 
+export default function BuscarAlimento() 
 {
   const textColor = useColorModeValue('secondaryGray.900', 'white');
-
-  const [peso, setPeso] = useState<string>("");
-  const [altura, setAltura] = useState<string>("");
-  const [exerciseFrequency, setexerciseFrequency] = useState<string>("");
-  const [objetivo, setObjetivo] = useState<string>("");
-  const [nom, setnom] = useState<string>("");
-  const [contra, setcontra] = useState<string>("");
-  const [genero, setgenero] = useState<string>("");
-  const [edad, setedad] = useState<string>("");
-
-  const [filled, setfilled] = useState<boolean>(true);
-  const [nomExiste, setnomExiste] = useState<boolean>(false);
+  const [quienPulsado, setquienPulsado] = useState<number>(0);
   const [datosAntes, setDatosAntes] = useState<boolean | undefined>(undefined);
 
 //   useEffect(() => 
@@ -154,8 +146,13 @@ export default function MyDay()
 //     console.error('Error fetching data:', error);
 //     }
 //   } 
-const alignSelfValue = useBreakpointValue({ base: "center", md: "flex-start" });
 
+
+  useEffect(() => 
+  {
+    
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [quienPulsado]);
 
 
   return (
@@ -166,50 +163,37 @@ const alignSelfValue = useBreakpointValue({ base: "center", md: "flex-start" });
         w="100%"
         h="100%"
         justify="center"
-        p="30px"
+        p="20px"
         minH="100vh"
         position={"relative"}
     >
         {/* title */}
-        <Card
-            width={{ base: "90%", md: "100%" }}
-            height="auto"
-            maxWidth="800px"
-            p="10px"
-            align="center"
-            justify="center"
-            borderRadius={"20px"}
-            >
-            <HStack justify="space-between" width="100%" align="center">
-                {/* Botón con flecha hacia la izquierda */}
-                <IconButton
-                icon={<ArrowLeftIcon />}
-                aria-label="Go Left"
-                onClick={() => alert("Going Left")}
-                variant="ghost"
-                />
+        <CustomCard hijo={
+            <>
+                <Buscador></Buscador>
+                <Button
+                    fontSize="sm"
+                    borderRadius="16px"
+                    bg="purple.100"
+                    w="50%"
+                    mt="20px"
+                    h="100%"
+                    p="10px"
+                    _hover={{bg:"gray.100"}}
+                    // rightIcon={<AddIcon />}
+                    > CREATE A FOOD
+                    </Button>
 
-                {/* Contenido Central */}
-                <VStack alignItems={"center"}>
-                <Text color={"black"} fontSize="2xl" fontWeight="700">
-                    MY DAY
-                </Text>
-                <Text color={"black"} fontSize="sd" fontWeight="700">
-                    12/09/2033
-                </Text>
-                </VStack>
+                  <Barra setquienPulsado={setquienPulsado} quienPulsado={quienPulsado}></Barra>
 
-                {/* Flecha hacia la derecha */}
-                <IconButton
-                icon={<ArrowRightIcon />}
-                aria-label="Go Right"
-                variant="ghost"
-                />
-            </HStack>
-        </Card>
 
+                {/* hacer un div y ponerlos con un .map */}
+                  <AlimentoMiniCard nameAlimento={'Manzana'} predomina={''}></AlimentoMiniCard>
+                  <AlimentoMiniCard nameAlimento={'Manzana'} predomina={''}></AlimentoMiniCard>
+                  <AlimentoMiniCard nameAlimento={'Manzana'} predomina={''}></AlimentoMiniCard>
+            </>}></CustomCard>
        {/* calorias y macronutrients overall view */}
-       <CustomCard hijo={<ElementoPrimero></ElementoPrimero>}></CustomCard>
+       {/* <CustomCard hijo={<ElementoPrimero></ElementoPrimero>}></CustomCard>
 
        <CustomCard hijo={ <Button
                fontSize="sm"
@@ -232,7 +216,7 @@ const alignSelfValue = useBreakpointValue({ base: "center", md: "flex-start" });
             </Text>
             </>
         }>
-        </CustomCard>
+        </CustomCard> */}
 
 
                    {/* <CustomCard hijo={ 

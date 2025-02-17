@@ -29,6 +29,7 @@ const crearRecibo = async () =>
 IMPORTANTE: ESTRUCTURACIÓN
 -En dto y en back las entidades van en plural, NO es recibo es recibos
 -Pero en la bd SÍ están en singular
+ORDEN: prote: "#610C04" -fats:"#abdefa" -carbs:"#EDC9AF"
 
 PARA HOY
 -login: mensaje para indicar q ha fallado

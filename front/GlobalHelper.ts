@@ -53,8 +53,11 @@ export async function getInternetDateParts() {
 
 
 
-
-
+// ICONOS PARA MACROS
+import { FaAppleAlt, FaFish , FaSeedling } from 'react-icons/fa';
+export const ProteIcono = FaFish;
+export const FatIcono = FaSeedling;
+export const CarbIcono = FaAppleAlt;
 
 
 

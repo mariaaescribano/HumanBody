@@ -21,7 +21,7 @@ export default function CustomCard({
   return (
     <Card
       p={"40px"} 
-      width={{ base: "80%", md: "100%" }} 
+      width={{ base: "90%", md: "100%" }} 
       mb={mb} 
       height="auto"
       maxWidth="800px" 

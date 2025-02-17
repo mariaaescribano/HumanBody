@@ -39,7 +39,7 @@ export default function ElementoPrimero(props: { }) {
         p="10px"
         _hover={{bg:"gray.100"}}
         rightIcon={<AddIcon />}
-        // onClick={comprobarSiPoderPaso2}
+        onClick={()=> location.href = "../addfood/buscarAlimento"}
         >
         </Button>
 

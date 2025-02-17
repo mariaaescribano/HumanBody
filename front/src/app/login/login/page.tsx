@@ -44,7 +44,10 @@ export default function login()
         if(response.data != null)
         {
           if(response.data.exists == true)
+          {
+            sessionStorage.setItem("userNom", nom)
             location.href = "../../myday"
+          }
           else
             setexiste(false)
         }

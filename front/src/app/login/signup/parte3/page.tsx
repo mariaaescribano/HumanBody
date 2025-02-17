@@ -159,6 +159,7 @@ export default function SignUp3()
             await crearUsuario(userAinsertar);
             //borrar session
             sessionStorage.clear();
+            sessionStorage.setItem("userNom", user.nombre)
             location.href="../../myday"
         }
     };
