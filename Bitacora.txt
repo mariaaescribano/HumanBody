@@ -23,6 +23,10 @@ FACILITADORES
 
 const crearRecibo = async () => 
 
+useEffect(() => 
+{
+
+}, []);
 
 
 
@@ -32,5 +36,5 @@ IMPORTANTE: ESTRUCTURACIÓN
 ORDEN: prote: "#610C04" -fats:"#abdefa" -carbs:"#EDC9AF"
 
 PARA HOY
--login: mensaje para indicar q ha fallado
-- my day: diseño y llamadas
+- poder crear alimento
+- poder ver ficha de alimento

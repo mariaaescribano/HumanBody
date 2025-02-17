@@ -29,7 +29,7 @@ import PopUpMessage from '@/components/global/PopUpMessage';
 import PopUpErrorMessage from '@/components/global/PopUpErrorMessage';
 import PurpleSpinner from '@/components/global/Spinner';
 import CustomCard from '@/components/global/CustomCard';
-import { getInternetDateParts } from '../../../../GlobalHelper';
+import { API_URL, getInternetDateParts } from '../../../../GlobalHelper';
 import { CircProgressMini } from '@/components/myday/CircProgressMini';
 import MacroCalView from '@/components/myday/MacroCalView';
 import ElementoPrimero from '@/components/myday/ElementoPrimero';
@@ -38,12 +38,16 @@ import MacroNutrCard from '@/components/signin/MacroNutrCard';
 import Buscador from '@/components/addfood/buscarAlimento/Buscador';
 import Barra from '@/components/addfood/buscarAlimento/Barra';
 import AlimentoMiniCard from '@/components/addfood/buscarAlimento/AlimentoMiniCard';
+import { miniCartaAlimento } from '../../../../../backend/src/dto/alimentos.dto';
 
 export default function BuscarAlimento() 
 {
   const textColor = useColorModeValue('secondaryGray.900', 'white');
-  const [quienPulsado, setquienPulsado] = useState<number>(0);
-  const [datosAntes, setDatosAntes] = useState<boolean | undefined>(undefined);
+
+  // mostrar alimentos con predominancia de un macronutriente
+  const [quienPulsado, setquienPulsado] = useState<number>(0); 
+
+  const [alimentosLista, setalimentosLista] = useState<miniCartaAlimento[]>([]);
 
 //   useEffect(() => 
 //   {
@@ -150,7 +154,40 @@ export default function BuscarAlimento()
 
   useEffect(() => 
   {
-    
+    const getMacroNutrientsFoods = async () =>
+    {
+      try
+      {
+        const response = await axios.get(
+          `${API_URL}/alimentos/macroPredomina/${quienPulsado}`,
+          {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+          }
+        );
+        if(response.data.foods != null)
+        {
+          const recoge = [];
+          for(let i=0; i< response.data.foods.length; i++)
+          {
+            let objeto: miniCartaAlimento = 
+            {
+              nombre: response.data.foods[i].nombre,
+              predomina:response.data.foods[i].predomina,
+              calorias_100gr: response.data.foods[i].calorias_100gr
+            }
+            recoge.push(objeto)
+          }
+          setalimentosLista(recoge)
+        }
+      }
+      catch (error) {
+      console.error('Error fetching data:', error);
+      }
+    }  
+   
+    getMacroNutrientsFoods();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [quienPulsado]);
 
@@ -180,7 +217,7 @@ export default function BuscarAlimento()
                     h="100%"
                     p="10px"
                     _hover={{bg:"gray.100"}}
-                    // rightIcon={<AddIcon />}
+                    leftIcon={<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M120-120v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm584-528 56-56-56-56-56 56 56 56Z"/></svg>}
                     > CREATE A FOOD
                     </Button>
 
@@ -188,9 +225,20 @@ export default function BuscarAlimento()
 
 
                 {/* hacer un div y ponerlos con un .map */}
-                  <AlimentoMiniCard nameAlimento={'Manzana'} predomina={''}></AlimentoMiniCard>
-                  <AlimentoMiniCard nameAlimento={'Manzana'} predomina={''}></AlimentoMiniCard>
-                  <AlimentoMiniCard nameAlimento={'Manzana'} predomina={''}></AlimentoMiniCard>
+                {alimentosLista.length >0 && alimentosLista.map((alimento, index) => (
+                  <AlimentoMiniCard 
+                    key={index}
+                    nameAlimento={alimento.nombre} 
+                    predomina={alimento.predomina} 
+                    calorias={alimento.calorias_100gr} 
+                  />
+                ))} 
+
+                <Box  justifyContent="center">
+                {alimentosLista.length ==0 && <PurpleSpinner></PurpleSpinner>}
+                </Box>
+                 
+
             </>}></CustomCard>
        {/* calorias y macronutrients overall view */}
        {/* <CustomCard hijo={<ElementoPrimero></ElementoPrimero>}></CustomCard>
@@ -253,9 +301,7 @@ export default function BuscarAlimento()
                        } 
                        />
                 */}
-       
-
-      {datosAntes == undefined && <PurpleSpinner></PurpleSpinner>}
+      
 
     </Flex>);
 

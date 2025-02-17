@@ -23,9 +23,10 @@ function Barra(props: {setquienPulsado:React.Dispatch<React.SetStateAction<numbe
     {/* Sección 0 */}
     <Flex
       flex="1"
-      _hover={{bg: props.quienPulsado !== 0 ? "#610C04" : "gray.200"}} 
+      _hover={{bg: props.quienPulsado !== 0 ? "gray.100" : "gray.200"}} 
       bg= {props.quienPulsado == 0 ? "gray.200": "#610C04"}     
       justifyContent="center"
+      onClick={()=> props.setquienPulsado(0)} 
       alignItems="center"
       p="10px"
     >
@@ -47,6 +48,7 @@ function Barra(props: {setquienPulsado:React.Dispatch<React.SetStateAction<numbe
       bg= {props.quienPulsado == 1 ? "gray.200": "#abdefa"}  
       justifyContent="center"
       alignItems="center"
+      onClick={()=> props.setquienPulsado(1)} 
       p="10px"
       borderLeft="2px solid black" // Borde separador
     >

@@ -194,9 +194,19 @@ const alignSelfValue = useBreakpointValue({ base: "center", md: "flex-start" });
                 <Text color={"black"} fontSize="2xl" fontWeight="700">
                     MY DAY
                 </Text>
-                <Text color={"black"} fontSize="sd" fontWeight="700">
-                    12/09/2033
-                </Text>
+                <HStack spacing="5px" alignItems="center">
+      {/* Ícono SVG */}
+
+        <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#000000">
+          <path d="M202.87-71.87q-37.78 0-64.39-26.61t-26.61-64.39v-554.26q0-37.78 26.61-64.39t64.39-26.61H240v-80h85.5v80h309v-80H720v80h37.13q37.78 0 64.39 26.61t26.61 64.39v554.26q0 37.78-26.61 64.39t-64.39 26.61H202.87Zm0-91h554.26V-560H202.87v397.13Zm0-477.13h554.26v-77.13H202.87V-640Zm0 0v-77.13V-640Z"/>
+        </svg>
+
+
+      {/* Texto */}
+      <Text color={"black"} fontSize="md" fontWeight="700">
+        12/09/2033
+      </Text>
+    </HStack>
                 </VStack>
 
                 {/* Flecha hacia la derecha */}
@@ -219,7 +229,8 @@ const alignSelfValue = useBreakpointValue({ base: "center", md: "flex-start" });
                h="auto"
                p="10px"
                _hover={{bg:"gray.100"}}
-               // onClick={comprobarSiPoderPaso2}
+                leftIcon={
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M240-80q-50 0-85-35t-35-85v-560q0-50 35-85t85-35h440v640H240q-17 0-28.5 11.5T200-200q0 17 11.5 28.5T240-160h520v-640h80v720H240Zm120-240h240v-480H360v480Zm-80 0v-480h-40q-17 0-28.5 11.5T200-760v447q10-3 19.5-5t20.5-2h40Zm-80-480v487-487Z"/></svg>}// onClick={comprobarSiPoderPaso2}
                > DIARY OF MEALS
                </Button>}>
         </CustomCard>

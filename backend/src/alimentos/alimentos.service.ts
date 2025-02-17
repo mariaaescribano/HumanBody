@@ -9,7 +9,7 @@ export class AlimentosService {
 
   async findAllByIdMacro(idMacro: number) 
   {
-    const sql = 'SELECT * FROM alimento WHERE predomina = ?';
+    const sql = 'SELECT * FROM alimento WHERE predomina = ? LIMIT 30';
     const result = await this.databaseService.query(sql, [idMacro]);
     return result;
   }
