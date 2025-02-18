@@ -23,12 +23,12 @@ function Barra(props: {setquienPulsado:React.Dispatch<React.SetStateAction<numbe
     {/* Sección 0 */}
     <Flex
       flex="1"
-      _hover={{bg: props.quienPulsado !== 0 ? "gray.100" : "gray.200"}} 
-      bg= {props.quienPulsado == 0 ? "gray.200": "#610C04"}     
+      // _hover={{ p: "15px" }}
+      bg="#610C04"   
       justifyContent="center"
       onClick={()=> props.setquienPulsado(0)} 
       alignItems="center"
-      p="10px"
+      p={props.quienPulsado==0 ? "15px": "10px"}
     >
       <Box
         bg="white" 
@@ -44,12 +44,12 @@ function Barra(props: {setquienPulsado:React.Dispatch<React.SetStateAction<numbe
     {/* Sección 1 */}
     <Flex
       flex="1"
-      _hover={{bg: props.quienPulsado !== 1 ? "gray.100" : "gray.200"}} 
-      bg= {props.quienPulsado == 1 ? "gray.200": "#abdefa"}  
+      // _hover={{ p: "15px" }}
+      bg= "#abdefa"
       justifyContent="center"
       alignItems="center"
       onClick={()=> props.setquienPulsado(1)} 
-      p="10px"
+      p={props.quienPulsado==1 ? "15px": "10px"}
       borderLeft="2px solid black" // Borde separador
     >
       <Box
@@ -65,12 +65,12 @@ function Barra(props: {setquienPulsado:React.Dispatch<React.SetStateAction<numbe
     {/* Sección 2 */}
     <Flex
       flex="1"
-      _hover={{bg: props.quienPulsado !== 2 ? "gray.100" : "gray.200"}} 
-      bg= {props.quienPulsado == 2 ? "gray.200": "#EDC9AF"}  
+      // _hover={{ p: "15px" }}
+      bg= "#EDC9AF"  
       justifyContent="center"
       alignItems="center"
       onClick={()=> props.setquienPulsado(2)} 
-      p="10px"
+      p={props.quienPulsado==2 ? "15px": "10px"}
       borderLeft="2px solid black" // Borde separador
     >
       <Box

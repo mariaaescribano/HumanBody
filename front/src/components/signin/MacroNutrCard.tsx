@@ -5,6 +5,9 @@ import MeryTooltip from '../global/MeryToolTip';
 import EBookButton from '../global/EBookButton';
 import { showMacroNutrSignUp } from '../../../../backend/src/dto/recibos.dto';
 import { showEbook } from '../../../../backend/src/dto/ebook.dto';
+import { FatsName } from '../Names/FatsName';
+import { ProteinsName } from '../Names/ProteinName';
+import { CarbsName } from '../Names/CarbName';
 
 export default function MacroNutrCard(props: {title:string, totalMacro:string, total:string, infoLista:showMacroNutrSignUp[], screenSize:string, ebooklista:showEbook[]}) 
 {
@@ -13,9 +16,9 @@ export default function MacroNutrCard(props: {title:string, totalMacro:string, t
   return (
     <Flex direction="column" w="100%">
         <div>
-        <Text color={textColor} fontSize="2xl" fontWeight="700">
-            {props.title}
-        </Text>
+        {props.title == "FATS" && <FatsName fontSize="2xl" />}
+        {props.title == "PROTEINS" && <ProteinsName fontSize="2xl" />}
+        {props.title == "CARBS" && <CarbsName fontSize="2xl" />}
         <Box w="100%" borderBottom="2px solid black" my="20px" />
         {/* Total large screen */}
         <Flex justify="center" gap="20px" mb="30px" w="100%" fontSize="xl" fontWeight="bold" wrap="wrap">

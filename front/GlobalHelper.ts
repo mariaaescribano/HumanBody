@@ -124,9 +124,6 @@ export function getTamanyoPantalla(setScreenSize:any)
 
 
 
-
-
-
 //////////////////// KEY MOVEMENT ///////////////////////////
 export function moveWithKey(e:any, setMoving:any, setDirection:any)
 {

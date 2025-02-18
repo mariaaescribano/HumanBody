@@ -60,7 +60,7 @@ export function CircProgressMini(props: {  caloriesPorAhora:string; caloriesObje
     let textColor = useColorModeValue('secondaryGray.900', 'white');
   
     // Usando valores hexadecimales directamente para pathColor
-    let stylesColorMode = useColorModeValue(
+    const stylesColorMode = useColorModeValue(
       {
         rotation: 0.25,
         textSize: '0px',
