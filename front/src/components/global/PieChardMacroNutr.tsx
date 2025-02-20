@@ -1,6 +1,7 @@
 'use client';
 import dynamic from 'next/dynamic';
 import { useEffect } from 'react';
+import { ArrayIsNull } from '../../../GlobalHelper';
 // import Chart from 'react-apexcharts';
 const Chart = dynamic(() => import('react-apexcharts'), {
   ssr: false,
@@ -45,10 +46,10 @@ const Chart = dynamic(() => import('react-apexcharts'), {
   },
 };
 
- const pieChartData = [36, 25, 12];
+ const pieChartDataDefault = [36, 25, 12];
 
 
- export const PieChardMacroNutr = () => {
+ export const PieChardMacroNutr = (props:{pieChartData:number[]}) => {
 
   return (
     // @ts-ignore
@@ -57,12 +58,11 @@ const Chart = dynamic(() => import('react-apexcharts'), {
       type="pie"
       width="100%"
       height="100%"
-      series={pieChartData}
+      series={ArrayIsNull(props.pieChartData) ? pieChartDataDefault : props.pieChartData}
       style={{
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-
       }}
     />
   );

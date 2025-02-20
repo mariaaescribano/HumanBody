@@ -3,7 +3,7 @@
 import { Flex, Box, Icon, Text, useColorModeValue, Card, Button, HStack, Image, Progress } from '@chakra-ui/react';
 import { useState } from 'react';
 import CustomCard from '../global/CustomCard';
-import { CarbIcono, FatIcono, ProteIcono } from '../../../GlobalHelper';
+import { CarbIcono, FatIcono, FiberIcono, ProteIcono } from '../../../GlobalHelper';
 
 export default function MacroCalView(props: { }) {
  
@@ -58,6 +58,23 @@ export default function MacroCalView(props: { }) {
                 sx={{
                     "& > div": { // Estilo del track lleno
                     backgroundColor: "#EDC9AF"
+                    }
+                }}
+            />
+        </Flex>
+        <Flex mb="20px" direction="column">
+            <HStack>
+                <FiberIcono></FiberIcono>
+                <Text mb="5px">FIBER</Text>
+            </HStack>
+            <Progress 
+                value={60} 
+                size="lg" 
+                bg="#efe5e5"
+                borderRadius="20px" 
+                sx={{
+                    "& > div": { // Estilo del track lleno
+                    backgroundColor: "pink.200"
                     }
                 }}
             />

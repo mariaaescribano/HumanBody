@@ -11,7 +11,7 @@ import {
 import axios from 'axios';
 // Custom components
 import React, { useEffect, useState, useRef } from 'react';
-import { API_URL, ObjectIsNull, getTamanyoPantalla } from '../../../../../GlobalHelper';
+import { API_URL, ObjectIsNull, crearRecibo, getTamanyoPantalla } from '../../../../../GlobalHelper';
 import { createUserSkeleton, realUser } from '../../../../../../backend/src/dto/usuarios.dto';
 import PurpleSpinner from '@/components/global/Spinner';
 import MeryTooltip from '@/components/global/MeryToolTip';
@@ -132,7 +132,7 @@ export default function SignUp3()
     {
         if(!ObjectIsNull(recibo) && user)
         {
-            let idRecibo = await crearRecibo();
+            let idRecibo = await crearRecibo(recibo);
             //creamos ficha
             const ficha: fichaSkeleton =
             {
@@ -174,26 +174,6 @@ export default function SignUp3()
         return `${year}-${month}-${day}`;
       }
     
-    const crearRecibo = async () => 
-    {
-        try{
-        const response = await axios.post(
-            `${API_URL}/recibos/createRecibo`,
-            recibo,
-            {
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            }
-        );
-        if(response.data != null)
-            return response.data;
-        }
-        catch (error) {
-        console.error('Error fetching data:', error);
-        }
-    };
-
     const crearFicha = async (ficha:fichaSkeleton) => 
     {
         try{

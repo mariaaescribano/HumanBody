@@ -5,7 +5,7 @@ import {
   } from 'react-icons/md';
 
 // Componente de búsqueda
-function Buscador(props: {marginLeft?:string}) {
+function Buscador(props: {marginLeft?:string, setcomidabuscada:any, comidabuscada:string}) {
 
   return (
     <Box 
@@ -23,6 +23,8 @@ function Buscador(props: {marginLeft?:string}) {
             variant="unstyled"
             border="none"
             p="2"
+            onChange={(e:any)=> props.setcomidabuscada(e.target.value)}
+            value={props.comidabuscada}
             fontSize="lg"
             width="100%"
             ml="2" // Espaciado entre el icono y el input

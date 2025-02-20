@@ -4,7 +4,8 @@
 import { Alert, AlertIcon, AlertDescription, CloseButton, AlertTitle } from '@chakra-ui/react';
 
 
-export default function PopUpMessage(props: { cancel:boolean, setCancel:React.Dispatch<React.SetStateAction<boolean>>, title:string, texto:string, }) 
+export default function PopUpErrorMessage(props: { cancel?:boolean, setCancel?:React.Dispatch<React.SetStateAction<boolean>>, 
+    title:string, texto:string, }) 
 {
 
     return (

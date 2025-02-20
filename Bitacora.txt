@@ -28,6 +28,7 @@ useEffect(() =>
 
 }, []);
 
+const [recibo, setrecibo ] = useState< reciboSkeleton | undefined >(undefined);
 
 
 IMPORTANTE: ESTRUCTURACIÓN
@@ -36,5 +37,4 @@ IMPORTANTE: ESTRUCTURACIÓN
 ORDEN: prote: "#610C04" -fats:"#abdefa" -carbs:"#EDC9AF"
 
 PARA HOY
-- poder crear alimento
 - poder ver ficha de alimento

@@ -22,7 +22,7 @@ export default function ElementoPrimero(props: { }) {
                     columns={{ base: 1, md: 2 }}  // En pantallas pequeñas, 1 columna; en pantallas medianas, 2 columnas
                     spacing={{ base: "30px", md: "50px" }}  // Espacio entre los elementos
                 >
-                    <Box w={{ sd: "auto", md: "200px" }}>
+                    <Box w={{ sd: "auto", md: "200px" }} mt={{ base: "0px", md: "25px", xl: "25px" }}>
                         <CircProgressMini caloriesPorAhora={'1300'} caloriesObjetivo={'2000'} percentage={66} />
                     </Box>
                     <MacroCalView />

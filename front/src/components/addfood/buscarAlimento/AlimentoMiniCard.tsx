@@ -5,8 +5,9 @@ import {
     Text, Box, Flex,
     HStack,VStack
   } from '@chakra-ui/react';
-import { CarbIcono, FatIcono, getTamanyoPantalla, ProteIcono } from "../../../../GlobalHelper";
+import { CarbIcono, getTamanyoPantalla, ProteIcono } from "../../../../GlobalHelper";
 import { useEffect, useRef, useState } from "react";
+import { FatIcono } from "@/components/global/FatIcon";
 
 
 export default function AlimentoMiniCard(props: {nameAlimento:string, predomina:number, calorias:string}) {

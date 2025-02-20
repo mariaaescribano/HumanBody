@@ -11,4 +11,15 @@ export class AlimentosController {
     const foods = await this.alimentosService.findAllByIdMacro(idMacro);
     return { foods: foods };
   }
+
+  @Get("search/:foodName")
+  async findMatchingFoodController(@Param('foodName') foodName: string) {
+    const foods = await this.alimentosService.findMatchingFood(foodName);
+    return { foods: foods };
+  }
+
+  @Post("createAlimento")
+  async createAlimento(@Body() body: alimentosSkeleton) {
+    return await this.alimentosService.createAlimento(body);
+  }
 }

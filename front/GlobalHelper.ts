@@ -16,6 +16,14 @@ export function ObjectIsNull(object:any)
     return false;
 };
 
+export function ArrayIsNull(array:any[])
+{
+  if(array == null || array == undefined || array.length == 0)
+    return true;
+  else
+    return false;
+};
+
 
 //////////// LISTAS  para pagina de registro //////////// 
 export const exerciseFrequencyList = [
@@ -55,9 +63,46 @@ export async function getInternetDateParts() {
 
 // ICONOS PARA MACROS
 import { FaAppleAlt, FaFish , FaSeedling } from 'react-icons/fa';
+import { MdOilBarrel } from 'react-icons/md';
+import { reciboSkeleton } from '../backend/src/dto/recibos.dto';
+import axios from 'axios';
 export const ProteIcono = FaFish;
-export const FatIcono = FaSeedling;
 export const CarbIcono = FaAppleAlt;
+export const FiberIcono = FaSeedling;
+
+// crear recibo
+export const crearRecibo = async (recibo: reciboSkeleton) => 
+  {
+      try{
+      const response = await axios.post(
+          `${API_URL}/recibos/createRecibo`,
+          recibo,
+          {
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          }
+      );
+      if(response.data != null)
+          return response.data;
+      }
+      catch (error) {
+      console.error('Error fetching data:', error);
+      }
+  };
+
+
+
+export const esSoloNumeros = (cadena: string): boolean => {
+    return /^\d+$/.test(cadena.trim());  // Elimina espacios antes de validar
+};
+
+
+export const calcularPorcentajes = (numeros: number[]) => {
+  const sumaTotal = numeros.reduce((acc, num) => acc + num, 0); // Sumar todos los números
+  const porcentajes = numeros.map(num => (num / sumaTotal) * 100); // Calcular el porcentaje de cada número
+  return porcentajes;
+};
 
 
 

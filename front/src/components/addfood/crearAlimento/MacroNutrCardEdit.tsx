@@ -2,35 +2,104 @@
 import { CarbsName } from '@/components/Names/CarbName';
 import { FatsName } from '@/components/Names/FatsName';
 import { ProteinsName } from '@/components/Names/ProteinName';
-import { Flex, Box, Icon, Text, useColorModeValue, Card, Button, HStack, Image, VStack, Input } from '@chakra-ui/react';
-import { MdArrowBack } from 'react-icons/md';
-// import MeryTooltip from '../global/MeryToolTip';
-// import EBookButton from '../global/EBookButton';
-// import { showMacroNutrSignUp } from '../../../../backend/src/dto/recibos.dto';
-// import { showEbook } from '../../../../backend/src/dto/ebook.dto';
+import { Flex, Box, Icon, Text, HStack, Image, VStack, Input } from '@chakra-ui/react';
+import { reciboConstNames, reciboSkeleton } from '../../../../../backend/src/dto/recibos.dto';
+import { useEffect, useRef } from 'react';
+import { esSoloNumeros } from '../../../../GlobalHelper';
 
-export default function MacroNutrCardEdit(props: {title:any, totalMacro:string, total:string, screenSize:string, infoLista:string[] }) 
+
+
+export default function MacroNutrCardEdit(props: {recibo:reciboSkeleton, setrecibo:any, totalMacro:string, screenSize:string, infoLista:string[] }) 
 {
-   const textColor = useColorModeValue('secondaryGray.900', 'white');
+    // para "dejar" q el recibo se actualice
+    // si se actualiza cuando actualizamos los resultados, en hacer suma, seria un bucle continuo
+    let entra = useRef<boolean>(false)
+
+   // le pasamos objeto a editar por parametro
+   // pone los datos
+   const escribir = (item:string, gramosCantidas:string) =>
+    {
+        if(esSoloNumeros(gramosCantidas) || gramosCantidas=="" )
+        {
+            entra.current = true;
+            if(gramosCantidas=="")
+                gramosCantidas="0";
+
+            const nuevoRecibo = { ...props.recibo };
+
+            switch (item) {  // Convertimos a minúsculas para hacer la comparación más robusta
+                case reciboConstNames.completo:
+                    nuevoRecibo.completo= gramosCantidas;
+                    break;
+                case reciboConstNames.incompleto:
+                    nuevoRecibo.incompleto= gramosCantidas;
+                    break;
+                case reciboConstNames.monoinsaturadas:
+                    nuevoRecibo.monoinsaturadas= gramosCantidas;
+                    break;
+                case reciboConstNames.poliinsaturadas:
+                    nuevoRecibo.poliinsaturadas= gramosCantidas;
+                    break;
+                case reciboConstNames.saturadas:
+                    nuevoRecibo.saturadas= gramosCantidas;
+                    break;
+                case reciboConstNames.fibra:
+                    nuevoRecibo.fibra= gramosCantidas;
+                    break;
+                case reciboConstNames.complejos:
+                    nuevoRecibo.complejos= gramosCantidas;
+                    break;
+                case reciboConstNames.simples:
+                    nuevoRecibo.simples= gramosCantidas;
+                    break;
+                default:
+                    console.log("Not found")
+            }
+
+            props.setrecibo(nuevoRecibo)
+        }
+    };
+
+    
+
+   // hacer suma
+    useEffect(() => 
+    {
+        console.log(props.recibo, entra.current)
+        if(props.recibo != null && entra.current == true)
+        {
+            entra.current = false;
+            const nuevoRecibo = { ...props.recibo };
+
+            // resultado de carbs
+            let sumaCarbs = (Number(props.recibo.complejos) || 0) + (Number(props.recibo.simples) || 0);
+            nuevoRecibo.carbs = sumaCarbs.toString();
+
+            // resultado de prote
+            let sumaProte = (Number(props.recibo.completo) || 0) + (Number(props.recibo.incompleto) || 0);
+            nuevoRecibo.prote = sumaProte.toString();
+             
+            // resultado de grasas   
+            let sumaGrasas =  (Number(props.recibo.poliinsaturadas) || 0) +  (Number(props.recibo.monoinsaturadas) || 0) +(Number(props.recibo.saturadas) || 0);
+            nuevoRecibo.grasas= sumaGrasas.toString();
+
+            props.setrecibo(nuevoRecibo)
+            console.log(nuevoRecibo)
+        }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [props.recibo]);
+
+
 
   return (
     <Flex direction="column" w="100%">
         <div>
-        {props.title == "FATS" && <FatsName fontSize="2xl" />}
-        {props.title == "PROTEINS" && <ProteinsName fontSize="2xl" />}
-        {props.title == "CARBS" && <CarbsName fontSize="2xl" />}
+        {props.totalMacro == reciboConstNames.grasas &&  <HStack><FatsName fontSize="2xl" /> <Text mb="5px" fontSize="2xl" fontWeight={"bold"}>{props.screenSize=="sm" ? "PER 100 G": "PER 100 GRAMS"}</Text></HStack>}
+        {props.totalMacro == reciboConstNames.prote && <HStack><ProteinsName fontSize="2xl" /> <Text mb="5px" fontSize="2xl" fontWeight={"bold"}>{props.screenSize=="sm" ? "PER 100 G": "PER 100 GRAMS"}</Text></HStack>}
+        {props.totalMacro == reciboConstNames.carbs && <HStack><CarbsName fontSize="2xl" /> <Text mb="5px" fontSize="2xl" fontWeight={"bold"}>{props.screenSize=="sm" ? "PER 100 G": "PER 100 GRAMS"}</Text></HStack>}
         <Box w="100%" borderBottom="2px solid black" my="20px" />
-        {/* Total large screen */}
-        {/* <Flex justify="center" gap="20px" mb="30px" w="100%" fontSize="xl" fontWeight="bold" wrap="wrap">
-            {props.ebooklista.map((item, index) => (
-                <EBookButton key={index} texto={item.title} />
-            ))}
-        </Flex>
-
-            <Box w="100%" borderBottom="2px solid black" my="20px" /> */}
-
             {props.screenSize!= "" && (props.screenSize == "md" || props.screenSize == "xl") && 
-    
             <Flex direction="column" w="100%" gap="5px">
             {
                 props.infoLista.map((item, index) => (
@@ -38,6 +107,7 @@ export default function MacroNutrCardEdit(props: {title:any, totalMacro:string, 
                     key={index}
                     align="center"
                     w="100%"
+                    
                     gap="20px"
                     fontSize={{ base: "md", sm: "lg" }} // Cambia el tamaño de la fuente en pantallas pequeñas
                     direction={{ base: "column", sm: "row" }} // En pantallas pequeñas, los elementos se apilan verticalmente, en pantallas grandes horizontalmente
@@ -47,7 +117,6 @@ export default function MacroNutrCardEdit(props: {title:any, totalMacro:string, 
                         <Text flexShrink={0} width={{ base: "100%", sm: "auto" }}>
                             {item +": "}
                         </Text>
-                        {/* <MeryTooltip texto={item.tooltip} /> */}
                     </HStack>
 
                     <Text
@@ -64,7 +133,9 @@ export default function MacroNutrCardEdit(props: {title:any, totalMacro:string, 
                         borderRadius={"10px"}
                         fontWeight='500'
                         variant='main'
-                    
+                        // value={(props.recibo as any)[item]} 
+                        w="20%"
+                        onChange={(e:any)=> escribir(item, e?.target.value)}
                         _placeholder={{ fontWeight: '400', color: 'secondaryGray.600' }}
                         h='44px'
                         maxH='44px'
@@ -98,7 +169,7 @@ export default function MacroNutrCardEdit(props: {title:any, totalMacro:string, 
                             borderRadius={"10px"}
                             fontWeight='500'
                             variant='main'
-                        
+                            onChange={(e:any)=> escribir(item, e?.target.value)}
                             _placeholder={{ fontWeight: '400', color: 'secondaryGray.600' }}
                             h='44px'
                             maxH='44px'
@@ -113,22 +184,14 @@ export default function MacroNutrCardEdit(props: {title:any, totalMacro:string, 
             </Flex>}
 
             <Box w="100%" borderBottom="2px solid black" my="20px" />
-            <Flex justify="center" w="100%" fontSize="xl" fontWeight={"bold"} gap="20px">
-            {props.screenSize== "sm" && <Text>TOTAL {props.totalMacro} </Text>}
-            {props.screenSize!== "sm" && <Text>TOTAL {props.totalMacro} :</Text>}
-                <Input
-                    border="1px solid gray"
-                    borderRadius={"10px"}
-                    fontWeight='500'
-                    variant='main'
-                    w="50%"
-                    _placeholder={{ fontWeight: '400', color: 'secondaryGray.600' }}
-                    h='44px'
-                    maxH='44px'
-                                />
-                <Text> {"   grams"}</Text>
+            <Flex justify="center" w="100%" fontSize="xl" fontWeight={"bold"} gap="10px">
+                {props.screenSize== "sm" && <Text>TOTAL {props.totalMacro} </Text>}
+                {props.screenSize!== "sm" && <Text>TOTAL {props.totalMacro} :</Text>}
+                
+                {props.totalMacro == "PROTEINS" && props.recibo.prote != "" && <Text>{props.recibo.prote+"    "} grams</Text>}
+                {props.totalMacro == "CARBS" && props.recibo.carbs != "" && <Text> {props.recibo.carbs +"    "} grams</Text>}
+                {props.totalMacro == "FATS"  && props.recibo.grasas != "" && <Text> {props.recibo.grasas+"    "} grams</Text>}
             </Flex> 
-        
         </div>
     </Flex>
 

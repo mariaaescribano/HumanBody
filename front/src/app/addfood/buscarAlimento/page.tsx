@@ -42,114 +42,65 @@ import { miniCartaAlimento } from '../../../../../backend/src/dto/alimentos.dto'
 
 export default function BuscarAlimento() 
 {
-  const textColor = useColorModeValue('secondaryGray.900', 'white');
-
   // mostrar alimentos con predominancia de un macronutriente
   const [quienPulsado, setquienPulsado] = useState<number>(0); 
 
   const [alimentosLista, setalimentosLista] = useState<miniCartaAlimento[]>([]);
 
-//   useEffect(() => 
-//   {
-//     const userStr = sessionStorage.getItem("user");
-//     if (userStr) 
-//     {
-//       const user = JSON.parse(userStr); 
-//       if(user)
-//       {
-//         setPeso(user.peso)
-//         setAltura(user.altura)
-//         setexerciseFrequency(user.exerciseFrequency)
-//         setObjetivo(user.objetivo)
-//         setnom(user.nombre)
-//         setcontra(user.contra)
-//         setedad(user.edad)
+  const [comidabuscada, setcomidabuscada] = useState<string>(""); // si se busca una comida...
 
-//         setDatosAntes(true);
-//       }
-//       else
-//       {
-//         setDatosAntes(false);
-//       }
-//     }
-//     else
-//     {
-//       setDatosAntes(false);
-//     }
-//     // eslint-disable-next-line react-hooks/exhaustive-deps
-//   }, []);
 
-//   const comprobarSiPoderPaso2 = () =>
-//   {
-//     if(!StringIsNull(peso)
-//     && !StringIsNull(altura)
-//     && !StringIsNull(exerciseFrequency)
-//     && !StringIsNull(objetivo)
-//     && !StringIsNull(nom)
-//     && !StringIsNull(contra)
-//     && !StringIsNull(genero) && nomExiste== false)
-//     {
-//         // quitar comillas
-//         let pesoSinComillas = peso.replace(/^"|"$/g, '');
-//         let alturaSinComillas = altura.replace(/^"|"$/g, '');
-//         let edadSinComillas = edad.replace(/^"|"$/g, '');
-//         let generoSinComillas = genero.replace(/^"|"$/g, '');
-//         let nombreSinComillas = nom.replace(/^"|"$/g, '');
-//         let contraSinComillas = contra.replace(/^"|"$/g, '');
 
-//        const user:createUserSkeleton = {
-//         nombre:nombreSinComillas,
-//         contra:contraSinComillas,
-//         peso:pesoSinComillas,
-//         altura:alturaSinComillas,
-//         nivel_actividad:exerciseFrequency,
-//         calorias_objetivo:"",
-//         objetivo:objetivo,
-//         recibo: NaN,
-//         genero: generoSinComillas,
-//         edad:edadSinComillas
-//       };
+  // si el usuario busca comida, entonces la barra tiene q cambiar para solo
+  // mostrar alimentos q hagan match
+  useEffect(() => 
+  {
+    if(comidabuscada!= "")
+      setquienPulsado(3)
 
-//       sessionStorage.clear();
-//       sessionStorage.setItem("user", JSON.stringify(user));
+    if(comidabuscada.length >= 1)
+      dameListaAlimentos()
 
-//       location.href = "./parte2";
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [comidabuscada]);
 
-//     }
-//     else
-//     {
-//       setfilled(false);
-//     }
-//   };
 
-//   const writingName = (e:any) =>
-//   {
-//     let nom =e.target.value;
-//     setnom(nom)
-//     if(nom!= "")
-//       existeName(nom);
-//   };
-
-//   const existeName = async (nombre:string) =>
-//   {
-//     try{
-//     const response = await axios.get(
-//       `${API_URL}/usuarios/userExist/${nombre}`,
-//       {
-//         headers: {
-//             'Content-Type': 'application/json'
-//         },
-//       }
-//     );
-//       if(response.data != null)
-//       {
-//         setnomExiste(response.data.exists);
-//       }
-//     }
-//     catch (error) {
-//     console.error('Error fetching data:', error);
-//     }
-//   } 
+  const dameListaAlimentos = async () =>
+  {
+    try
+    {
+      const response = await axios.get(
+        `${API_URL}/alimentos/search/${comidabuscada}`,
+        {
+          headers: {
+              'Content-Type': 'application/json'
+          },
+        }
+      );
+      if(response.data.foods != null)
+      {
+        const recoge = [];
+        for(let i=0; i< response.data.foods.length; i++)
+        {
+          let objeto: miniCartaAlimento = 
+          {
+            nombre: response.data.foods[i].nombre,
+            predomina:response.data.foods[i].predomina,
+            calorias_100gr: response.data.foods[i].calorias_100gr
+          }
+          recoge.push(objeto)
+        }
+        setalimentosLista(recoge)
+      }
+      else if(response.data.foods.length == 0)
+      {
+        
+      }
+    }
+    catch (error) {
+    console.error('Error fetching data:', error);
+    }
+  }  
 
 
   useEffect(() => 
@@ -207,14 +158,30 @@ export default function BuscarAlimento()
         {/* title */}
         <CustomCard hijo={
             <>
-                <Buscador></Buscador>
-                <Button
+                <Buscador setcomidabuscada={setcomidabuscada} comidabuscada={comidabuscada}></Buscador>
+
+                 <SimpleGrid columns={{ base: 1, md: 2 }} spacing="20px" mt="20px">
+                  <Button
                     fontSize="sm"
                     borderRadius="16px"
                     bg="purple.100"
                     w={{sd:"70%", md: "70%"}}
                     mt="20px"
-                    h="100%"
+                    h="90%"
+                    // onClick={()=> location.href = "./crearAlimento"}
+                    p="10px"
+                    _hover={{bg:"gray.100"}}
+                    leftIcon={<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M240-360h280l80-80H240v80Zm0-160h240v-80H240v80Zm-80-160v400h280l-80 80H80v-560h800v120h-80v-40H160Zm756 212q5 5 5 11t-5 11l-36 36-70-70 36-36q5-5 11-5t11 5l48 48ZM520-120v-70l266-266 70 70-266 266h-70ZM160-680v400-400Z"/></svg>}
+                    > MY CREATED FOODS
+                    </Button>
+
+                    <Button
+                    fontSize="sm"
+                    borderRadius="16px"
+                    bg="purple.100"
+                    w={{sd:"70%", md: "70%"}}
+                    mt="20px"
+                    h="90%"
                     onClick={()=> location.href = "./crearAlimento"}
                     p="10px"
                     _hover={{bg:"gray.100"}}
@@ -222,11 +189,13 @@ export default function BuscarAlimento()
                     > CREATE A FOOD
                     </Button>
 
+                  </SimpleGrid>
+
                   <Barra setquienPulsado={setquienPulsado} quienPulsado={quienPulsado}></Barra>
 
 
                 {/* hacer un div y ponerlos con un .map */}
-                {alimentosLista.length >0 && alimentosLista.map((alimento, index) => (
+                {alimentosLista.length > 0 && alimentosLista.map((alimento, index) => (
                   <AlimentoMiniCard 
                     key={index}
                     nameAlimento={alimento.nombre} 
@@ -236,74 +205,15 @@ export default function BuscarAlimento()
                 ))} 
 
                 <Box  justifyContent="center">
-                {alimentosLista.length ==0 && <PurpleSpinner></PurpleSpinner>}
+                {alimentosLista.length ==0 && comidabuscada== "" && <PurpleSpinner></PurpleSpinner>}
+                </Box>
+
+                <Box  justifyContent="center">
+                {alimentosLista.length == 0 && comidabuscada!= "" && <Text mt="20px">Food not found</Text>}
                 </Box>
                  
 
             </>}></CustomCard>
-       {/* calorias y macronutrients overall view */}
-       {/* <CustomCard hijo={<ElementoPrimero></ElementoPrimero>}></CustomCard>
-
-       <CustomCard hijo={ <Button
-               fontSize="sm"
-               borderRadius="16px"
-               bg="purple.100"
-               w="100%"
-               h="auto"
-               p="10px"
-               _hover={{bg:"gray.100"}}
-               // onClick={comprobarSiPoderPaso2}
-               > DIARY OF MEALS
-               </Button>}>
-        </CustomCard>
-
-
-        <CustomCard bgColor="#efe5e5" hijo={ 
-            <>
-            <Text color={"black"} fontSize="xl" w="100%" fontWeight="700" textAlign="left">
-                TODAY'S MACRONUTRIENTS
-            </Text>
-            </>
-        }>
-        </CustomCard> */}
-
-
-                   {/* <CustomCard hijo={ 
-                       <MacroNutrCard title={'PROTEINS'} totalMacro={recibo.prote} total={'TOTAL PROTEINS'} infoLista={proteinButtons} screenSize={screenSize} ebooklista={proteinEbooks}></MacroNutrCard>} >
-                   </CustomCard>
-       
-       
-    
-                       <CustomCard 
-                       hijo={ 
-                           <MacroNutrCard 
-                           title={'FATS'} 
-                           totalMacro={recibo.grasas}
-                           total={'TOTAL FATS'} 
-                           infoLista={fatButtons} 
-                           screenSize={screenSize} 
-                           ebooklista={fatEbooks} 
-                           />
-                       } 
-                       />
-                   
-       
-
-                       <CustomCard mb="50px"
-                       hijo={ 
-                           <MacroNutrCard 
-                           title={'CARBS'} 
-                           totalMacro={recibo.carbs}
-                           total={'TOTAL CARBS'} 
-                           infoLista={carbButtons} 
-                           screenSize={screenSize} 
-                           ebooklista={carbEbooks} 
-                           />
-                       } 
-                       />
-                */}
-      
-
     </Flex>);
 
 }

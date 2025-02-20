@@ -21,3 +21,18 @@ export interface showMacroNutrSignUp
     price:string;
     tooltip:string;
 };
+
+export enum reciboConstNames {
+    grasas = "FATS",
+    monoinsaturadas = "Monounsaturated",
+    poliinsaturadas = "Polyunsaturated",
+    saturadas = "Saturated",
+    prote = "PROTEINS",
+    incompleto = "Incomplete",
+    completo = "Complete",
+    carbs = "CARBS",
+    complejos = "Complex",
+    simples = "Simples",
+    fibra = "Fiber"
+  }
+  
