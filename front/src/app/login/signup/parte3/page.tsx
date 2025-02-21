@@ -266,23 +266,23 @@ export default function SignUp3()
     let fatButtons: showMacroNutrSignUp[] = [];
     
     if (recibo != null) {
-    fatButtons = [
-        {
-        label: "Monounsaturated",
-        price: `${recibo.monoinsaturadas} grams`,
-        tooltip: "Heart-friendly fats that support cholesterol balance and overall health."
-        },
-        {
-        label: "Polyunsaturated",
-        price: `${recibo.poliinsaturadas} grams`,
-        tooltip: "Essential fats, including omega-3 and omega-6, crucial for brain and cell function."
-        },
-        {
-        label: "Saturated",
-        price: `${recibo.saturadas} grams`,
-        tooltip: "Stable fats that provide energy but should be consumed in moderation."
-        }
-    ];
+        fatButtons = [
+            {
+            label: "Monounsaturated",
+            price: `${recibo.monoinsaturadas} grams`,
+            tooltip: "Heart-friendly fats that support cholesterol balance and overall health."
+            },
+            {
+            label: "Polyunsaturated",
+            price: `${recibo.poliinsaturadas} grams`,
+            tooltip: "Essential fats, including omega-3 and omega-6, crucial for brain and cell function."
+            },
+            {
+            label: "Saturated",
+            price: `${recibo.saturadas} grams`,
+            tooltip: "Stable fats that provide energy but should be consumed in moderation."
+            }
+        ];
     }
       
     const carbEbooks: showEbook[] = [
@@ -353,7 +353,7 @@ export default function SignUp3()
 
             {!ObjectIsNull(recibo) && recibo != null && 
             <CustomCard hijo={ 
-                <MacroNutrCard title={'PROTEINS'} totalMacro={recibo.prote} total={'TOTAL PROTEINS'} infoLista={proteinButtons} screenSize={screenSize} ebooklista={proteinEbooks}></MacroNutrCard>} >
+                <MacroNutrCard title={'PROTEINS'} total={recibo.prote} infoLista={proteinButtons} screenSize={screenSize} ebooklista={proteinEbooks}></MacroNutrCard>} >
             </CustomCard>} 
 
 
@@ -362,8 +362,7 @@ export default function SignUp3()
                 hijo={ 
                     <MacroNutrCard 
                     title={'FATS'} 
-                    totalMacro={recibo.grasas}
-                    total={'TOTAL FATS'} 
+                    total={recibo.grasas}
                     infoLista={fatButtons} 
                     screenSize={screenSize} 
                     ebooklista={fatEbooks} 
@@ -377,8 +376,7 @@ export default function SignUp3()
                 hijo={ 
                     <MacroNutrCard 
                     title={'CARBS'} 
-                    totalMacro={recibo.carbs}
-                    total={'TOTAL CARBS'} 
+                    total={recibo.carbs}
                     infoLista={carbButtons} 
                     screenSize={screenSize} 
                     ebooklista={carbEbooks} 

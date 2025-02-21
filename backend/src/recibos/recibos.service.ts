@@ -14,4 +14,10 @@ export class RecibosService {
     const idRecibo = result.insertId;
     return idRecibo;
   }
+
+  async returnReciboConcretoFuncion(idRecibo: number) {
+    const sql = 'SELECT * FROM recibo WHERE id = ?';
+    const result = await this.databaseService.query(sql, [idRecibo]);
+    return result;
+  }
 }

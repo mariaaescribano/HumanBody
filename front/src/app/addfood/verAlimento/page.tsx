@@ -35,32 +35,24 @@ import { buildStyles, CircularProgressbarWithChildren } from 'react-circular-pro
 
 import MacroNutrCardEdit from '@/components/addfood/crearAlimento/MacroNutrCardEdit';
 import { MdCheck } from 'react-icons/md';
-import { reciboSkeleton, reciboConstNames } from '../../../../../backend/src/dto/recibos.dto';
+import { reciboSkeleton, reciboConstNames, showMacroNutrSignUp } from '../../../../../backend/src/dto/recibos.dto';
 import SuccessErrorMessage from '@/components/global/message/SuccessErrorMessage';
 import FiberCard from '@/components/global/cards/FiberCard';
 import InputField from '@/components/global/random/InputField';
 import { PieChardMacroNutr } from '@/components/global/cards/PieChardMacroNutr';
+import CalorGramsSelectCard from '@/components/addfood/verAlimento/CalorGramsSelectCard';
+import MacroNutrCard from '@/components/signin/MacroNutrCard';
+import { showEbook } from '../../../../../backend/src/dto/ebook.dto';
+import { ProteinsName } from '@/components/Names/ProteinName';
 
-export default function CrearAlimento() 
+export default function VerAlimento() 
 {
   const [alimento, setalimento ] = useState<alimentosSkeleton | null>(null);
   const textColor = useColorModeValue('secondaryGray.900', 'white');
   const [screenSize, setscreenSize ] = useState<string>("");
-  const foodName = useRef<string>("");
 
-
-  const [calories, setcalories ] = useState<string>("");
-
-
-  const [btnfinishedPulsado, setbtnfinishedPulsado ] = useState<boolean>(false);
-
-
-  const [mensajeError, setmensajeError ] = useState<boolean| undefined>(undefined);
-
-
-  const [pieChardData, setpieChardData ] = useState<number[]>([20, 40, 40]);
-
-  const [recibo, setrecibo ] = useState< reciboSkeleton >(
+  // aqui se guarda los valores por 100 gr del alimento
+  const [reciboOriginal, setreciboOriginal ] = useState< reciboSkeleton >(
     {
       grasas:"",
       monoinsaturadas:"",
@@ -75,6 +67,37 @@ export default function CrearAlimento()
       fibra:""
     }
   );
+
+  // aqui se guardan los valores personalizados dependiendo de los gramos q ponga el user
+  // empiezan siendo igual a los originales ( gramos por defecto son 100 )
+  const [reciboPersonalizado, setreciboPersonalizado ] = useState< reciboSkeleton >(
+    {
+      grasas:"",
+      monoinsaturadas:"",
+      poliinsaturadas:"",
+      saturadas:"",
+      prote:"",
+      incompleto:"",
+      completo:"",
+      carbs:"",
+      complejos:"",
+      simples:"",
+      fibra:""
+    }
+  );
+
+  const [calories, setcalories ] = useState<string>("");
+
+  // what user ate
+  const [grams, setgrams ] = useState<string>("100");
+
+  const [btnfinishedPulsado, setbtnfinishedPulsado ] = useState<boolean>(false);
+  const [mensajeError, setmensajeError ] = useState<boolean| undefined>(undefined);
+
+  // se actualiza solo una vez, con los valores originales (no sentido q cambie)
+  const [pieChardData, setpieChardData ] = useState<number[]>([]);
+  
+
 
   // 0: coge id y tamaño pantalla
   useEffect(() => 
@@ -103,6 +126,7 @@ export default function CrearAlimento()
       if(response.data != null)
       {
         setalimento(response.data.alimento[0])
+        setcalories(response.data.alimento[0].calorias_100gr)
         dameReciboDeAlimento(response.data.alimento[0].recibo_id);
       }
     }
@@ -111,11 +135,12 @@ export default function CrearAlimento()
     }
   };
 
-  const dameReciboDeAlimento = async (idAlimento:number) =>
+  // 2: coge el recibo para acceder a sus datos nutricionales
+  const dameReciboDeAlimento = async (idRecibo:number) =>
   {
     try{
     const response = await axios.get(
-      `${API_URL}/alimentos/alimento/${idAlimento}`,
+      `${API_URL}/recibos/recibo/${idRecibo}`,
       {
         headers: {
             'Content-Type': 'application/json'
@@ -124,14 +149,186 @@ export default function CrearAlimento()
     );
       if(response.data != null)
       {
-        setalimento(response.data.alimento[0])
+        let recibo = response.data.recibo[0];
+       
+        setreciboOriginal(recibo)
+        setreciboPersonalizado(recibo)
+        setpieChardData([parseInt(recibo.prote, 10), parseInt(recibo.grasas, 10), parseInt(recibo.carbs, 10), parseInt(recibo.fibra, 10)])
       }
     }
     catch (error) {
     console.error('Error fetching data:', error);
     }
   };
+
+
+  // cada vez q los gramos cambien, las calorias y macros deben de ser actualizadas
+  useEffect(() => 
+  {
+    if(calories!= "" && alimento && reciboPersonalizado)
+    {
+      // actualiza calorias
+      let caloriasPorGramos = reglaDeTres(100, parseInt(alimento?.calorias_100gr, 10), parseInt(grams, 10));
+      setcalories(Math.round(caloriasPorGramos).toString());
+
+      // actualiza macros
+      let proteNuevos = reglaDeTres(100, parseInt(reciboOriginal?.prote, 10), parseInt(grams, 10));
+      let completoNuevos = reglaDeTres(100, parseInt(reciboOriginal?.completo, 10), parseInt(grams, 10));
+      let incompletoNuevos = reglaDeTres(100, parseInt(reciboOriginal?.incompleto, 10), parseInt(grams, 10));
+      let monoNuevos = reglaDeTres(100, parseInt(reciboOriginal?.monoinsaturadas, 10), parseInt(grams, 10));
+      let poliinsaturadasNuevos = reglaDeTres(100, parseInt(reciboOriginal?.poliinsaturadas, 10), parseInt(grams, 10));
+      let saturadasNuevos = reglaDeTres(100, parseInt(reciboOriginal?.saturadas, 10), parseInt(grams, 10));
+      let carbsNuevos = reglaDeTres(100, parseInt(reciboOriginal?.carbs, 10), parseInt(grams, 10));
+      let grasasNuevos = reglaDeTres(100, parseInt(reciboOriginal?.grasas, 10), parseInt(grams, 10));
+      let simplesNuevos = reglaDeTres(100, parseInt(reciboOriginal?.simples, 10), parseInt(grams, 10));
+      let complejosNuevos = reglaDeTres(100, parseInt(reciboOriginal?.complejos, 10), parseInt(grams, 10));
+      let fibraNuevos = reglaDeTres(100, parseInt(reciboOriginal?.fibra, 10), parseInt(grams, 10));
+
+      const nuevoReciboPersonalizado : reciboSkeleton =
+      {
+        grasas: Math.round(grasasNuevos).toString(),
+        monoinsaturadas: Math.round(monoNuevos).toString(),
+        poliinsaturadas: Math.round(poliinsaturadasNuevos).toString(),
+        saturadas:Math.round(saturadasNuevos).toString(),
+        prote: Math.round(proteNuevos).toString(),
+        incompleto: Math.round(incompletoNuevos).toString(),
+        completo: Math.round(completoNuevos).toString(),
+        carbs: Math.round(carbsNuevos).toString(),
+        complejos: Math.round(complejosNuevos).toString(),
+        simples: Math.round(simplesNuevos).toString(),
+        fibra: Math.round(fibraNuevos).toString()
+      };
+
+      setreciboPersonalizado(nuevoReciboPersonalizado)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [grams]);
   
+
+  function reglaDeTres(valorA:number, valorB:number, valorC:number) {
+    return (valorB * valorC) / valorA;
+  }
+  
+  
+
+
+
+
+   // listas usadas para mostrar datos
+  
+    const proteinEbooks: showEbook[] = [
+    {
+        title: "What are amino acids?",
+        onclick: undefined
+    },
+    {
+        title: "How proteins repair my cells?",
+        onclick: undefined
+    }
+    ];
+
+    let proteinButtons: showMacroNutrSignUp[] = [];
+
+    if (reciboPersonalizado != null) 
+    {
+        proteinButtons = [
+            { 
+            label: "Complete proteins", 
+            price: `${reciboPersonalizado.completo == "" ? 0 : reciboPersonalizado.completo} grams`, 
+            tooltip: "Contain all essential amino acids your body needs for regeneration." 
+            },
+            { 
+            label: "Incomplete proteins", 
+            price: `${reciboPersonalizado.incompleto} grams`, 
+            tooltip: "Lack one or more essential amino acids needed for regeneration." 
+            }
+        ];
+    }
+
+    const fatEbooks: showEbook[] = [
+        {
+          title: "How monounsaturated fats help me?",
+          onclick: undefined
+        },
+        {
+          title: "How polyunsaturated fats help me?",
+          onclick: undefined
+        },
+        {
+          title: "Why saturated fats can hurt me?",
+          onclick: undefined
+        }
+    ];
+    
+    let fatButtons: showMacroNutrSignUp[] = [];
+    
+    if (reciboPersonalizado != null) {
+        fatButtons = [
+            {
+            label: "Monounsaturated",
+            price: `${reciboPersonalizado.monoinsaturadas} grams`,
+            tooltip: "Heart-friendly fats that support cholesterol balance and overall health."
+            },
+            {
+            label: "Polyunsaturated",
+            price: `${reciboPersonalizado.poliinsaturadas} grams`,
+            tooltip: "Essential fats, including omega-3 and omega-6, crucial for brain and cell function."
+            },
+            {
+            label: "Saturated",
+            price: `${reciboPersonalizado.saturadas} grams`,
+            tooltip: "Stable fats that provide energy but should be consumed in moderation."
+            }
+        ];
+    }
+      
+    const carbEbooks: showEbook[] = [
+    {
+        title: "Why I need complex carbs?",
+        onclick: undefined
+    },
+    {
+        title: "Do I need simple carbs?",
+        onclick: undefined
+    }
+    ];
+
+    const fiberEbooks: showEbook[] = [
+    {
+        title: "Fiber and microbiota",
+        onclick: undefined
+    },
+    {
+        title: "Fiber and neurogenesis",
+        onclick: undefined
+    },
+    {
+        title: "Fiber and neurotransmissors",
+        onclick: undefined
+    }
+    ];
+    
+    let carbButtons: showMacroNutrSignUp[] = [];
+    
+    if (reciboPersonalizado != null) {
+    carbButtons = [
+        // {
+        // label: "Fiber",
+        // price: `${recibo.fibra} grams`,
+        // tooltip: "Fiber promotes healthy digestion, supports heart health, helps regulate blood sugar levels and supports neuron and brain activity."
+        // },
+        {
+        label: "Complex",
+        price: `${ Math.round(parseInt(reciboPersonalizado.complejos, 10)) } grams`,
+        tooltip: "Provide long-lasting energy and fiber, digesting slowly."
+        },
+        {
+        label: "Simples",
+        price: `${reciboPersonalizado.simples} grams`,
+        tooltip: "Digest quickly, giving a fast but short energy boost."
+        }
+    ];
+    }
 
 
   
@@ -139,18 +336,18 @@ export default function CrearAlimento()
 
   return (
     <>
-      {screenSize != "" && alimento!= null && recibo &&
+      {screenSize != "" && alimento!= null && reciboPersonalizado &&
       <Flex
-            direction="column"
-            align="center"
-            bg="purple.100"
-            w="100%"
-            h="100%"
-            justify="center"
-            p="20px"
-            minH="100vh"
-            position={"relative"}
-        >
+          direction="column"
+          align="center"
+          bg="purple.100"
+          w="100%"
+          h="100%"
+          justify="center"
+          p="20px"
+          minH="100vh"
+          position={"relative"}
+      >
 
 
         {/* titulo */}
@@ -212,60 +409,39 @@ export default function CrearAlimento()
 
 
         <CustomCard hijo={ 
-            <>
+          <>
             <Box mb={{ base: '20px', md: '20px' }}>
-          {/* SimpleGrid ajusta las columnas según el tamaño de la pantalla */}
-          <SimpleGrid columns={{ base: 1, md: 2 }} spacing="20px">
-            <VStack >
-                <InputField
-                mb="20px"
-                onChange= {(e:any) => foodName.current = e.target.value}
-                id="first"
-                placeholder="Apple"
-                label="Food Name"
-                />
-                <HStack ml="30px">
-                    <InputField
-                    mb="0px"
-                    // onChange= {(e:any) => { cambiaCalories(e)  }}
-                    id="second"
-                    value={ calories }
-                    placeholder="57"
-                    label="Calories per 100 grams"
-                    />
-                    <Text mt="30px">kcal</Text>
-                </HStack>         
-            </VStack>
-
-            <Box w={{ base: '200px', md: '100%' }} ml={{ base: "30px", md: "0px" }}>
-              <PieChardMacroNutr pieChartData={pieChardData} />
+              <SimpleGrid columns={{ base: 1, md: 2 }}>
+                <CalorGramsSelectCard calories={calories} grams={grams} setgrams={setgrams}></CalorGramsSelectCard>
+                {pieChardData.length > 0 && <Box w={{ base: '200px', md: '100%' }}  mt={{ base: "20px", md: "0px" }}>
+                  <PieChardMacroNutr pieChartData={pieChardData} />
+                </Box>}
+              </SimpleGrid>
             </Box>
-          </SimpleGrid>
+          </>
+        }></CustomCard>
 
-          {/* Centrar el componente CircProgressMacroEdit */}
-        
-        </Box>
+        {screenSize != "" && 
+        <CustomCard hijo={ 
+        <MacroNutrCard title={"PROTEINS"} total={reciboPersonalizado.prote == "" ? "0" : Math.round(parseInt(reciboPersonalizado.prote,10)).toString()} infoLista={proteinButtons} screenSize={screenSize} ebooklista={[]}></MacroNutrCard>}>
+        </CustomCard>}
 
-        </>}></CustomCard>
+        {screenSize != "" && 
+        <CustomCard hijo={ 
+        <MacroNutrCard title={"FATS"} total={reciboPersonalizado.grasas == "" ? "0" : Math.round(parseInt(reciboPersonalizado.grasas,10)).toString()} infoLista={fatButtons} screenSize={screenSize} ebooklista={[]}></MacroNutrCard>}>
+        </CustomCard>}
 
+        {screenSize != "" && 
+        <CustomCard hijo={ 
+        <MacroNutrCard title={"CARBS"} total={reciboPersonalizado.carbs == "" ? "0" : Math.round(parseInt(reciboPersonalizado.carbs,10)).toString()} infoLista={carbButtons} screenSize={screenSize} ebooklista={[]}></MacroNutrCard>}>
+        </CustomCard>}
+    
         {screenSize != "" && <CustomCard hijo={ 
-        <MacroNutrCardEdit recibo={recibo} setrecibo={setrecibo} 
-        totalMacro={reciboConstNames.prote} 
-        screenSize={screenSize} 
-        infoLista={[reciboConstNames.completo, reciboConstNames.incompleto]}>
-        </MacroNutrCardEdit>}></CustomCard>}
-        
-        {screenSize != "" && <CustomCard hijo={ <MacroNutrCardEdit recibo={recibo} setrecibo={setrecibo} totalMacro={reciboConstNames.grasas} screenSize={screenSize} infoLista={[reciboConstNames.monoinsaturadas,reciboConstNames.poliinsaturadas, reciboConstNames.saturadas]}></MacroNutrCardEdit>}></CustomCard>}
+        <FiberCard edit={false} totalFiber={reciboPersonalizado.fibra == "" ? "0" : Math.round(parseInt(reciboPersonalizado.fibra,10)).toString()} screenSize={screenSize}></FiberCard>}></CustomCard>}
 
-        {screenSize != "" &&  <CustomCard hijo={  <MacroNutrCardEdit recibo={recibo} setrecibo={setrecibo} totalMacro={reciboConstNames.carbs} screenSize={screenSize} infoLista={[reciboConstNames.fibra, reciboConstNames.complejos, reciboConstNames.simples]}></MacroNutrCardEdit>}></CustomCard>}
+    </Flex>}
 
-
-        {screenSize != "" && <CustomCard hijo={ 
-        <FiberCard edit={false} totalFiber={recibo.fibra} screenSize={screenSize}></FiberCard>}></CustomCard>}
-
-        </Flex>}
-
-        {screenSize == "" && <PurpleSpinner></PurpleSpinner>}
+      {screenSize == "" && pieChardData.length == 0 && <PurpleSpinner></PurpleSpinner>}
     </>);
 
 }

@@ -29,28 +29,28 @@ export default function MacroNutrCardEdit(props: {recibo:reciboSkeleton, setreci
 
             switch (item) {  // Convertimos a minúsculas para hacer la comparación más robusta
                 case reciboConstNames.completo:
-                    nuevoRecibo.completo= gramosCantidas;
+                    nuevoRecibo.completo= Math.round(parseInt(gramosCantidas,10)).toString();
                     break;
                 case reciboConstNames.incompleto:
-                    nuevoRecibo.incompleto= gramosCantidas;
+                    nuevoRecibo.incompleto= Math.round(parseInt(gramosCantidas,10)).toString();
                     break;
                 case reciboConstNames.monoinsaturadas:
-                    nuevoRecibo.monoinsaturadas= gramosCantidas;
+                    nuevoRecibo.monoinsaturadas= Math.round(parseInt(gramosCantidas,10)).toString();
                     break;
                 case reciboConstNames.poliinsaturadas:
-                    nuevoRecibo.poliinsaturadas= gramosCantidas;
+                    nuevoRecibo.poliinsaturadas=Math.round(parseInt(gramosCantidas,10)).toString();
                     break;
                 case reciboConstNames.saturadas:
-                    nuevoRecibo.saturadas= gramosCantidas;
+                    nuevoRecibo.saturadas= Math.round(parseInt(gramosCantidas,10)).toString();
                     break;
                 case reciboConstNames.fibra:
-                    nuevoRecibo.fibra= gramosCantidas;
+                    nuevoRecibo.fibra= Math.round(parseInt(gramosCantidas,10)).toString();
                     break;
                 case reciboConstNames.complejos:
-                    nuevoRecibo.complejos= gramosCantidas;
+                    nuevoRecibo.complejos= Math.round(parseInt(gramosCantidas,10)).toString();
                     break;
                 case reciboConstNames.simples:
-                    nuevoRecibo.simples= gramosCantidas;
+                    nuevoRecibo.simples= Math.round(parseInt(gramosCantidas,10)).toString();
                     break;
                 default:
                     console.log("Not found")
@@ -73,15 +73,15 @@ export default function MacroNutrCardEdit(props: {recibo:reciboSkeleton, setreci
 
             // resultado de carbs
             let sumaCarbs = (Number(props.recibo.complejos) || 0) + (Number(props.recibo.simples) || 0);
-            nuevoRecibo.carbs = sumaCarbs.toString();
+            nuevoRecibo.carbs = Math.round(sumaCarbs).toString();
 
             // resultado de prote
             let sumaProte = (Number(props.recibo.completo) || 0) + (Number(props.recibo.incompleto) || 0);
-            nuevoRecibo.prote = sumaProte.toString();
+            nuevoRecibo.prote = Math.round(sumaProte).toString();
              
             // resultado de grasas   
             let sumaGrasas =  (Number(props.recibo.poliinsaturadas) || 0) +  (Number(props.recibo.monoinsaturadas) || 0) +(Number(props.recibo.saturadas) || 0);
-            nuevoRecibo.grasas= sumaGrasas.toString();
+            nuevoRecibo.grasas= Math.round(sumaGrasas).toString();
 
             props.setrecibo(nuevoRecibo)
             console.log(nuevoRecibo)
@@ -184,10 +184,9 @@ export default function MacroNutrCardEdit(props: {recibo:reciboSkeleton, setreci
             </Flex>}
 
             <Box w="100%" borderBottom="2px solid black" my="20px" />
-            <Flex justify="center" w="100%" fontSize="xl" fontWeight={"bold"} gap="10px">
-                {props.screenSize== "sm" && <Text>TOTAL {props.totalMacro} </Text>}
-                {props.screenSize!== "sm" && <Text>TOTAL {props.totalMacro} :</Text>}
-                
+            <Flex justify="space-between" w="100%" fontSize="xl" fontWeight={"bold"} gap="10px">
+                <Text>TOTAL </Text>
+                 
                 {props.totalMacro == "PROTEINS" && <Text>{props.recibo.prote=="" ? 0 : props.recibo.prote+ "    "} grams</Text>}
                 {props.totalMacro == "CARBS" && <Text> {props.recibo.carbs=="" ? 0 : props.recibo.carbs + "    "} grams</Text>}
                 {props.totalMacro == "FATS" && <Text> {props.recibo.grasas=="" ? 0 : props.recibo.grasas+"    "} grams</Text>}

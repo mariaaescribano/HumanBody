@@ -31,10 +31,19 @@ useEffect(() =>
 const [recibo, setrecibo ] = useState< reciboSkeleton | undefined >(undefined);
 
 
+const dameDatosDeAlimento = async () =>
+{
+
+};
+
+
+
+
 IMPORTANTE: ESTRUCTURACIÓN
 -En dto y en back las entidades van en plural, NO es recibo es recibos
 -Pero en la bd SÍ están en singular
 ORDEN: prote: "#610C04" -fats:"#abdefa" -carbs:"#EDC9AF"
 
 PARA HOY
-- poder ver ficha de alimento
+- MOVIDONGA: empezar a añadir alimentos a dias de usuario
+- crear un const en globalHelper q haga Math.round(parseInt(reciboPersonalizado.complejos, 10)) ??

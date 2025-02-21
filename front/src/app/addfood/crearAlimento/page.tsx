@@ -296,7 +296,7 @@ export default function CrearAlimento()
                 </HStack>         
             </VStack>
 
-            <Box w={{ base: '200px', md: '100%' }} ml={{ base: "30px", md: "0px" }}>
+            <Box w={{ base: '200px', md: '100%' }} ml={{ base: "30px", md: "0px" }} mt={{ base: "10px", md: "0px" }}>
               <PieChardMacroNutr pieChartData={pieChardData} />
             </Box>
           </SimpleGrid>

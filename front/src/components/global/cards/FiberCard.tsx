@@ -40,7 +40,7 @@ export default function FiberCard(props: { edit:boolean, totalFiber?:string, scr
             
 
           {props.edit && <Flex justify="center" w="100%" fontSize="xl" fontWeight={"bold"} gap="20px">
-            <Text mt="10px">TOTAL FIBER: </Text>
+            <Text mt="10px">TOTAL </Text>
             <InputField />
             <Text mt="10px">grams</Text>
           </Flex>} 
@@ -49,8 +49,8 @@ export default function FiberCard(props: { edit:boolean, totalFiber?:string, scr
               
         {props.edit == false  &&
           <Flex justify="space-between" w="100%" fontSize="xl" fontWeight={"bold"} gap="10px"> 
-            <Text>TOTAL FIBER</Text>
-            <MeryTooltip texto={"Fiber is a carb but it isn't summed with the carbohydrates."} />
+            <Text>TOTAL </Text>
+            {/* <MeryTooltip texto={"Fiber is a carb but it isn't summed with the carbohydrates."} /> */}
 
           <HStack>
               <Text> {props.totalFiber} </Text>
