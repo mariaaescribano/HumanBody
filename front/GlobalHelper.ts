@@ -70,6 +70,16 @@ export const ProteIcono = FaFish;
 export const CarbIcono = FaAppleAlt;
 export const FiberIcono = FaSeedling;
 
+// COLORES
+export const colorProte= '#610C04';
+export const colorFats= '#abdefa';
+export const colorCarbs= '#EDC9AF';
+export const colorFibra= '#ffe5f0';
+
+
+
+
+
 // crear recibo
 export const crearRecibo = async (recibo: reciboSkeleton) => 
   {
@@ -103,6 +113,7 @@ export const calcularPorcentajes = (numeros: number[]) => {
   const porcentajes = numeros.map(num => (num / sumaTotal) * 100); // Calcular el porcentaje de cada número
   return porcentajes;
 };
+
 
 
 

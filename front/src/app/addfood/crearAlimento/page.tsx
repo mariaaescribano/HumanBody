@@ -24,19 +24,22 @@ import NatureIcon from '@mui/icons-material/Nature';
 // Custom components
 import React, { useEffect, useState, useRef } from 'react';
 import SelectSignIn from '@/components/signin/SelectSignIn';
-import PopUpMessage from '@/components/global/PopUpMessage';
-import PopUpErrorMessage from '@/components/global/PopUpErrorMessage';
-import PurpleSpinner from '@/components/global/Spinner';
-import CustomCard from '@/components/global/CustomCard';
+import PopUpMessage from '@/components/global/message/PopUpMessage';
+import PopUpErrorMessage from '@/components/global/message/PopUpErrorMessage';
+import PurpleSpinner from '@/components/global/random/Spinner';
+import CustomCard from '@/components/global/cards/CustomCard';
 import { API_URL, calcularPorcentajes, crearRecibo, esSoloNumeros, getTamanyoPantalla } from '../../../../GlobalHelper';
 import { alimentosSkeleton, miniCartaAlimento } from '../../../../../backend/src/dto/alimentos.dto';
-import InputField from '@/components/global/InputField';
+
 import { buildStyles, CircularProgressbarWithChildren } from 'react-circular-progressbar';
-import { PieChardMacroNutr } from '@/components/global/PieChardMacroNutr';
+
 import MacroNutrCardEdit from '@/components/addfood/crearAlimento/MacroNutrCardEdit';
 import { MdCheck } from 'react-icons/md';
 import { reciboSkeleton, reciboConstNames } from '../../../../../backend/src/dto/recibos.dto';
-import SuccessErrorMessage from '@/components/global/SuccessErrorMessage';
+import SuccessErrorMessage from '@/components/global/message/SuccessErrorMessage';
+import InputField from '@/components/global/random/InputField';
+import { PieChardMacroNutr } from '@/components/global/cards/PieChardMacroNutr';
+import FiberCard from '@/components/global/cards/FiberCard';
 
 export default function CrearAlimento() 
 {
@@ -46,7 +49,7 @@ export default function CrearAlimento()
   const [calories, setcalories ] = useState<string>("");
   const [btnfinishedPulsado, setbtnfinishedPulsado ] = useState<boolean>(false);
   const [mensajeError, setmensajeError ] = useState<boolean| undefined>(undefined);
-  const [pieChardData, setpieChardData ] = useState<number[]>([20, 40, 40]);
+  const [pieChardData, setpieChardData ] = useState<number[]>([20, 40, 30, 10]);
   const [recibo, setrecibo ] = useState< reciboSkeleton >(
     {
       grasas:"",
@@ -74,12 +77,11 @@ export default function CrearAlimento()
   // cada vez q el recibo cambia, se actualizan los valores del piechardData (array de numbers para porcentajes)
   useEffect(() => 
   {
-    if(recibo.prote != "" && recibo.grasas!= "" && recibo.carbs!= "")
+    if(recibo.prote != "" && recibo.grasas!= "" && recibo.carbs!= "" && recibo.fibra!= "")
     {
-      let lista = [parseInt(recibo.prote, 10), parseInt(recibo.grasas, 10), parseInt(recibo.carbs, 10)] 
+      let lista = [parseInt(recibo.prote, 10), parseInt(recibo.grasas, 10), parseInt(recibo.carbs, 10), parseInt(recibo.fibra, 10)] 
       let porcentajes = calcularPorcentajes(lista)
       setpieChardData(porcentajes)
-      console.log(porcentajes)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recibo]);
@@ -314,7 +316,11 @@ export default function CrearAlimento()
         
         {screenSize != "" && <CustomCard hijo={ <MacroNutrCardEdit recibo={recibo} setrecibo={setrecibo} totalMacro={reciboConstNames.grasas} screenSize={screenSize} infoLista={[reciboConstNames.monoinsaturadas,reciboConstNames.poliinsaturadas, reciboConstNames.saturadas]}></MacroNutrCardEdit>}></CustomCard>}
 
-        {screenSize != "" &&  <CustomCard hijo={  <MacroNutrCardEdit recibo={recibo} setrecibo={setrecibo} totalMacro={reciboConstNames.carbs} screenSize={screenSize} infoLista={[reciboConstNames.fibra, reciboConstNames.complejos, reciboConstNames.simples]}></MacroNutrCardEdit>}></CustomCard>}
+        {screenSize != "" &&  <CustomCard hijo={  <MacroNutrCardEdit recibo={recibo} setrecibo={setrecibo} totalMacro={reciboConstNames.carbs} screenSize={screenSize} infoLista={[reciboConstNames.complejos, reciboConstNames.simples]}></MacroNutrCardEdit>}></CustomCard>}
+
+        {screenSize != "" && <CustomCard hijo={ 
+       <FiberCard edit={true} totalFiber={""} screenSize={screenSize}></FiberCard>}></CustomCard>}
+
 
         </Flex>}
 

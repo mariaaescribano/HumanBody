@@ -1,7 +1,7 @@
 'use client';
 import { Flex, Box, Icon, Text, useColorModeValue, Card, Button, HStack, Image } from '@chakra-ui/react';
 import { MdArrowBack } from 'react-icons/md';
-import MeryTooltip from '../global/MeryToolTip';
+import MeryTooltip from '../global/random/MeryToolTip';
 
 export default function TitleCard(props: { title:string, letsgo:any, goback:any, tooltip:string}) {
    const textColor = useColorModeValue('secondaryGray.900', 'white');

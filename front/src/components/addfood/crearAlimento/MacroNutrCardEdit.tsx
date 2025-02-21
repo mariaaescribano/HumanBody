@@ -188,9 +188,9 @@ export default function MacroNutrCardEdit(props: {recibo:reciboSkeleton, setreci
                 {props.screenSize== "sm" && <Text>TOTAL {props.totalMacro} </Text>}
                 {props.screenSize!== "sm" && <Text>TOTAL {props.totalMacro} :</Text>}
                 
-                {props.totalMacro == "PROTEINS" && props.recibo.prote != "" && <Text>{props.recibo.prote+"    "} grams</Text>}
-                {props.totalMacro == "CARBS" && props.recibo.carbs != "" && <Text> {props.recibo.carbs +"    "} grams</Text>}
-                {props.totalMacro == "FATS"  && props.recibo.grasas != "" && <Text> {props.recibo.grasas+"    "} grams</Text>}
+                {props.totalMacro == "PROTEINS" && <Text>{props.recibo.prote=="" ? 0 : props.recibo.prote+ "    "} grams</Text>}
+                {props.totalMacro == "CARBS" && <Text> {props.recibo.carbs=="" ? 0 : props.recibo.carbs + "    "} grams</Text>}
+                {props.totalMacro == "FATS" && <Text> {props.recibo.grasas=="" ? 0 : props.recibo.grasas+"    "} grams</Text>}
             </Flex> 
         </div>
     </Flex>

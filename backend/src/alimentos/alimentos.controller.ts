@@ -22,4 +22,10 @@ export class AlimentosController {
   async createAlimento(@Body() body: alimentosSkeleton) {
     return await this.alimentosService.createAlimento(body);
   }
+
+  @Get("alimento/:idAlimento")
+  async returnAlimentoConcreto(@Param('idAlimento') idAlimento: number) {
+    const alimento = await this.alimentosService.returnAlimentoConcretoFuncion(idAlimento);
+    return { alimento: alimento };
+  }
 }

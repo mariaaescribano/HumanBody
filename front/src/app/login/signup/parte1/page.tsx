@@ -19,15 +19,16 @@ import {
 } from '@chakra-ui/react';
 import axios from 'axios';
 // Custom components
-import InputField from '../../../../components/global/InputField';
+
 import React, { useEffect, useState, useRef } from 'react';
 import SelectSignIn from '@/components/signin/SelectSignIn';
 import { API_URL } from '../../../../../GlobalHelper';
 import { StringIsNull } from '../../../../../GlobalHelper';
-import PopUpMessage from '@/components/global/PopUpMessage';
-import PopUpErrorMessage from '@/components/global/PopUpErrorMessage';
+import PopUpMessage from '@/components/global/message/PopUpMessage';
+import PopUpErrorMessage from '@/components/global/message/PopUpErrorMessage';
 import { createUserSkeleton } from '../../../../../../backend/src/dto/usuarios.dto';
-import PurpleSpinner from '@/components/global/Spinner';
+import PurpleSpinner from '@/components/global/random/Spinner';
+import InputField from '@/components/global/random/InputField';
 
 export default function SignUp1() 
 {
@@ -146,7 +147,7 @@ export default function SignUp1()
     catch (error) {
     console.error('Error fetching data:', error);
     }
-  } 
+  } ;
 
   return (
     <Flex

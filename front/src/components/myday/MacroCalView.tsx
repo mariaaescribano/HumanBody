@@ -2,8 +2,9 @@
 // Chakra imports
 import { Flex, Box, Icon, Text, useColorModeValue, Card, Button, HStack, Image, Progress } from '@chakra-ui/react';
 import { useState } from 'react';
-import CustomCard from '../global/CustomCard';
-import { CarbIcono, FatIcono, FiberIcono, ProteIcono } from '../../../GlobalHelper';
+import CustomCard from '../global/cards/CustomCard';
+import { CarbIcono, colorCarbs, colorFats, colorFibra, colorProte, FiberIcono, ProteIcono } from '../../../GlobalHelper';
+import { FatIcono } from '../global/random/FatIcon';
 
 export default function MacroCalView(props: { }) {
  
@@ -23,7 +24,7 @@ export default function MacroCalView(props: { }) {
                 borderRadius="20px" 
                 sx={{
                     "& > div": { // Estilo del track lleno
-                    backgroundColor: "#610C04"
+                    backgroundColor: colorProte
                     }
                 }}
             />
@@ -40,7 +41,7 @@ export default function MacroCalView(props: { }) {
                 borderRadius="20px" 
                 sx={{
                     "& > div": { // Estilo del track lleno
-                    backgroundColor: "#abdefa"
+                    backgroundColor: colorFats
                     }
                 }}
             />
@@ -57,7 +58,7 @@ export default function MacroCalView(props: { }) {
                 borderRadius="20px" 
                 sx={{
                     "& > div": { // Estilo del track lleno
-                    backgroundColor: "#EDC9AF"
+                    backgroundColor: colorCarbs
                     }
                 }}
             />
@@ -74,7 +75,7 @@ export default function MacroCalView(props: { }) {
                 borderRadius="20px" 
                 sx={{
                     "& > div": { // Estilo del track lleno
-                    backgroundColor: "pink.200"
+                    backgroundColor: colorFibra
                     }
                 }}
             />

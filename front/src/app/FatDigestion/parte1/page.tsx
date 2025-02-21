@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Card, Box, Text, Flex, Grid, VStack, Button, HStack } from '@chakra-ui/react';
 import Boca from '../../../../public/FatDigestion/Boca.jpg';
 import LeftRightButtons from '@/components/global/old/LeftRightButtons';
-import PopUpMessage from '@/components/global/PopUpMessage';
+import PopUpMessage from '@/components/global/message/PopUpMessage';
 import IzqPurpleMessage from '@/components/global/old/IzqPurpleMessage';
 import DerPurpleMessage from '@/components/global/DerPurpleMessage';
 import BarnerMorado from '@/components/global/BarnerMorado';

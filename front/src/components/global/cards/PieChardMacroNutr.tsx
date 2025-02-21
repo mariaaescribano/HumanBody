@@ -1,15 +1,15 @@
 'use client';
 import dynamic from 'next/dynamic';
 import { useEffect } from 'react';
-import { ArrayIsNull } from '../../../GlobalHelper';
+import { ArrayIsNull, colorCarbs, colorFats, colorFibra, colorProte } from '../../../../GlobalHelper';
 // import Chart from 'react-apexcharts';
 const Chart = dynamic(() => import('react-apexcharts'), {
   ssr: false,
 });
 
  const pieChartOptions = {
-  labels: ['Proteins', 'Fats', 'Carbs'],
-  colors: ['white', '#abdefa', '#EDC9AF' ],
+  labels: ['Proteins', 'Fats', 'Carbs', 'Fiber'],
+  colors: ['white', colorFats, colorCarbs, colorFibra ],
   chart: {
     width: '50px',
   },
@@ -38,7 +38,7 @@ const Chart = dynamic(() => import('react-apexcharts'), {
     },
   },
   fill: {
-    colors: ['#610C04', '#abdefa', '#EDC9AF' ],
+    colors: [colorProte, colorFats, colorCarbs, colorFibra],
   },
   tooltip: {
     enabled: true,
@@ -46,7 +46,7 @@ const Chart = dynamic(() => import('react-apexcharts'), {
   },
 };
 
- const pieChartDataDefault = [36, 25, 12];
+ const pieChartDataDefault = [36, 25, 12, 5];
 
 
  export const PieChardMacroNutr = (props:{pieChartData:number[]}) => {

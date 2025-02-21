@@ -2,10 +2,10 @@
 // Chakra imports
 import { Flex, Box, Icon, Text, useColorModeValue, Card, Button, HStack, Image, Progress, SimpleGrid } from '@chakra-ui/react';
 import { useState } from 'react';
-import CustomCard from '../global/CustomCard';
+import CustomCard from '../global/cards/CustomCard';
 import { CircProgressMini } from './CircProgressMini';
 import MacroCalView from './MacroCalView';
-import EBookButton from '../global/EBookButton';
+import EBookButton from '../global/random/EBookButton';
 import { AddIcon } from '@chakra-ui/icons';
 
 export default function ElementoPrimero(props: { }) {

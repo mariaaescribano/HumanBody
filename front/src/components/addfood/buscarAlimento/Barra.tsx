@@ -3,7 +3,8 @@ import { Box, Input, Text, Flex } from '@chakra-ui/react'; // Chakra UI para est
 import {
     MdSearch
   } from 'react-icons/md';
-import { CarbIcono, FatIcono, ProteIcono } from '../../../../GlobalHelper';
+import { CarbIcono, ProteIcono } from '../../../../GlobalHelper';
+import { FatIcono } from '@/components/global/random/FatIcon';
 
 // Componente de búsqueda
 function Barra(props: {setquienPulsado:React.Dispatch<React.SetStateAction<number>>, quienPulsado:number}) 

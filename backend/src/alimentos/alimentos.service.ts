@@ -26,5 +26,11 @@ export class AlimentosService {
     await this.databaseService.query(sql, params);
     return "Ok";
   }
+
+  async returnAlimentoConcretoFuncion(idAlimento: number) {
+    const sql = 'SELECT * FROM alimento WHERE id = ?';
+    const result = await this.databaseService.query(sql, [idAlimento]);
+    return result;
+  }
  
 }

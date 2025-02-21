@@ -10,7 +10,7 @@ import chylomicrons from '../../../../public/FatDigestion/Parte4/chylomicrons.pn
 
 import dialogo from '../../../../public/dialogo.png';
 import LeftRightButtons from '@/components/global/old/LeftRightButtons';
-import PopUpMessage from '@/components/global/PopUpMessage';
+import PopUpMessage from '@/components/global/message/PopUpMessage';
 import IzqPurpleMessage from '@/components/global/old/IzqPurpleMessage';
 import DerPurpleMessage from '@/components/global/DerPurpleMessage';
 import BarnerMorado from '@/components/global/BarnerMorado';

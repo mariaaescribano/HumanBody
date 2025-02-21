@@ -25,10 +25,10 @@ import axios from 'axios';
 // Custom components
 import React, { useEffect, useState, useRef } from 'react';
 import SelectSignIn from '@/components/signin/SelectSignIn';
-import PopUpMessage from '@/components/global/PopUpMessage';
-import PopUpErrorMessage from '@/components/global/PopUpErrorMessage';
-import PurpleSpinner from '@/components/global/Spinner';
-import CustomCard from '@/components/global/CustomCard';
+import PopUpMessage from '@/components/global/message/PopUpMessage';
+import PopUpErrorMessage from '@/components/global/message/PopUpErrorMessage';
+import PurpleSpinner from '@/components/global/random/Spinner';
+import CustomCard from '@/components/global/cards/CustomCard';
 import { API_URL, getInternetDateParts } from '../../../../GlobalHelper';
 import { CircProgressMini } from '@/components/myday/CircProgressMini';
 import MacroCalView from '@/components/myday/MacroCalView';
@@ -77,13 +77,16 @@ export default function BuscarAlimento()
           },
         }
       );
+      console.log(response.data.foods)
       if(response.data.foods != null)
       {
         const recoge = [];
+        console.log(response.data.foods)
         for(let i=0; i< response.data.foods.length; i++)
         {
           let objeto: miniCartaAlimento = 
           {
+            id: response.data.foods[i].id,
             nombre: response.data.foods[i].nombre,
             predomina:response.data.foods[i].predomina,
             calorias_100gr: response.data.foods[i].calorias_100gr
@@ -124,6 +127,7 @@ export default function BuscarAlimento()
           {
             let objeto: miniCartaAlimento = 
             {
+              id:response.data.foods[i].id,
               nombre: response.data.foods[i].nombre,
               predomina:response.data.foods[i].predomina,
               calorias_100gr: response.data.foods[i].calorias_100gr
@@ -182,7 +186,8 @@ export default function BuscarAlimento()
                     w={{sd:"70%", md: "70%"}}
                     mt="20px"
                     h="90%"
-                    onClick={()=> location.href = "./crearAlimento"}
+                    as="a"
+                    href= "./crearAlimento"
                     p="10px"
                     _hover={{bg:"gray.100"}}
                     leftIcon={<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M120-120v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm584-528 56-56-56-56-56 56 56 56Z"/></svg>}
@@ -198,6 +203,7 @@ export default function BuscarAlimento()
                 {alimentosLista.length > 0 && alimentosLista.map((alimento, index) => (
                   <AlimentoMiniCard 
                     key={index}
+                    idAlimento = {alimento.id} 
                     nameAlimento={alimento.nombre} 
                     predomina={alimento.predomina} 
                     calorias={alimento.calorias_100gr} 

@@ -25,10 +25,10 @@ import axios from 'axios';
 // Custom components
 import React, { useEffect, useState, useRef } from 'react';
 import SelectSignIn from '@/components/signin/SelectSignIn';
-import PopUpMessage from '@/components/global/PopUpMessage';
-import PopUpErrorMessage from '@/components/global/PopUpErrorMessage';
-import PurpleSpinner from '@/components/global/Spinner';
-import CustomCard from '@/components/global/CustomCard';
+import PopUpMessage from '@/components/global/message/PopUpMessage';
+import PopUpErrorMessage from '@/components/global/message/PopUpErrorMessage';
+import PurpleSpinner from '@/components/global/random/Spinner';
+import CustomCard from '@/components/global/cards/CustomCard';
 import { getInternetDateParts } from '../../../GlobalHelper';
 import { CircProgressMini } from '@/components/myday/CircProgressMini';
 import MacroCalView from '@/components/myday/MacroCalView';

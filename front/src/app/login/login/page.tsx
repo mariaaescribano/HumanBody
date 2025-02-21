@@ -17,10 +17,11 @@ import {
 } from '@chakra-ui/react';
 import axios from 'axios';
 // Custom components
-import InputField from '../../../components/global/InputField';
+
 import React, { useEffect, useState } from 'react';
 import { API_URL } from '../../../../GlobalHelper';
-import PopUpErrorMessage from '@/components/global/PopUpErrorMessage';
+import PopUpErrorMessage from '@/components/global/message/PopUpErrorMessage';
+import InputField from '@/components/global/random/InputField';
 
 
 export default function login() 

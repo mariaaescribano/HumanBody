@@ -10,6 +10,7 @@ export interface alimentosSkeleton
 
 export interface miniCartaAlimento 
 {
+    id:number;
     nombre:string;
     predomina:number;
     calorias_100gr:string;

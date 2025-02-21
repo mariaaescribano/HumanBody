@@ -1,8 +1,8 @@
 'use client';
 import { Flex, Box, Icon, Text, useColorModeValue, Card, Button, HStack, Image, VStack } from '@chakra-ui/react';
 import { MdArrowBack } from 'react-icons/md';
-import MeryTooltip from '../global/MeryToolTip';
-import EBookButton from '../global/EBookButton';
+import MeryTooltip from '../global/random/MeryToolTip';
+import EBookButton from '../global/random/EBookButton';
 import { showMacroNutrSignUp } from '../../../../backend/src/dto/recibos.dto';
 import { showEbook } from '../../../../backend/src/dto/ebook.dto';
 import { FatsName } from '../Names/FatsName';
@@ -90,13 +90,7 @@ export default function MacroNutrCard(props: {title:string, totalMacro:string, t
 
             <Box w="100%" borderBottom="2px solid black" my="20px" />
             <Flex justify="space-between" w="100%" fontSize="xl" fontWeight={"bold"}>
-                {props.title !== "CARBS" && <Text>{props.total} </Text>}
-                {props.title == "CARBS" &&<HStack justify="start" align="start">
-                    <Text flexShrink={0} width={{ base: "100%", sm: "auto" }}>
-                        {props.total}
-                    </Text>
-                    <MeryTooltip texto={"Fiber isn’t summed with the total carbohydrates."} />
-                </HStack>} 
+                 <Text>{props.total} </Text>
                 <Text>{props.totalMacro} grams</Text>
             </Flex> 
         

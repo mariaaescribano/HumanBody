@@ -1,6 +1,6 @@
 import React from 'react';
 import { HStack, Text } from '@chakra-ui/react'; 
-import { FatIcono } from '../global/FatIcon';
+import { FatIcono } from '../global/random/FatIcon';
 
 
 export const FatsName = (props:{fontSize:string}) => {

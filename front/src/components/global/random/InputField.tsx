@@ -2,6 +2,7 @@
 // Chakra imports
 import { Flex, FormLabel, Input, Text, useColorModeValue } from '@chakra-ui/react';
 import MeryTooltip from './MeryToolTip';
+
 // Custom components
 
 export default function InputField(props: {

@@ -13,15 +13,16 @@ import axios from 'axios';
 import React, { useEffect, useState, useRef } from 'react';
 import { API_URL, ObjectIsNull, crearRecibo, getTamanyoPantalla } from '../../../../../GlobalHelper';
 import { createUserSkeleton, realUser } from '../../../../../../backend/src/dto/usuarios.dto';
-import PurpleSpinner from '@/components/global/Spinner';
-import MeryTooltip from '@/components/global/MeryToolTip';
-import EBookButton from '@/components/global/EBookButton';
-import CustomCard from '@/components/global/CustomCard';
+import PurpleSpinner from '@/components/global/random/Spinner';
+import MeryTooltip from '@/components/global/random/MeryToolTip';
+import EBookButton from '@/components/global/random/EBookButton';
+import CustomCard from '@/components/global/cards/CustomCard';
 import TitleCard from '@/components/signin/TitleCard';
 import MacroNutrCard from '@/components/signin/MacroNutrCard';
 import { reciboSkeleton, showMacroNutrSignUp } from '../../../../../../backend/src/dto/recibos.dto';
 import { fichaSkeleton } from '../../../../../../backend/src/dto/fichas.dto';
 import { showEbook } from '../../../../../../backend/src/dto/ebook.dto';
+import FiberCard from '@/components/global/cards/FiberCard';
 
 export default function SignUp3() 
 {
@@ -292,9 +293,20 @@ export default function SignUp3()
     {
         title: "Do I need simple carbs?",
         onclick: undefined
+    }
+    ];
+
+    const fiberEbooks: showEbook[] = [
+    {
+        title: "Fiber and microbiota",
+        onclick: undefined
     },
     {
-        title: "Why fiber is essential?",
+        title: "Fiber and neurogenesis",
+        onclick: undefined
+    },
+    {
+        title: "Fiber and neurotransmissors",
         onclick: undefined
     }
     ];
@@ -303,11 +315,11 @@ export default function SignUp3()
     
     if (recibo != null) {
     carbButtons = [
-        {
-        label: "Fiber",
-        price: `${recibo.fibra} grams`,
-        tooltip: "Fiber promotes healthy digestion, supports heart health, helps regulate blood sugar levels and supports neuron and brain activity."
-        },
+        // {
+        // label: "Fiber",
+        // price: `${recibo.fibra} grams`,
+        // tooltip: "Fiber promotes healthy digestion, supports heart health, helps regulate blood sugar levels and supports neuron and brain activity."
+        // },
         {
         label: "Complex",
         price: `${recibo.complejos} grams`,
@@ -374,6 +386,13 @@ export default function SignUp3()
                 } 
                 />
             }
+
+
+            {!ObjectIsNull(recibo) && recibo != null && 
+            <CustomCard hijo={
+                <FiberCard edit={false} totalFiber={recibo.fibra} screenSize={screenSize} ebooklista={fiberEbooks}></FiberCard>}> 
+            </CustomCard>}
+
             {user == null && <PurpleSpinner></PurpleSpinner>}
         </Flex>
     );

@@ -26,9 +26,9 @@ import React, { useEffect, useState, useRef } from 'react';
 import { API_URL, exerciseFrequencyList, StringIsNull, objectivesList, ObjectIsNull, getTamanyoPantalla } from '../../../../../GlobalHelper';
 import { createUserSkeleton } from '../../../../../../backend/src/dto/usuarios.dto';
 import { MdArrowBack, MdHdrStrong } from 'react-icons/md';
-import PurpleSpinner from '@/components/global/Spinner';
-import MeryTooltip from '@/components/global/MeryToolTip';
-import CustomCard from '@/components/global/CustomCard';
+import PurpleSpinner from '@/components/global/random/Spinner';
+import MeryTooltip from '@/components/global/random/MeryToolTip';
+import CustomCard from '@/components/global/cards/CustomCard';
 import TitleCard from '@/components/signin/TitleCard';
 
 export default function SignUp2() 
