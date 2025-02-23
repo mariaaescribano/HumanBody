@@ -44,6 +44,10 @@ IMPORTANTE: ESTRUCTURACIÓN
 -Pero en la bd SÍ están en singular
 ORDEN: prote: "#610C04" -fats:"#abdefa" -carbs:"#EDC9AF"
 
+
+
 PARA HOY
-- MOVIDONGA: empezar a añadir alimentos a dias de usuario
-- crear un const en globalHelper q haga Math.round(parseInt(reciboPersonalizado.complejos, 10)) ??
+- añadir alimento y q se sume al reciboDeHoy
+- ademas, los alimentos seleccionados se tienen q guardar --> hacer lista con ids
+
+- añadir flecha en buscar Alimento para volver a pagina de myday

@@ -14,8 +14,21 @@ import MeryTooltip from '../random/MeryToolTip';
 
 
 
-export default function FiberCard(props: { edit:boolean, totalFiber?:string, screenSize:string, ebooklista?:showEbook[]  }) 
+export default function FiberCard(props: { edit:boolean, recibo?:reciboSkeleton, setrecibo?:any, totalFiber?:string, screenSize:string, ebooklista?:showEbook[]  }) 
 {
+
+
+  const escribir = (gramosCantidas:string) =>
+  {
+      if(esSoloNumeros(gramosCantidas) || gramosCantidas=="" )
+      {
+          const nuevoRecibo = { ...props.recibo };
+          nuevoRecibo.fibra= Math.round(parseInt(gramosCantidas,10)).toString();
+
+          props.setrecibo(nuevoRecibo)
+      }
+  };
+
 
   return (
     <Flex direction="column" w="100%">
@@ -41,7 +54,7 @@ export default function FiberCard(props: { edit:boolean, totalFiber?:string, scr
 
           {props.edit && <Flex justify="center" w="100%" fontSize="xl" fontWeight={"bold"} gap="20px">
             <Text mt="10px">TOTAL </Text>
-            <InputField />
+            <InputField onChange= {(e:any)=> {escribir(e.target.value)}}/>
             <Text mt="10px">grams</Text>
           </Flex>} 
 

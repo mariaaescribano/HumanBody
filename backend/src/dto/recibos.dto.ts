@@ -22,6 +22,14 @@ export interface showMacroNutrSignUp
     tooltip:string;
 };
 
+export interface macroPorcentajes 
+{
+    prote:number;
+    grasas:number;
+    carbs:number;
+    fibra:number;   
+};
+
 export enum reciboConstNames {
     grasas = "FATS",
     monoinsaturadas = "Monounsaturated",

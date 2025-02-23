@@ -28,7 +28,7 @@ import PopUpMessage from '@/components/global/message/PopUpMessage';
 import PopUpErrorMessage from '@/components/global/message/PopUpErrorMessage';
 import PurpleSpinner from '@/components/global/random/Spinner';
 import CustomCard from '@/components/global/cards/CustomCard';
-import { API_URL, calcularPorcentajes, crearRecibo, esSoloNumeros, getTamanyoPantalla } from '../../../../GlobalHelper';
+import { API_URL, calcularPorcentajes, convierteNumRedondeado, crearRecibo, dameDatosDelRecibo, esSoloNumeros, getTamanyoPantalla, StringIsNull, sumaDeMacros } from '../../../../GlobalHelper';
 import { alimentosSkeleton, miniCartaAlimento } from '../../../../../backend/src/dto/alimentos.dto';
 
 import { buildStyles, CircularProgressbarWithChildren } from 'react-circular-progressbar';
@@ -47,6 +47,12 @@ import { ProteinsName } from '@/components/Names/ProteinName';
 
 export default function VerAlimento() 
 {
+  const [reciboHoy, setreciboHoy ] = useState< reciboSkeleton | null >(null);
+
+  const [btnfinishedPulsado, setbtnfinishedPulsado ] = useState<boolean>(false);
+  const [mensajeError, setmensajeError ] = useState<boolean| undefined>(undefined);
+
+  ///////////////  GESTION ALIMENTO VALORES ///////////////
   const [alimento, setalimento ] = useState<alimentosSkeleton | null>(null);
   const textColor = useColorModeValue('secondaryGray.900', 'white');
   const [screenSize, setscreenSize ] = useState<string>("");
@@ -90,9 +96,6 @@ export default function VerAlimento()
 
   // what user ate
   const [grams, setgrams ] = useState<string>("100");
-
-  const [btnfinishedPulsado, setbtnfinishedPulsado ] = useState<boolean>(false);
-  const [mensajeError, setmensajeError ] = useState<boolean| undefined>(undefined);
 
   // se actualiza solo una vez, con los valores originales (no sentido q cambie)
   const [pieChardData, setpieChardData ] = useState<number[]>([]);
@@ -169,7 +172,7 @@ export default function VerAlimento()
     {
       // actualiza calorias
       let caloriasPorGramos = reglaDeTres(100, parseInt(alimento?.calorias_100gr, 10), parseInt(grams, 10));
-      setcalories(Math.round(caloriasPorGramos).toString());
+      setcalories(Math.round(isNaN(caloriasPorGramos) ? 0 : caloriasPorGramos).toString());
 
       // actualiza macros
       let proteNuevos = reglaDeTres(100, parseInt(reciboOriginal?.prote, 10), parseInt(grams, 10));
@@ -208,6 +211,129 @@ export default function VerAlimento()
   function reglaDeTres(valorA:number, valorB:number, valorC:number) {
     return (valorB * valorC) / valorA;
   }
+
+  /////////////// END GESTION ALIMENTO VALORES ///////////////
+
+
+
+
+  // 1: cuando user le da a Add
+  const addFood = async () =>
+  {
+    //  se coge su recibo
+    let idreciboDeHoy = sessionStorage.getItem("reciboDeHoy");
+    if(idreciboDeHoy!= null)
+    {
+      await dameDatosDelRecibo(parseInt(idreciboDeHoy, 10), setreciboHoy);
+    }
+    else
+    {
+      setmensajeError(true)
+    }
+  };
+
+  // 2: suma
+  useEffect(() => 
+  {
+    if(reciboHoy)
+    {
+      // se hace la suma
+      let idreciboDeHoy = sessionStorage.getItem("reciboDeHoy");
+      let reciboSuma = sumaDeMacros(reciboPersonalizado, reciboHoy);
+
+      if(reciboSuma && idreciboDeHoy)
+      {
+        update(reciboSuma, idreciboDeHoy);
+      }
+        
+      else
+        setmensajeError(true)
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reciboHoy]);
+
+
+  // 3: si todo ha ido bien 
+  // se actualiza de la bd los datos antiguos de hoy por la suma con el nuevo alimento 
+  // se añade al dia de hoy el id del alimento en alimentos
+  const update = async (reciboSuma: any, idreciboDeHoy:string) => 
+  {
+    let idDia = sessionStorage.getItem("diaId");
+    if(idDia)
+    {
+      let todobn = await updateDiaAlimentos(idDia);
+      if(todobn)
+        await updateRecibo(reciboSuma, idreciboDeHoy);
+    }
+  };
+
+  const updateDiaAlimentos = async (idDia:string) => 
+  {
+    let caloriasAnteriores = sessionStorage.getItem("caloriasDeHoy")
+    if(caloriasAnteriores && !StringIsNull(calories) && alimento?.id)
+    {
+      let sumaCalorias = convierteNumRedondeado(caloriasAnteriores) + convierteNumRedondeado(calories);
+      sessionStorage.setItem("caloriasDeHoy", sumaCalorias.toString());
+
+      try
+      {
+        const response = await axios.put(
+            `${API_URL}/dias/diaAlimCalor/${parseInt(idDia, 10)}`,
+            { alimentoId: alimento.id, calorias: sumaCalorias },
+              {
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+            }
+        );
+        if(response.data != null)
+          return true;
+      }
+      catch (error) 
+      {
+        setmensajeError(true)
+        console.error('Error fetching data:', error);
+        return false;
+      }
+    }
+    else
+      setmensajeError(false)
+  };
+
+  const updateRecibo = async (reciboSuma: any, idreciboDeHoy:string) => 
+  {
+    try
+    {
+      const response = await axios.put(
+          `${API_URL}/recibos/recibo/${parseInt(idreciboDeHoy, 10)}`,
+          reciboSuma,
+          {
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          }
+      );
+      if(response.data != null)
+        setmensajeError(false)
+    }
+      catch (error) {
+      console.error('Error fetching data:', error);
+      }
+  };
+
+
+
+  // 4: si todo ha ido bien, se vuelve a buscar alimento
+  useEffect(() => 
+  {
+    if (mensajeError==false) {
+      const timer = setTimeout(() => {
+        location.href = "./buscarAlimento";
+      }, 3000);
+      return () => clearTimeout(timer); 
+    }
+  }, [mensajeError]);
   
   
 
@@ -351,7 +477,7 @@ export default function VerAlimento()
 
 
         {/* titulo */}
-      {mensajeError == true &&<PopUpErrorMessage title={'Error'} texto={'Please, fill up all the data'}></PopUpErrorMessage>}
+      {mensajeError == true &&<PopUpErrorMessage title={'Error'} texto={'Please, try again later.'}></PopUpErrorMessage>}
         <CustomCard hijo={ 
           <>
           <Flex justify="start" gap="5px" align="center" mb="10px">
@@ -390,7 +516,7 @@ export default function VerAlimento()
                 h="46px"
                 isDisabled ={btnfinishedPulsado } // esta disabled cuando se le ha dado al boton, para no darle mas veces
                 _hover={{ bg: 'gray.100' }}
-                // onClick={finish}
+                onClick={addFood}
                 leftIcon={<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M268-240 42-466l57-56 170 170 56 56-57 56Zm226 0L268-466l56-57 170 170 368-368 56 57-424 424Zm0-226-57-56 198-198 57 56-198 198Z"/></svg>}
               >
                 ADD
@@ -403,7 +529,7 @@ export default function VerAlimento()
                 )}
               </Button>
             </HStack>
-            {mensajeError == false && <SuccessErrorMessage status={'success'} title={'Food created!'}></SuccessErrorMessage>} 
+            {mensajeError == false && <SuccessErrorMessage status={'success'} title={'Food added!'}></SuccessErrorMessage>} 
           
         </> }></CustomCard>
 

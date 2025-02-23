@@ -102,6 +102,59 @@ export const crearRecibo = async (recibo: reciboSkeleton) =>
   };
 
 
+  // coger datos del recibo
+
+  export const dameDatosDelRecibo = async (idRecibo:number, setactualiza:any) =>
+  {
+    try{
+      const response = await axios.get(
+        `${API_URL}/recibos/recibo/${idRecibo}`,
+        {
+          headers: {
+              'Content-Type': 'application/json'
+          },
+        }
+      );
+        if(response.data != null)
+        {
+          let recibo = response.data.recibo[0];
+          let newRecibo : reciboSkeleton =
+          {
+            grasas:"0",
+            monoinsaturadas:"0",
+            poliinsaturadas:"0",
+            saturadas:"0",
+            prote:"0",
+            incompleto:"0",
+            completo:"0",
+            carbs:"0",
+            complejos:"0",
+            simples:"0",
+            fibra:"0"
+          };
+
+          if (recibo.grasas !== "") newRecibo.grasas = recibo.grasas;
+          if (recibo.monoinsaturadas !== "") newRecibo.monoinsaturadas = recibo.monoinsaturadas;
+          if (recibo.poliinsaturadas !== "") newRecibo.poliinsaturadas = recibo.poliinsaturadas;
+          if (recibo.saturadas !== "") newRecibo.saturadas = recibo.saturadas;
+          if (recibo.prote !== "") newRecibo.prote = recibo.prote;
+          if (recibo.incompleto !== "") newRecibo.incompleto = recibo.incompleto;
+          if (recibo.completo !== "") newRecibo.completo = recibo.completo;
+          if (recibo.carbs !== "") newRecibo.carbs = recibo.carbs;
+          if (recibo.complejos !== "") newRecibo.complejos = recibo.complejos;
+          if (recibo.simples !== "") newRecibo.simples = recibo.simples;
+          if (recibo.fibra !== "") newRecibo.fibra = recibo.fibra;
+
+          setactualiza(newRecibo);
+          
+        }
+      }
+      catch (error) {
+      console.error('Error fetching data:', error);
+      }
+  };
+
+
 
 export const esSoloNumeros = (cadena: string): boolean => {
     return /^\d+$/.test(cadena.trim());  // Elimina espacios antes de validar
@@ -117,7 +170,45 @@ export const calcularPorcentajes = (numeros: number[]) => {
 
 
 
+export const sumaDeMacros =  (reciboPersonalizado:reciboSkeleton, reciboHoy:reciboSkeleton) =>
+{
+  let grasasSuma = convierteNumRedondeado(reciboPersonalizado.grasas) + convierteNumRedondeado(reciboHoy.grasas);
+  let monoinsaturadasSuma = convierteNumRedondeado(reciboPersonalizado.monoinsaturadas) + convierteNumRedondeado(reciboHoy.monoinsaturadas);
+  let saturadasSuma = convierteNumRedondeado(reciboPersonalizado.saturadas) + convierteNumRedondeado(reciboHoy.saturadas);
+  let poliinsaturadasSuma = convierteNumRedondeado(reciboPersonalizado.poliinsaturadas) + convierteNumRedondeado(reciboHoy.poliinsaturadas);
+  let proteSuma = convierteNumRedondeado(reciboPersonalizado.prote) + convierteNumRedondeado(reciboHoy.prote);
+  let incompletoSuma = convierteNumRedondeado(reciboPersonalizado.incompleto) + convierteNumRedondeado(reciboHoy.incompleto);
+  let completoSuma = convierteNumRedondeado(reciboPersonalizado.completo) + convierteNumRedondeado(reciboHoy.completo);
+  let carbsSuma = convierteNumRedondeado(reciboPersonalizado.carbs) + convierteNumRedondeado(reciboHoy.carbs);
+  let complejosSuma = convierteNumRedondeado(reciboPersonalizado.complejos) + convierteNumRedondeado(reciboHoy.complejos);
+  let simplesSuma = convierteNumRedondeado(reciboPersonalizado.simples) + convierteNumRedondeado(reciboHoy.simples);
+  let fibraSuma = convierteNumRedondeado(reciboPersonalizado.fibra) + convierteNumRedondeado(reciboHoy.fibra);
 
+  let newRecibo : reciboSkeleton =
+  {
+    grasas:grasasSuma.toString(),
+    monoinsaturadas:monoinsaturadasSuma.toString(),
+    poliinsaturadas:poliinsaturadasSuma.toString(),
+    saturadas:saturadasSuma.toString(),
+    prote:proteSuma.toString(),
+    incompleto:incompletoSuma.toString(),
+    completo:completoSuma.toString(),
+    carbs:carbsSuma.toString(),
+    complejos:complejosSuma.toString(),
+    simples:simplesSuma.toString(),
+    fibra:fibraSuma.toString()
+  };
+
+  return newRecibo;
+};
+
+
+
+export const convierteNumRedondeado = (texto:string) =>
+{
+  let num = Math.round(parseInt(texto, 10));
+  return num;
+}
 
 
 export function EscribirTextoDinamico(

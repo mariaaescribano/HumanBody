@@ -15,7 +15,7 @@ export class AlimentosService {
   }
 
   async findMatchingFood(foodName: string) {
-    const sql = 'SELECT * FROM alimento WHERE nombre LIKE ? LIMIT 10';
+    const sql = 'SELECT * FROM alimento WHERE nombre LIKE ? LIMIT 30';
     const result = await this.databaseService.query(sql, [`%${foodName}%`]);
     return result;
   }

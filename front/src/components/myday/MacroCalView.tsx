@@ -1,13 +1,13 @@
 'use client';
 // Chakra imports
-import { Flex, Box, Icon, Text, useColorModeValue, Card, Button, HStack, Image, Progress } from '@chakra-ui/react';
-import { useState } from 'react';
-import CustomCard from '../global/cards/CustomCard';
+import { Flex, Box, Icon, Text,  HStack, Progress } from '@chakra-ui/react';
 import { CarbIcono, colorCarbs, colorFats, colorFibra, colorProte, FiberIcono, ProteIcono } from '../../../GlobalHelper';
 import { FatIcono } from '../global/random/FatIcon';
+import { macroPorcentajes } from '../../../../backend/src/dto/recibos.dto';
 
-export default function MacroCalView(props: { }) {
- 
+export default function MacroCalView(props: {macroPorcentaje:macroPorcentajes}) 
+{
+    
   
   return (
     <Box width="100%" borderRadius="20px" alignItems="center">
@@ -18,7 +18,7 @@ export default function MacroCalView(props: { }) {
             </HStack>
            
             <Progress 
-                value={60} 
+                value={props.macroPorcentaje.prote} 
                 size="lg" 
                 bg="#efe5e5" 
                 borderRadius="20px" 
@@ -35,7 +35,7 @@ export default function MacroCalView(props: { }) {
                 <Text mb="5px">FATS</Text>
             </HStack>
             <Progress 
-                value={60} 
+                value={props.macroPorcentaje.grasas} 
                 size="lg" 
                 bg="#efe5e5"
                 borderRadius="20px" 
@@ -52,7 +52,7 @@ export default function MacroCalView(props: { }) {
                 <Text mb="5px">CARBS</Text>
             </HStack>
             <Progress 
-                value={60} 
+                value={props.macroPorcentaje.carbs} 
                 size="lg" 
                 bg="#efe5e5"
                 borderRadius="20px" 
@@ -69,7 +69,7 @@ export default function MacroCalView(props: { }) {
                 <Text mb="5px">FIBER</Text>
             </HStack>
             <Progress 
-                value={60} 
+                value={props.macroPorcentaje.fibra} 
                 size="lg" 
                 bg="#efe5e5"
                 borderRadius="20px" 

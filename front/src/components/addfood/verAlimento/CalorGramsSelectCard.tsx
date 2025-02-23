@@ -17,7 +17,7 @@ export default function CalorGramsSelectCard(props: { calories:string, grams:str
    const cambiaGrams = async (grams:string) =>
     {
         let deja = esSoloNumeros(grams);
-        if(deja)
+        if(deja == true || grams == "")
             props.setgrams(grams)
     };
 

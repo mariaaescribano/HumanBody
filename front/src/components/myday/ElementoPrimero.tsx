@@ -1,17 +1,35 @@
 'use client';
 // Chakra imports
 import { Flex, Box, Icon, Text, useColorModeValue, Card, Button, HStack, Image, Progress, SimpleGrid } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import CustomCard from '../global/cards/CustomCard';
 import { CircProgressMini } from './CircProgressMini';
 import MacroCalView from './MacroCalView';
 import EBookButton from '../global/random/EBookButton';
 import { AddIcon } from '@chakra-ui/icons';
+import { macroPorcentajes } from '../../../../backend/src/dto/recibos.dto';
 
-export default function ElementoPrimero(props: { }) {
+export default function ElementoPrimero(props: {macroPorcentaje: macroPorcentajes }) {
+
+    const [caloriasObj, setcaloriasObj] = useState<number>(0);
+    const [caloriasHoy, setcaloriasHoy] = useState<number>(0);
+
+    useEffect(() => 
+    {
+        let caloriasHoy = sessionStorage.getItem("caloriasDeHoy");
+        let caloriasObjetivo = sessionStorage.getItem("caloriasObjetivo");
+        if(caloriasHoy && caloriasObjetivo)
+        {
+            setcaloriasObj(parseInt(caloriasObjetivo, 10))
+            setcaloriasHoy(parseInt(caloriasHoy, 10))
+        }
+        
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
  
   return (
     <>
+    {caloriasObj != 0 && <>
         <Box mb={{ base: "20px", md: "50px" }} alignItems={"center"} justifyContent={"center"}>
             <Flex
                 justify="center"  // Centra los elementos horizontalmente
@@ -23,9 +41,9 @@ export default function ElementoPrimero(props: { }) {
                     spacing={{ base: "30px", md: "50px" }}  // Espacio entre los elementos
                 >
                     <Box w={{ sd: "auto", md: "200px" }} mt={{ base: "0px", md: "25px", xl: "25px" }}>
-                        <CircProgressMini caloriesPorAhora={'1300'} caloriesObjetivo={'2000'} percentage={66} />
+                        <CircProgressMini caloriesPorAhora={caloriasHoy} caloriesObjetivo={caloriasObj} percentage={(caloriasHoy/caloriasObj)*100} />
                     </Box>
-                    <MacroCalView />
+                    <MacroCalView macroPorcentaje={props.macroPorcentaje}/>
                 </SimpleGrid>
             </Flex>
         </Box>
@@ -46,6 +64,7 @@ export default function ElementoPrimero(props: { }) {
         <Box w="100%" borderBottom="2px solid black" my="20px" />
         <EBookButton texto={'Fasting'}></EBookButton>
         {/* lista de botones dependiendo del estado  */}
+    </>}
     </>
 
   );

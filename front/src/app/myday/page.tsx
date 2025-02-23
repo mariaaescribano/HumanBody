@@ -29,137 +29,172 @@ import PopUpMessage from '@/components/global/message/PopUpMessage';
 import PopUpErrorMessage from '@/components/global/message/PopUpErrorMessage';
 import PurpleSpinner from '@/components/global/random/Spinner';
 import CustomCard from '@/components/global/cards/CustomCard';
-import { getInternetDateParts } from '../../../GlobalHelper';
+import { API_URL, crearRecibo, dameDatosDelRecibo, getInternetDateParts } from '../../../GlobalHelper';
 import { CircProgressMini } from '@/components/myday/CircProgressMini';
 import MacroCalView from '@/components/myday/MacroCalView';
 import ElementoPrimero from '@/components/myday/ElementoPrimero';
 import { ArrowLeftIcon, ArrowRightIcon } from "@chakra-ui/icons";
 import MacroNutrCard from '@/components/signin/MacroNutrCard';
+import { macroPorcentajes, reciboSkeleton } from '../../../../backend/src/dto/recibos.dto';
 
 export default function MyDay() 
 {
-  const textColor = useColorModeValue('secondaryGray.900', 'white');
+  // lo necesario para 1 dia en sessionstorage
+  const idReciboDeHoy = useRef<number>(-1);
+  const idReciboObjetivo = useRef<number>(-1);
 
-  const [peso, setPeso] = useState<string>("");
-  const [altura, setAltura] = useState<string>("");
-  const [exerciseFrequency, setexerciseFrequency] = useState<string>("");
-  const [objetivo, setObjetivo] = useState<string>("");
-  const [nom, setnom] = useState<string>("");
-  const [contra, setcontra] = useState<string>("");
-  const [genero, setgenero] = useState<string>("");
-  const [edad, setedad] = useState<string>("");
+  // lo q el usuario consume en 1 dia se guarda aqui
+  const [reciboDeHoy, setreciboDeHoy ] = useState< reciboSkeleton >(
+    {
+      grasas:"0",
+      monoinsaturadas:"0",
+      poliinsaturadas:"0",
+      saturadas:"0",
+      prote:"0",
+      incompleto:"0",
+      completo:"0",
+      carbs:"0",
+      complejos:"0",
+      simples:"0",
+      fibra:"0"
+    }
+  );
 
-  const [filled, setfilled] = useState<boolean>(true);
-  const [nomExiste, setnomExiste] = useState<boolean>(false);
-  const [datosAntes, setDatosAntes] = useState<boolean | undefined>(undefined);
+  const [reciboObjetivo, setreciboObjetivo ] = useState< reciboSkeleton | null >(null);
 
-//   useEffect(() => 
-//   {
-//     const userStr = sessionStorage.getItem("user");
-//     if (userStr) 
-//     {
-//       const user = JSON.parse(userStr); 
-//       if(user)
-//       {
-//         setPeso(user.peso)
-//         setAltura(user.altura)
-//         setexerciseFrequency(user.exerciseFrequency)
-//         setObjetivo(user.objetivo)
-//         setnom(user.nombre)
-//         setcontra(user.contra)
-//         setedad(user.edad)
+  // y el porcentaje aqui
+  const [macroPorcentaje, setmacroPorcentajes ] = useState< macroPorcentajes | null >(null);
 
-//         setDatosAntes(true);
-//       }
-//       else
-//       {
-//         setDatosAntes(false);
-//       }
-//     }
-//     else
-//     {
-//       setDatosAntes(false);
-//     }
-//     // eslint-disable-next-line react-hooks/exhaustive-deps
-//   }, []);
+  ///////////////////// END DECLARATIONS /////////////////////
 
-//   const comprobarSiPoderPaso2 = () =>
-//   {
-//     if(!StringIsNull(peso)
-//     && !StringIsNull(altura)
-//     && !StringIsNull(exerciseFrequency)
-//     && !StringIsNull(objetivo)
-//     && !StringIsNull(nom)
-//     && !StringIsNull(contra)
-//     && !StringIsNull(genero) && nomExiste== false)
-//     {
-//         // quitar comillas
-//         let pesoSinComillas = peso.replace(/^"|"$/g, '');
-//         let alturaSinComillas = altura.replace(/^"|"$/g, '');
-//         let edadSinComillas = edad.replace(/^"|"$/g, '');
-//         let generoSinComillas = genero.replace(/^"|"$/g, '');
-//         let nombreSinComillas = nom.replace(/^"|"$/g, '');
-//         let contraSinComillas = contra.replace(/^"|"$/g, '');
 
-//        const user:createUserSkeleton = {
-//         nombre:nombreSinComillas,
-//         contra:contraSinComillas,
-//         peso:pesoSinComillas,
-//         altura:alturaSinComillas,
-//         nivel_actividad:exerciseFrequency,
-//         calorias_objetivo:"",
-//         objetivo:objetivo,
-//         recibo: NaN,
-//         genero: generoSinComillas,
-//         edad:edadSinComillas
-//       };
 
-//       sessionStorage.clear();
-//       sessionStorage.setItem("user", JSON.stringify(user));
 
-//       location.href = "./parte2";
 
-//     }
-//     else
-//     {
-//       setfilled(false);
-//     }
-//   };
+  // 0: mira si ya hay recibo y calorias para el dia de hoy, si no lo hay lo crea
+  useEffect(() => 
+  {
+    let id = sessionStorage.getItem("reciboDeHoy");
+    let idReciboObjetivoo = sessionStorage.getItem("reciboObjetivo");
 
-//   const writingName = (e:any) =>
-//   {
-//     let nom =e.target.value;
-//     setnom(nom)
-//     if(nom!= "")
-//       existeName(nom);
-//   };
+    // no hay nada en la BD, lo creo de zero
+    if(id == null )
+    {
+      creaRecibo();
+    }
+    // ya hay datos en la BD, los recoge
+    else if(id &&idReciboObjetivoo)
+    {
+      recuperaDatosSiSSNoVacia(id,  idReciboObjetivoo)
+    }
+     
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-//   const existeName = async (nombre:string) =>
-//   {
-//     try{
-//     const response = await axios.get(
-//       `${API_URL}/usuarios/userExist/${nombre}`,
-//       {
-//         headers: {
-//             'Content-Type': 'application/json'
-//         },
-//       }
-//     );
-//       if(response.data != null)
-//       {
-//         setnomExiste(response.data.exists);
-//       }
-//     }
-//     catch (error) {
-//     console.error('Error fetching data:', error);
-//     }
-//   } 
-const alignSelfValue = useBreakpointValue({ base: "center", md: "flex-start" });
+  // recupera id de reciboDeHoy y de Objetivo 
+  const recuperaDatosSiSSNoVacia = async (id:string, idReciboObjetivoo: string) =>
+  {
+    idReciboDeHoy.current = parseInt(id, 10);
+    await dameDatosDelRecibo(idReciboDeHoy.current, setreciboDeHoy);
+    await dameDatosDelRecibo(parseInt(idReciboObjetivoo, 10), setreciboObjetivo);
+    idReciboObjetivo.current = parseInt(idReciboObjetivoo, 10);
+  };
+
+
+  const creaRecibo = async () =>
+  {
+    idReciboDeHoy.current = await crearRecibo(reciboDeHoy);
+    await crearDia(idReciboDeHoy.current);
+
+    let nombreuser = sessionStorage.getItem("userNom");
+    if(nombreuser)
+    {
+      let datos = await dameUsuarioReciboObjetivo(nombreuser);
+    
+      sessionStorage.setItem("reciboObjetivo", datos.recibo_id)
+      sessionStorage.setItem("caloriasObjetivo", datos.calorias_objetivo)
+      sessionStorage.setItem("caloriasDeHoy", "0")
+
+      dameDatosDelRecibo(datos.recibo_id, setreciboObjetivo);
+      idReciboObjetivo.current = datos.recibo_id;
+    }
+
+    sessionStorage.setItem("reciboDeHoy", idReciboDeHoy.current.toString())
+  };
+
+
+  const dameUsuarioReciboObjetivo = async (nombre:string) =>
+  {
+    try{
+      const response = await axios.get(
+        `${API_URL}/usuarios/usuCaloriasReciboObjetivo/${nombre}`,
+        {
+          headers: {
+              'Content-Type': 'application/json'
+          },
+        }
+      );
+      if(response.data)
+        return response.data;
+      }
+      catch (error) {
+      console.error('Error fetching data:', error);
+      }
+  };
+
+  const crearDia = async (reciboDeHoy:number) =>
+    {
+      try{
+        const response = await axios.post(
+          `${API_URL}/dias/createDia`,
+          { reciboDeHoy },
+          {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+          }
+        );
+        if(response.data)
+          sessionStorage.setItem("diaId", response.data)
+        }
+        catch (error) {
+        console.error('Error fetching data:', error);
+        }
+  };
+
+  
+
+  // cada vez q el recibo cambia se actualiza el porcentaje
+  useEffect(() => 
+  {
+    if(reciboObjetivo!= null)
+    {
+      let protePorcentaje = calcularPorcentaje(parseInt(reciboDeHoy.prote, 10), parseInt(reciboObjetivo.prote, 10))
+      let fatPorcentaje = calcularPorcentaje(parseInt(reciboDeHoy.grasas, 10), parseInt(reciboObjetivo.grasas, 10))
+      let carbsPorcentaje = calcularPorcentaje(parseInt(reciboDeHoy.carbs, 10), parseInt(reciboObjetivo.carbs, 10))
+      let fibraPorcentaje = calcularPorcentaje(parseInt(reciboDeHoy.fibra, 10), parseInt(reciboObjetivo.fibra, 10))
+      console.log(reciboDeHoy.prote, parseInt(reciboDeHoy.prote, 10), parseInt(reciboObjetivo.prote, 10))
+      setmacroPorcentajes({
+        prote:protePorcentaje,
+        grasas:fatPorcentaje,
+        carbs:carbsPorcentaje,
+        fibra:fibraPorcentaje
+      });
+    } 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reciboDeHoy, reciboObjetivo]);
+
+  const calcularPorcentaje = (parte:number, total:number) => {
+    return total > 0 ? (parte / total) * 100 : 0;
+  };
 
 
 
   return (
-    <Flex
+    <>
+    
+    {macroPorcentaje!= null && 
+      <Flex
         direction="column"
         align="center"
         bg="purple.100"
@@ -219,7 +254,7 @@ const alignSelfValue = useBreakpointValue({ base: "center", md: "flex-start" });
         </Card>
 
        {/* calorias y macronutrients overall view */}
-       <CustomCard hijo={<ElementoPrimero></ElementoPrimero>}></CustomCard>
+        <CustomCard hijo={<ElementoPrimero macroPorcentaje={macroPorcentaje}></ElementoPrimero>}></CustomCard>
 
        <CustomCard hijo={ <Button
                fontSize="sm"
@@ -281,9 +316,11 @@ const alignSelfValue = useBreakpointValue({ base: "center", md: "flex-start" });
                        />
                 */}
        
+       </Flex>} 
 
-      {datosAntes == undefined && <PurpleSpinner></PurpleSpinner>}
 
-    </Flex>);
+      {macroPorcentaje == null && <PurpleSpinner></PurpleSpinner>} 
+      </>
+    );
 
 }

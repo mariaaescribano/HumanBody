@@ -15,4 +15,14 @@ export class FichasService {
     const idRecibo = result.insertId;
     return idRecibo;
   }
+
+  async findReciboCaloriasDeUserFicha(idFicha: number) 
+  {
+    const sql = 'SELECT calorias_objetivo, recibo_id FROM ficha WHERE id = ?';
+    const result = await this.databaseService.query(sql, [idFicha]);
+    return result;
+  }
+
+
+  
 }

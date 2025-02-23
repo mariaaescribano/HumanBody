@@ -1,6 +1,7 @@
 
 export interface alimentosSkeleton 
 {
+    id?:string;
     nombre:string;
     calorias_100gr:string;
     gramos:string;

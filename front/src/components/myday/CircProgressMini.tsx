@@ -56,7 +56,7 @@ import {
 //   );
 // }
 
-export function CircProgressMini(props: {  caloriesPorAhora:string; caloriesObjetivo:string; percentage:number }) {
+export function CircProgressMini(props: {  caloriesPorAhora:number; caloriesObjetivo:number; percentage:number }) {
     let textColor = useColorModeValue('secondaryGray.900', 'white');
   
     // Usando valores hexadecimales directamente para pathColor

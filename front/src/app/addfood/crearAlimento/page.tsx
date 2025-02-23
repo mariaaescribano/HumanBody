@@ -77,12 +77,19 @@ export default function CrearAlimento()
   // cada vez q el recibo cambia, se actualizan los valores del piechardData (array de numbers para porcentajes)
   useEffect(() => 
   {
-    if(recibo.prote != "" && recibo.grasas!= "" && recibo.carbs!= "" && recibo.fibra!= "")
-    {
-      let lista = [parseInt(recibo.prote, 10), parseInt(recibo.grasas, 10), parseInt(recibo.carbs, 10), parseInt(recibo.fibra, 10)] 
-      let porcentajes = calcularPorcentajes(lista)
-      setpieChardData(porcentajes)
-    }
+    // compruebo si screensize tiene valor para q no se cargue esto antes de tiempo
+    // si se cargase, el pieChard seria 0,0,0,0 y no queremos eso
+    if(screenSize!="")
+      {
+        let lista = [parseInt(recibo.prote == "" ? "0" : recibo.prote, 10), 
+          parseInt(recibo.grasas == "" ? "0" : recibo.grasas, 10), 
+          parseInt(recibo.carbs == "" ? "0" : recibo.carbs, 10), 
+          parseInt(recibo.fibra == "" ? "0" : recibo.fibra, 10)]
+    
+        let porcentajes = calcularPorcentajes(lista)
+        setpieChardData(porcentajes)
+      }
+    
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recibo]);
  
@@ -117,6 +124,7 @@ export default function CrearAlimento()
   const quePredomina = () =>
   {
     let predomina = 0;
+    // console.log(pieChardData)
     if(pieChardData[0] > pieChardData[1] && pieChardData[0] > pieChardData[2])
     {
       predomina = 0;
@@ -319,7 +327,7 @@ export default function CrearAlimento()
         {screenSize != "" &&  <CustomCard hijo={  <MacroNutrCardEdit recibo={recibo} setrecibo={setrecibo} totalMacro={reciboConstNames.carbs} screenSize={screenSize} infoLista={[reciboConstNames.complejos, reciboConstNames.simples]}></MacroNutrCardEdit>}></CustomCard>}
 
         {screenSize != "" && <CustomCard hijo={ 
-       <FiberCard edit={true} totalFiber={""} screenSize={screenSize}></FiberCard>}></CustomCard>}
+       <FiberCard edit={true} recibo={recibo}  setrecibo={setrecibo}  totalFiber={""} screenSize={screenSize}></FiberCard>}></CustomCard>}
 
 
         </Flex>}
