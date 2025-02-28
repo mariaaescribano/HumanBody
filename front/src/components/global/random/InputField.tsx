@@ -13,6 +13,7 @@ export default function InputField(props: {
 	type?: string;
 	toolTipText?:string;
 	mb?:string;
+	disabled?:boolean;
 	[x: string]: any;
 }) {
 	const { id, label, extra, placeholder, type, toolTipText, mb, ...rest } = props;
@@ -38,6 +39,7 @@ export default function InputField(props: {
 				{...rest}
 				type={type}
 				id={id}
+				disabled={props.disabled}
                 border="1px solid gray"
                 borderRadius={"10px"}
 				fontWeight='500'

@@ -7,6 +7,7 @@ import { reciboConstNames, reciboSkeleton } from '../../../../../backend/src/dto
 import { useEffect, useRef } from 'react';
 import { esSoloNumeros } from '../../../../GlobalHelper';
 import InputField from '@/components/global/random/InputField';
+import { CaloryIcon } from '@/components/icons/CaloryIcon';
 
 
 
@@ -39,8 +40,12 @@ export default function CalorGramsSelectCard(props: { calories:string, grams:str
                     fontSize='sm'
                     color={textColorPrimary}
                     fontWeight='bold'
+                
                     _hover={{ cursor: 'pointer' }}>
-                    {"Total Calories:"}
+                        <HStack>
+                            <CaloryIcon />
+                            <Text fontSize="14px" whiteSpace="nowrap" flexShrink={0} w="100%">Total Calories:</Text>
+                        </HStack>
                 </FormLabel>
                 <Input
                     border="1px solid gray"

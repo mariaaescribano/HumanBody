@@ -5,4 +5,5 @@ export interface diasSkeleton
     recibo_id:number;
     calorias_total:string;
     alimentos_id:string;
+    fecha:string;
 };

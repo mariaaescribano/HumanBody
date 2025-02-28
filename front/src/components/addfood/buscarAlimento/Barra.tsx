@@ -4,7 +4,7 @@ import {
     MdSearch
   } from 'react-icons/md';
 import { CarbIcono, ProteIcono } from '../../../../GlobalHelper';
-import { FatIcono } from '@/components/global/random/FatIcon';
+import { FatIcono } from '@/components/icons/FatIcon';
 
 // Componente de búsqueda
 function Barra(props: {setquienPulsado:React.Dispatch<React.SetStateAction<number>>, quienPulsado:number}) 

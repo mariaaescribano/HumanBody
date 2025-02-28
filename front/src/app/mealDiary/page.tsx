@@ -38,8 +38,11 @@ import MacroNutrCard from '@/components/signin/MacroNutrCard';
 import { macroPorcentajes, reciboSkeleton, showMacroNutrSignUp } from '../../../../backend/src/dto/recibos.dto';
 import { showEbook } from '../../../../backend/src/dto/ebook.dto';
 import FiberCard from '@/components/global/cards/FiberCard';
+import { PieChardMacroNutr } from '@/components/global/cards/PieChardMacroNutr';
+import InputField from '@/components/global/random/InputField';
+import EBookButton from '@/components/global/random/EBookButton';
 
-export default function MyDay() 
+export default function mealDiary() 
 {
   // lo necesario para 1 dia en sessionstorage
   const idReciboDeHoy = useRef<number>(-1);
@@ -47,7 +50,7 @@ export default function MyDay()
 
   const [screenSize, setscreenSize ] = useState<string>("");
 
-  // lo q el usuario consume en 1 dia se guarda aqui
+  // lo q el usuario ha consumido en 1 dia se guarda aqui
   const [reciboDeHoy, setreciboDeHoy ] = useState< reciboSkeleton >(
     {
       grasas:"0",
@@ -75,58 +78,44 @@ export default function MyDay()
 
 
 
-  // 0: mira si ya hay recibo y calorias para el dia de hoy, si no lo hay lo crea
+  // 0: encuentra datos en el ss
   useEffect(() => 
   {
-    let id = sessionStorage.getItem("reciboDeHoy");
-    let idReciboObjetivoo = sessionStorage.getItem("reciboObjetivo");
-    getTamanyoPantalla(setscreenSize)
-
-    // no hay nada en la BD, lo creo de zero
-    // console.log(id)
-    if(id == null )
-    {
-      creaRecibo();
-    }
-    // ya hay datos en la BD, los recoge
-    else if(id && idReciboObjetivoo)
-    {
-      recuperaDatosSiSSNoVacia(id,  idReciboObjetivoo)
-    }
-     
+    let userNom = sessionStorage.getItem("userNom");
+    if(userNom)
+      getDiaAnterior(userNom);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // recupera id de reciboDeHoy y de Objetivo 
-  const recuperaDatosSiSSNoVacia = async (id:string, idReciboObjetivoo: string) =>
+  // 1:  funcion q vea q dia es hoy y q te devuelva el dia de ayer
+  const getDiaAnterior = async (userNom:string) =>
   {
-    idReciboDeHoy.current = parseInt(id, 10);
-    await dameDatosDelRecibo(idReciboDeHoy.current, setreciboDeHoy);
-    await dameDatosDelRecibo(parseInt(idReciboObjetivoo, 10), setreciboObjetivo);
-    idReciboObjetivo.current = parseInt(idReciboObjetivoo, 10);
+    console.log("efewwwwwwwwwwwwwwwfw")
+    let dia = await getFecha();
+    let idDia = await getUserYesterday(userNom, dia);
+
   };
 
 
-  const creaRecibo = async () =>
+  const getUserYesterday = async (userNom:string, dia:string) =>
   {
-    idReciboDeHoy.current = await crearRecibo(reciboDeHoy);
-    await crearDia(idReciboDeHoy.current);
-
-    let nombreuser = sessionStorage.getItem("userNom");
-    // console.log(nombreuser)
-    if(nombreuser)
-    {
-      let datos = await dameUsuarioReciboObjetivo(nombreuser);
-    
-      sessionStorage.setItem("reciboObjetivo", datos.recibo_id)
-      sessionStorage.setItem("caloriasObjetivo", datos.calorias_objetivo)
-      sessionStorage.setItem("caloriasDeHoy", "0")
-
-      dameDatosDelRecibo(datos.recibo_id, setreciboObjetivo);
-      idReciboObjetivo.current = datos.recibo_id;
-    }
-
-    sessionStorage.setItem("reciboDeHoy", idReciboDeHoy.current.toString())
+    console.log("efewfw")
+    try{
+      const response = await axios.get(
+        `${API_URL}/dias/diaAnterior/${userNom}/${dia}`,
+        {
+          headers: {
+              'Content-Type': 'application/json'
+          },
+        }
+      );
+      console.log(response.data)
+      if(response.data)
+        return response.data;
+      }
+      catch (error) {
+      console.error('Error fetching data:', error);
+      }
   };
 
 
@@ -148,33 +137,6 @@ export default function MyDay()
       console.error('Error fetching data:', error);
       }
   };
-
- 
-
-
-  const crearDia = async (reciboDeHoy:number) =>
-  {
-    let fecha = await getFecha();
-    let userNom = sessionStorage.getItem("userNom");
-    try{
-      const response = await axios.post(
-        `${API_URL}/dias/createDia`,
-        { reciboDeHoy, fecha, userNom},
-        {
-          headers: {
-              'Content-Type': 'application/json'
-          },
-        }
-      );
-      if(response.data)
-        sessionStorage.setItem("diaId", response.data)
-      }
-      catch (error) {
-      console.error('Error fetching data:', error);
-      }
-  };
-
-  
 
   // cada vez q el recibo cambia se actualiza el porcentaje
   useEffect(() => 
@@ -350,12 +312,12 @@ export default function MyDay()
             >
             <HStack justify="space-between" width="100%" align="center">
                 {/* Botón con flecha hacia la izquierda */}
-                {/* <IconButton
+                <IconButton
                 icon={<ArrowLeftIcon />}
                 aria-label="Go Left"
                 onClick={() => alert("Going Left")}
                 variant="ghost"
-                /> */}
+                />
 
                 {/* Contenido Central */}
                 <VStack alignItems={"center"}>
@@ -363,33 +325,65 @@ export default function MyDay()
                     MY DAY
                 </Text>
                 <HStack spacing="5px" alignItems="center">
-                {/* Ícono SVG */}
+      {/* Ícono SVG */}
 
-                  <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#000000">
-                    <path d="M202.87-71.87q-37.78 0-64.39-26.61t-26.61-64.39v-554.26q0-37.78 26.61-64.39t64.39-26.61H240v-80h85.5v80h309v-80H720v80h37.13q37.78 0 64.39 26.61t26.61 64.39v554.26q0 37.78-26.61 64.39t-64.39 26.61H202.87Zm0-91h554.26V-560H202.87v397.13Zm0-477.13h554.26v-77.13H202.87V-640Zm0 0v-77.13V-640Z"/>
-                  </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#000000">
+          <path d="M202.87-71.87q-37.78 0-64.39-26.61t-26.61-64.39v-554.26q0-37.78 26.61-64.39t64.39-26.61H240v-80h85.5v80h309v-80H720v80h37.13q37.78 0 64.39 26.61t26.61 64.39v554.26q0 37.78-26.61 64.39t-64.39 26.61H202.87Zm0-91h554.26V-560H202.87v397.13Zm0-477.13h554.26v-77.13H202.87V-640Zm0 0v-77.13V-640Z"/>
+        </svg>
 
 
-                {/* Texto */}
-                <Text color={"black"} fontSize="md" fontWeight="700">
-                  12/09/2033
-                </Text>
-              </HStack>
+      {/* Texto */}
+      <Text color={"black"} fontSize="md" fontWeight="700">
+        12/09/2033
+      </Text>
+    </HStack>
                 </VStack>
 
                 {/* Flecha hacia la derecha */}
-                {/* <IconButton
+                <IconButton
                 icon={<ArrowRightIcon />}
                 aria-label="Go Right"
                 variant="ghost"
-                /> */}
+                />
             </HStack>
         </Card>
 
        {/* calorias y macronutrients overall view */}
-        <CustomCard hijo={<ElementoPrimero macroPorcentaje={macroPorcentaje}></ElementoPrimero>}></CustomCard>
+        <CustomCard hijo={
+          <>
+            <Box mb={{ base: "20px", md: "50px" }} alignItems={"center"} justifyContent={"center"}>
+              <Flex
+                  justify="center"  // Centra los elementos horizontalmente
+                  align="center"    // Centra los elementos verticalmente
+              >
+                  <SimpleGrid
+                      w={{ base: "100%", md: "70%" }}  
+                      columns={{ base: 1, md: 2 }}  // En pantallas pequeñas, 1 columna; en pantallas medianas, 2 columnas
+                      spacing={{ base: "30px", md: "50px" }}  // Espacio entre los elementos
+                  >
+                      <Box w={{ sd: "auto", md: "200px" }} mt={{ base: "0px", md: "25px", xl: "25px" }}>
+                          <PieChardMacroNutr pieChartData={pieChardData} />
+                      </Box>
+                      <MacroCalView macroPorcentaje={props.macroPorcentaje}/>
+                  </SimpleGrid>
+              </Flex>
+            </Box>
+          
+            <InputField
+              mb="20px"
+              // onChange= {(e:any) => foodName.current = e.target.value}
+              id="first"
+              disa
+              placeholder="Apple"
+              label="Food Name"
+              />
+    
+            <Box w="100%" borderBottom="2px solid black" my="20px" />
+            <EBookButton texto={'What happens if...?'}></EBookButton>
+          </>
+        }></CustomCard>
 
-       <CustomCard hijo={ 
+       {/* <CustomCard hijo={ 
         <>
         <Text mb="20px" textAlign="left" alignSelf="flex-start"
             justifySelf="flex-start">Learn about the past ...</Text>
@@ -455,10 +449,11 @@ export default function MyDay()
 
       </>} 
 
-       </Flex>} 
+       </Flex>}  */}
 
 
       {macroPorcentaje == null && <PurpleSpinner></PurpleSpinner>} 
+      </Flex>} 
       </>
     );
 

@@ -46,6 +46,7 @@ export default function login()
         {
           if(response.data.exists == true)
           {
+            sessionStorage.clear()
             sessionStorage.setItem("userNom", nom)
             location.href = "../../myday"
           }

@@ -7,9 +7,9 @@ import { diasSkeleton } from 'src/dto/dias.dto';
 export class DiasController {
   constructor(private readonly diasService: DiasService) {}
   @Post('createDia')
-  async create(@Body() body: { reciboDeHoy: number }) 
+  async create(@Body() body: { reciboDeHoy: number, fecha:string, userNom:string }) 
   {
-    return await this.diasService.createDia(body.reciboDeHoy);
+    return await this.diasService.createDia(body.reciboDeHoy, body.fecha, body.userNom);
   }
 
   // update alimentos y calorias
@@ -18,4 +18,14 @@ export class DiasController {
     let todoBien = await this.diasService.updateDiaAlimentosCalorias(idDia, body.alimentoId, body.calorias);
     return { message: todoBien ? "Alimentos de día actualizado" : "No ok" };
   }
+
+  @Get("diaAnterior/:userNom/:fecha")
+  async returnReciboConcreto(
+    @Param('userNom') userNom: string,
+    @Param('fecha') fecha: string
+  ) {
+    const recibo = await this.diasService.getDiaAnteriorDeUser(userNom, fecha);
+    return { recibo: recibo };
+  }
+  
 }

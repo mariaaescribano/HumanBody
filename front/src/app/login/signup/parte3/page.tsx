@@ -372,7 +372,7 @@ export default function SignUp3()
             }
 
             {!ObjectIsNull(recibo) && recibo != null && 
-                <CustomCard mb="50px"
+                <CustomCard 
                 hijo={ 
                     <MacroNutrCard 
                     title={'CARBS'} 
@@ -387,7 +387,7 @@ export default function SignUp3()
 
 
             {!ObjectIsNull(recibo) && recibo != null && 
-            <CustomCard hijo={
+            <CustomCard mb="50px" hijo={
                 <FiberCard edit={false} totalFiber={recibo.fibra} screenSize={screenSize} ebooklista={fiberEbooks}></FiberCard>}> 
             </CustomCard>}
 

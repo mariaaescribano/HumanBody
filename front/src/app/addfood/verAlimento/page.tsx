@@ -222,6 +222,7 @@ export default function VerAlimento()
   {
     //  se coge su recibo
     let idreciboDeHoy = sessionStorage.getItem("reciboDeHoy");
+    console.log(idreciboDeHoy)
     if(idreciboDeHoy!= null)
     {
       await dameDatosDelRecibo(parseInt(idreciboDeHoy, 10), setreciboHoy);
@@ -240,7 +241,7 @@ export default function VerAlimento()
       // se hace la suma
       let idreciboDeHoy = sessionStorage.getItem("reciboDeHoy");
       let reciboSuma = sumaDeMacros(reciboPersonalizado, reciboHoy);
-
+      console.log(reciboSuma)
       if(reciboSuma && idreciboDeHoy)
       {
         update(reciboSuma, idreciboDeHoy);
@@ -287,6 +288,7 @@ export default function VerAlimento()
               },
             }
         );
+        console.log(response.data)
         if(response.data != null)
           return true;
       }

@@ -57,7 +57,8 @@ export default function ElementoPrimero(props: {macroPorcentaje: macroPorcentaje
         p="10px"
         _hover={{bg:"gray.100"}}
         rightIcon={<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M417-417H166v-126h251v-251h126v251h251v126H543v251H417v-251Z"/></svg>}
-        onClick={()=> location.href = "../addfood/buscarAlimento"}
+        as="a"
+        href="../addfood/buscarAlimento"
         >
         </Button>
 

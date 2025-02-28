@@ -36,6 +36,8 @@ const dameDatosDeAlimento = async () =>
 
 };
 
+#
+
 
 
 
@@ -47,7 +49,10 @@ ORDEN: prote: "#610C04" -fats:"#abdefa" -carbs:"#EDC9AF"
 
 
 PARA HOY
-- añadir alimento y q se sume al reciboDeHoy
-- ademas, los alimentos seleccionados se tienen q guardar --> hacer lista con ids
+- hacer diarios de alimentos 
+--> acabar funcion de dias.service
+--> probarla
 
-- añadir flecha en buscar Alimento para volver a pagina de myday
+
+- hacer ficha de explicacion
+

@@ -1,10 +1,11 @@
 'use client';
-import { Box, Text, useColorModeValue } from '@chakra-ui/react';
+import { Box, HStack, Text, useColorModeValue } from '@chakra-ui/react';
 import {
     buildStyles,
     CircularProgressbarWithChildren,
   } from 'react-circular-progressbar';
   import 'react-circular-progressbar/dist/styles.css'; // ¡No olvides importar los estilos!
+import { CaloryIcon } from '../icons/CaloryIcon';
   
 
 // export default function CircProgress(props: {
@@ -86,10 +87,14 @@ export function CircProgressMini(props: {  caloriesPorAhora:number; caloriesObje
         text={"dee"}
         styles={buildStyles(stylesColorMode)}
       >
-        <Box>
-          <Text fontSize="10px" color={textColor} fontWeight="700">
-            CALORIES
-          </Text> 
+        <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
+          <HStack>
+            <CaloryIcon />
+            <Text fontSize="10px" color={textColor} fontWeight="700">
+              CALORIES
+            </Text> 
+          </HStack>
+          
           <Text fontSize="45px" color={textColor} fontWeight="700">
             {props.caloriesPorAhora}
           </Text>

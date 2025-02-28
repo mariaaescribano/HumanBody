@@ -30,6 +30,7 @@ import PurpleSpinner from '@/components/global/random/Spinner';
 import MeryTooltip from '@/components/global/random/MeryToolTip';
 import CustomCard from '@/components/global/cards/CustomCard';
 import TitleCard from '@/components/signin/TitleCard';
+import { CaloryIcon } from '@/components/icons/CaloryIcon';
 
 export default function SignUp2() 
 {
@@ -278,7 +279,10 @@ export default function SignUp2()
           {/* Horizontal Line */}
           <Box w="100%" borderBottom="2px solid black" my="20px" />
           <Flex justify="space-between" w="100%" fontSize="xl" fontWeight={"bold"} mb="20px">
+            <HStack>
+              <CaloryIcon />
               <Text>TOTAL CALORIES </Text>
+            </HStack>
               <Text>{caloriesWithObjective.current} kcal</Text>
           </Flex>
 

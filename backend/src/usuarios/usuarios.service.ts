@@ -38,4 +38,26 @@ export class UsuariosService {
     const result = await this.databaseService.query(sql, params);
     return result.length > 0 ? true : false;
   }
+
+
+
+
+
+
+
+  // llamado por dias.service
+  async dameDiasDeUserNom(nom: string ) 
+  {
+    const sql = 'SELECT dias_ids FROM usuarios WHERE nombre = ?';
+    const params = [nom];
+    const result = await this.databaseService.query(sql, params);
+    return result;
+  }
+
+  async updateDiasUsuario( idDia: string, userNom:string ) 
+  {
+    const sql = `UPDATE usuarios SET dias_ids = CONCAT(dias_ids, ',', ?) WHERE nombre = ?`;
+    await this.databaseService.query(sql, [ idDia, userNom]);
+  }
+  
 }

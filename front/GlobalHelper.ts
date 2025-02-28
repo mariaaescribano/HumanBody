@@ -117,6 +117,7 @@ export const crearRecibo = async (recibo: reciboSkeleton) =>
       );
         if(response.data != null)
         {
+          console.log(response.data)
           let recibo = response.data.recibo[0];
           let newRecibo : reciboSkeleton =
           {
@@ -201,6 +202,27 @@ export const sumaDeMacros =  (reciboPersonalizado:reciboSkeleton, reciboHoy:reci
 
   return newRecibo;
 };
+
+
+
+export const getFecha = async () => {
+  const madridDate = new Date().toLocaleString('es-ES', {
+    timeZone: 'Europe/Madrid',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  });
+
+  // Convertimos la fecha a formato "DD-MM-YYYY"
+  const [day, month, year] = madridDate.split('/');
+  const formattedDate = `${year}-${month}-${day}`;
+
+  return formattedDate;
+};
+
+
+
+
 
 
 
