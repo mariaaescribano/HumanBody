@@ -19,13 +19,16 @@ export class DiasController {
     return { message: todoBien ? "Alimentos de día actualizado" : "No ok" };
   }
 
-  @Get("diaAnterior/:userNom/:fecha")
-  async returnReciboConcreto(
-    @Param('userNom') userNom: string,
-    @Param('fecha') fecha: string
-  ) {
-    const recibo = await this.diasService.getDiaAnteriorDeUser(userNom, fecha);
-    return { recibo: recibo };
+  @Get("allDias_ids/:userNom")
+  async returnReciboConcreto(@Param('userNom') userNom: string) {
+    const diaId = await this.diasService.getDiaDeUser(userNom);
+    return { diaId };
+  }
+
+  @Get("dia/:idDia")
+  async diaPorId(@Param('idDia') idDia: number) {
+    const dia = await this.diasService.diaPorId(idDia);
+    return {dia};
   }
   
 }

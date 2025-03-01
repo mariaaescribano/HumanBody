@@ -69,6 +69,7 @@ export default function MyDay()
   // y el porcentaje aqui
   const [macroPorcentaje, setmacroPorcentajes ] = useState< macroPorcentajes | null >(null);
 
+  const [fecha, setfecha ] = useState<string>("");
   ///////////////////// END DECLARATIONS /////////////////////
 
 
@@ -100,6 +101,9 @@ export default function MyDay()
   // recupera id de reciboDeHoy y de Objetivo 
   const recuperaDatosSiSSNoVacia = async (id:string, idReciboObjetivoo: string) =>
   {
+    let fechaDeDia = await getFecha();
+    setfecha(fechaDeDia)
+
     idReciboDeHoy.current = parseInt(id, 10);
     await dameDatosDelRecibo(idReciboDeHoy.current, setreciboDeHoy);
     await dameDatosDelRecibo(parseInt(idReciboObjetivoo, 10), setreciboObjetivo);
@@ -109,6 +113,9 @@ export default function MyDay()
 
   const creaRecibo = async () =>
   {
+    let fechaDeDia = await getFecha();
+    setfecha(fechaDeDia)
+
     idReciboDeHoy.current = await crearRecibo(reciboDeHoy);
     await crearDia(idReciboDeHoy.current);
 
@@ -326,7 +333,7 @@ export default function MyDay()
   return (
     <>
     
-    {macroPorcentaje!= null && 
+    {macroPorcentaje!= null && fecha &&
       <Flex
         direction="column"
         align="center"
@@ -348,7 +355,7 @@ export default function MyDay()
             justify="center"
             borderRadius={"20px"}
             >
-            <HStack justify="space-between" width="100%" align="center">
+            <HStack justify="center" width="100%" align="center">
                 {/* Botón con flecha hacia la izquierda */}
                 {/* <IconButton
                 icon={<ArrowLeftIcon />}
@@ -372,7 +379,7 @@ export default function MyDay()
 
                 {/* Texto */}
                 <Text color={"black"} fontSize="md" fontWeight="700">
-                  12/09/2033
+                  {fecha}
                 </Text>
               </HStack>
                 </VStack>

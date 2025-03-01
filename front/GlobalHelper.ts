@@ -117,7 +117,6 @@ export const crearRecibo = async (recibo: reciboSkeleton) =>
       );
         if(response.data != null)
         {
-          console.log(response.data)
           let recibo = response.data.recibo[0];
           let newRecibo : reciboSkeleton =
           {
@@ -147,7 +146,6 @@ export const crearRecibo = async (recibo: reciboSkeleton) =>
           if (recibo.fibra !== "") newRecibo.fibra = recibo.fibra;
 
           setactualiza(newRecibo);
-          
         }
       }
       catch (error) {
@@ -220,6 +218,12 @@ export const getFecha = async () => {
   return formattedDate;
 };
 
+
+
+
+export const calcularPorcentaje = (parte:number, total:number) => {
+  return total > 0 ? (parte / total) * 100 : 0;
+};
 
 
 

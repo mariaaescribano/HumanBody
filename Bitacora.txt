@@ -38,7 +38,7 @@ const dameDatosDeAlimento = async () =>
 
 #
 
-
+@
 
 
 IMPORTANTE: ESTRUCTURACIÓN
@@ -50,9 +50,8 @@ ORDEN: prote: "#610C04" -fats:"#abdefa" -carbs:"#EDC9AF"
 
 PARA HOY
 - hacer diarios de alimentos 
---> acabar funcion de dias.service
---> probarla
-
+--> hacer funcion verPosterior y eliminar o desactivar boton cuando no hay mas fechas ni por delante ni por detras
+--> hacer funcion ISO friendly para las fechas
 
 - hacer ficha de explicacion
 

@@ -5,8 +5,10 @@ import {
   Button,
   Card,
   Flex,
+  FormLabel,
   HStack,
   IconButton,
+  Input,
   Select,
   SimpleGrid,
   Spinner,
@@ -24,15 +26,10 @@ import {
 import axios from 'axios';
 // Custom components
 import React, { useEffect, useState, useRef } from 'react';
-import SelectSignIn from '@/components/signin/SelectSignIn';
-import PopUpMessage from '@/components/global/message/PopUpMessage';
-import PopUpErrorMessage from '@/components/global/message/PopUpErrorMessage';
 import PurpleSpinner from '@/components/global/random/Spinner';
 import CustomCard from '@/components/global/cards/CustomCard';
-import { API_URL, crearRecibo, dameDatosDelRecibo, getFecha, getInternetDateParts, getTamanyoPantalla } from '../../../GlobalHelper';
-import { CircProgressMini } from '@/components/myday/CircProgressMini';
+import { API_URL, calcularPorcentaje, calcularPorcentajes, crearRecibo, dameDatosDelRecibo, getFecha, getTamanyoPantalla } from '../../../GlobalHelper';
 import MacroCalView from '@/components/myday/MacroCalView';
-import ElementoPrimero from '@/components/myday/ElementoPrimero';
 import { ArrowLeftIcon, ArrowRightIcon } from "@chakra-ui/icons";
 import MacroNutrCard from '@/components/signin/MacroNutrCard';
 import { macroPorcentajes, reciboSkeleton, showMacroNutrSignUp } from '../../../../backend/src/dto/recibos.dto';
@@ -41,12 +38,23 @@ import FiberCard from '@/components/global/cards/FiberCard';
 import { PieChardMacroNutr } from '@/components/global/cards/PieChardMacroNutr';
 import InputField from '@/components/global/random/InputField';
 import EBookButton from '@/components/global/random/EBookButton';
+import { diasSkeleton } from '../../../../backend/dist/src/dto/dias.dto';
+import { CaloryIcon } from '@/components/icons/CaloryIcon';
+
+///////////////// ESTRATEGIA /////////////////
+// va a coger todos los dias_ids y los va a guardar
+// cuando el user vaya a atras o hacia delante se mostraran los datos
+// se muestra vacio si no hay nada
 
 export default function mealDiary() 
 {
-  // lo necesario para 1 dia en sessionstorage
-  const idReciboDeHoy = useRef<number>(-1);
-  const idReciboObjetivo = useRef<number>(-1);
+  const dia = useRef<diasSkeleton | null>(null);
+  const userNom = useRef<string>("");
+  const idsFechas = useRef<number[]>([]); // se guardan por orden cronológico
+
+  // lleva cuenta del id de la fecha en la q estamos
+  const [idFecha, setidFecha ] = useState<number>(-1);
+  const [fecha, setfecha ] = useState<string>("");
 
   const [screenSize, setscreenSize ] = useState<string>("");
 
@@ -67,99 +75,157 @@ export default function mealDiary()
     }
   );
 
-  const [reciboObjetivo, setreciboObjetivo ] = useState< reciboSkeleton | null >(null);
-
   // y el porcentaje aqui
   const [macroPorcentaje, setmacroPorcentajes ] = useState< macroPorcentajes | null >(null);
+  const [pieChardData, setpieChardData ] = useState<number[]>([20, 40, 30, 10]);
 
+  const [reciboObjetivo, setreciboObjetivo ] = useState< reciboSkeleton | null >(null);
+ 
   ///////////////////// END DECLARATIONS /////////////////////
-
-
 
 
 
   // 0: encuentra datos en el ss
   useEffect(() => 
   {
-    let userNom = sessionStorage.getItem("userNom");
-    if(userNom)
-      getDiaAnterior(userNom);
+    dia.current=null;
+    getTamanyoPantalla(setscreenSize)
+    let userNomm = sessionStorage.getItem("userNom");
+    if(userNomm)
+    {
+      userNom.current = userNomm;
+      getDiasIds();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // 1:  funcion q vea q dia es hoy y q te devuelva el dia de ayer
-  const getDiaAnterior = async (userNom:string) =>
+  // 1: coge todos los dias_ids
+  const getDiasIds = async () => 
   {
-    console.log("efewwwwwwwwwwwwwwwfw")
-    let dia = await getFecha();
-    let idDia = await getUserYesterday(userNom, dia);
-
-  };
-
-
-  const getUserYesterday = async (userNom:string, dia:string) =>
-  {
-    console.log("efewfw")
     try{
       const response = await axios.get(
-        `${API_URL}/dias/diaAnterior/${userNom}/${dia}`,
+        `${API_URL}/dias/allDias_ids/${userNom.current}`,
         {
           headers: {
               'Content-Type': 'application/json'
           },
         }
       );
-      console.log(response.data)
-      if(response.data)
-        return response.data;
+      if(response.data.diaId)
+      {
+        idsFechas.current = response.data.diaId;
+        // coge del ss el id Dia de hoy (q deberia de ser igual al ultimo de la lista) y lo muestra
+        let diaHoy = sessionStorage.getItem("diaId")
+        if(diaHoy)
+          setidFecha(parseInt(diaHoy, 10));
+        else
+          setidFecha(parseInt(response.data.diaId[response.data.diaId.length-1], 10));
       }
+    }
       catch (error) {
       console.error('Error fetching data:', error);
-      }
+    }
   };
 
-
-  const dameUsuarioReciboObjetivo = async (nombre:string) =>
-  {
-    try{
-      const response = await axios.get(
-        `${API_URL}/usuarios/usuCaloriasReciboObjetivo/${nombre}`,
-        {
-          headers: {
-              'Content-Type': 'application/json'
-          },
-        }
-      );
-      if(response.data)
-        return response.data;
-      }
-      catch (error) {
-      console.error('Error fetching data:', error);
-      }
-  };
-
-  // cada vez q el recibo cambia se actualiza el porcentaje
+  // 2: ya tenemos el id del dia q tenemos q mostrar
   useEffect(() => 
   {
-    if(reciboObjetivo!= null)
+    const cogeDiaYRecibo = async () =>
+    {
+      let diaObjeto = await dameDiaConcreto(idFecha);
+      if (diaObjeto.dia[0]) 
+      {
+        setfecha(diaObjeto.dia[0].fecha)
+        let reciboObj = sessionStorage.getItem("reciboObjetivo")
+        if(reciboObj)
+          await dameDatosDelRecibo(parseInt(reciboObj, 10), setreciboObjetivo);
+
+        await dameDatosDelRecibo(diaObjeto.dia[0].recibo_id, setreciboDeHoy);
+      } 
+      else 
+      {
+        setmacroPorcentajes({
+          prote:0,
+          grasas:0,
+          carbs:0,
+          fibra:0 });
+          setpieChardData([20, 40, 30, 10])
+          dia.current = null;
+      }
+    };
+
+    if(idFecha != -1)
+      cogeDiaYRecibo();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [idFecha]);
+
+  // 3: si todo ha ido bien el reciboHoy deberia de haber cambiado
+  useEffect(() => 
+  {
+    // ahora ya podemos poner los datos del primer bloque
+    if(reciboDeHoy && reciboObjetivo)
     {
       let protePorcentaje = calcularPorcentaje(parseInt(reciboDeHoy.prote, 10), parseInt(reciboObjetivo.prote, 10))
       let fatPorcentaje = calcularPorcentaje(parseInt(reciboDeHoy.grasas, 10), parseInt(reciboObjetivo.grasas, 10))
       let carbsPorcentaje = calcularPorcentaje(parseInt(reciboDeHoy.carbs, 10), parseInt(reciboObjetivo.carbs, 10))
       let fibraPorcentaje = calcularPorcentaje(parseInt(reciboDeHoy.fibra, 10), parseInt(reciboObjetivo.fibra, 10))
-      // console.log(reciboDeHoy.prote, parseInt(reciboDeHoy.prote, 10), parseInt(reciboObjetivo.prote, 10))
+      
       setmacroPorcentajes({
         prote:protePorcentaje,
         grasas:fatPorcentaje,
         carbs:carbsPorcentaje,
         fibra:fibraPorcentaje
-      });
+      }); 
+      
+
+      let lista = [parseInt(reciboDeHoy.prote == "" ? "0" : reciboDeHoy.prote, 10), 
+      parseInt(reciboDeHoy.grasas == "" ? "0" : reciboDeHoy.grasas, 10), 
+      parseInt(reciboDeHoy.carbs == "" ? "0" : reciboDeHoy.carbs, 10), 
+      parseInt(reciboDeHoy.fibra == "" ? "0" : reciboDeHoy.fibra, 10)]
+
+      let porcentajes = calcularPorcentajes(lista)
+      if (porcentajes.every(num => isNaN(num))) 
+      {
+        setpieChardData([20, 40, 30, 10])
+      }
+      else
+        setpieChardData(porcentajes)
     } 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reciboDeHoy, reciboObjetivo]);
 
-  const calcularPorcentaje = (parte:number, total:number) => {
-    return total > 0 ? (parte / total) * 100 : 0;
+  const dameDiaConcreto = async (idDia:number) =>
+  {
+    try{
+      const response = await axios.get(
+        `${API_URL}/dias/dia/${idDia}`,
+        {
+          headers: {
+              'Content-Type': 'application/json'
+          },
+        }
+      );
+      if(response.data)
+        return response.data;
+      }
+      catch (error) {
+      console.error('Error fetching data:', error);
+      }
+  };
+
+
+  const cogeDiaAnterior = () =>
+  {
+    let index = idsFechas.current.indexOf(idFecha);
+    console.log(idsFechas.current[index-1])
+    if(idsFechas.current[index-1])
+      setidFecha(idsFechas.current[index-1])
+  };
+
+  const cogeDiaPosterior = () =>
+  {
+    
   };
 
 
@@ -287,8 +353,7 @@ export default function mealDiary()
 
   return (
     <>
-    
-    {macroPorcentaje!= null && 
+      {macroPorcentaje!= null && screenSize!="" && idFecha!= -1 &&fecha!=""&&
       <Flex
         direction="column"
         align="center"
@@ -299,7 +364,7 @@ export default function mealDiary()
         p="30px"
         minH="100vh"
         position={"relative"}
-    >
+      >
         {/* title */}
         <Card
             width={{ base: "90%", md: "100%" }}
@@ -315,34 +380,35 @@ export default function mealDiary()
                 <IconButton
                 icon={<ArrowLeftIcon />}
                 aria-label="Go Left"
-                onClick={() => alert("Going Left")}
+                onClick={cogeDiaAnterior}
                 variant="ghost"
                 />
 
                 {/* Contenido Central */}
                 <VStack alignItems={"center"}>
-                <Text color={"black"} fontSize="2xl" fontWeight="700">
-                    MY DAY
-                </Text>
-                <HStack spacing="5px" alignItems="center">
-      {/* Ícono SVG */}
+                  <Text color={"black"} fontSize="2xl" fontWeight="700">
+                      MY DAY
+                  </Text>
+                  <HStack spacing="5px" alignItems="center">
+                      {/* Ícono SVG */}
 
-        <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#000000">
-          <path d="M202.87-71.87q-37.78 0-64.39-26.61t-26.61-64.39v-554.26q0-37.78 26.61-64.39t64.39-26.61H240v-80h85.5v80h309v-80H720v80h37.13q37.78 0 64.39 26.61t26.61 64.39v554.26q0 37.78-26.61 64.39t-64.39 26.61H202.87Zm0-91h554.26V-560H202.87v397.13Zm0-477.13h554.26v-77.13H202.87V-640Zm0 0v-77.13V-640Z"/>
-        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#000000">
+                          <path d="M202.87-71.87q-37.78 0-64.39-26.61t-26.61-64.39v-554.26q0-37.78 26.61-64.39t64.39-26.61H240v-80h85.5v80h309v-80H720v80h37.13q37.78 0 64.39 26.61t26.61 64.39v554.26q0 37.78-26.61 64.39t-64.39 26.61H202.87Zm0-91h554.26V-560H202.87v397.13Zm0-477.13h554.26v-77.13H202.87V-640Zm0 0v-77.13V-640Z"/>
+                        </svg>
 
 
-      {/* Texto */}
-      <Text color={"black"} fontSize="md" fontWeight="700">
-        12/09/2033
-      </Text>
-    </HStack>
+                      {/* Texto */}
+                      <Text color={"black"} fontSize="md" fontWeight="700">
+                      {fecha}
+                      </Text>
+                  </HStack>
                 </VStack>
 
                 {/* Flecha hacia la derecha */}
                 <IconButton
                 icon={<ArrowRightIcon />}
                 aria-label="Go Right"
+                onClick={cogeDiaPosterior}
                 variant="ghost"
                 />
             </HStack>
@@ -359,53 +425,52 @@ export default function mealDiary()
                   <SimpleGrid
                       w={{ base: "100%", md: "70%" }}  
                       columns={{ base: 1, md: 2 }}  // En pantallas pequeñas, 1 columna; en pantallas medianas, 2 columnas
-                      spacing={{ base: "30px", md: "50px" }}  // Espacio entre los elementos
+                      spacing={{ base: "30px", md: "120px" }}  // Espacio entre los elementos
                   >
-                      <Box w={{ sd: "auto", md: "200px" }} mt={{ base: "0px", md: "25px", xl: "25px" }}>
+                      <Box w={{ sd: "auto", md: "250px" }} mt={{ base: "0px", md: "25px", xl: "25px" }}>
                           <PieChardMacroNutr pieChartData={pieChardData} />
                       </Box>
-                      <MacroCalView macroPorcentaje={props.macroPorcentaje}/>
+                      <MacroCalView macroPorcentaje={macroPorcentaje}/>
                   </SimpleGrid>
               </Flex>
             </Box>
-          
-            <InputField
-              mb="20px"
-              // onChange= {(e:any) => foodName.current = e.target.value}
-              id="first"
-              disa
-              placeholder="Apple"
-              label="Food Name"
-              />
+
+            {/* calories showBox */}
+            <Flex direction='column' mb={'20px'} mt={{ base: "0px", md: "-30px" }}>
+                    <FormLabel
+                      display='flex'
+                      ms='10px'
+                      fontSize='sm'
+                      color={"black"}
+                      fontWeight='bold'
+                      _hover={{ cursor: 'pointer' }}>
+                      {"Calories"}
+                    </FormLabel>
+
+                    <Flex
+                      border="1px solid gray"
+                      borderRadius="10px"
+                      fontWeight="500"
+                      justifyContent="center"
+                      alignItems="center"
+                      h="44px"
+                      maxH="44px"
+                      textAlign="center"
+                    >
+                      {/* If value is passed as JSX (e.g., icon and text), render it */}
+                      {<Box p="5px" display="flex" alignItems="center">
+                        <CaloryIcon />
+                        <Text ml="10px" mr="10px">{!dia.current ? "0 kcal" : dia.current?.calorias_total + " kcal"}</Text>
+                      </Box>
+                      }
+                    </Flex>
+            </Flex>
     
             <Box w="100%" borderBottom="2px solid black" my="20px" />
             <EBookButton texto={'What happens if...?'}></EBookButton>
           </>
         }></CustomCard>
-
-       {/* <CustomCard hijo={ 
-        <>
-        <Text mb="20px" textAlign="left" alignSelf="flex-start"
-            justifySelf="flex-start">Learn about the past ...</Text>
-        <Button
-               fontSize="sm"
-               borderRadius="16px"
-               bg="purple.100"
-               w="100%"
-               h="auto"
-               p="10px"
-               as="a"
-               href="../mealDiary"
-               _hover={{bg:"gray.100"}}
-                leftIcon={
-                  <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M240-80q-50 0-85-35t-35-85v-560q0-50 35-85t85-35h440v640H240q-17 0-28.5 11.5T200-200q0 17 11.5 28.5T240-160h520v-640h80v720H240Zm120-240h240v-480H360v480Zm-80 0v-480h-40q-17 0-28.5 11.5T200-760v447q10-3 19.5-5t20.5-2h40Zm-80-480v487-487Z"/></svg>}// onClick={comprobarSiPoderPaso2}
-               > DIARY OF MEALS
-               </Button>
-               </>}>
-        </CustomCard>
-
-
-        { reciboObjetivo!= null && <>
+   
         <CustomCard hijo={ 
             <>
             <Text color={"black"} fontSize="xl" w="100%"  fontWeight="700" textAlign="center">
@@ -444,17 +509,11 @@ export default function mealDiary()
         />    
 
         {screenSize != "" && <CustomCard mb="50px" hijo={ 
-              <FiberCard edit={false} totalFiber={reciboDeHoy.fibra} screenSize={screenSize}></FiberCard>}></CustomCard>}
-
-
-      </>} 
-
-       </Flex>}  */}
-
+        <FiberCard edit={false} ebooklista={fiberEbooks} totalFiber={reciboDeHoy.fibra} screenSize={screenSize}></FiberCard>}></CustomCard>}
+      </Flex>}  
 
       {macroPorcentaje == null && <PurpleSpinner></PurpleSpinner>} 
-      </Flex>} 
-      </>
-    );
+    </>
+  );
 
 }
