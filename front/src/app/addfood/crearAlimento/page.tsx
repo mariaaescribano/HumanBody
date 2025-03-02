@@ -154,10 +154,11 @@ export default function CrearAlimento()
       recibo_id:idRecibo,
       predomina:predomina // 0-prote, 1-fats, 2-carbs
     }
+    let nom = sessionStorage.getItem("userNom")
    
     try{
       const response = await axios.post(
-          `${API_URL}/alimentos/createAlimento`,
+          `${API_URL}/alimentos/createAlimento/${nom}`,
           alimento,
           {
             headers: {

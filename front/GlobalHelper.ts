@@ -167,6 +167,17 @@ export const calcularPorcentajes = (numeros: number[]) => {
 };
 
 
+export const formatDateToISOFriendly = (dateString: string) => {
+  const months = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
+
+  const [year, month, day] = dateString.split("-");
+
+  return `${months[parseInt(month) - 1]} ${parseInt(day)}, ${year}`;
+}
+
 
 
 export const sumaDeMacros =  (reciboPersonalizado:reciboSkeleton, reciboHoy:reciboSkeleton) =>

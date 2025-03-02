@@ -33,7 +33,7 @@ function Barra(props: {setquienPulsado:React.Dispatch<React.SetStateAction<numbe
     >
       <Box
         bg="white" 
-        boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)" 
+        boxShadow= {props.quienPulsado==0 ? "": "0px 4px 6px rgba(0, 0, 0, 0.1)"}
         p="5px"                       
         borderRadius="80px"            
       >
@@ -50,12 +50,12 @@ function Barra(props: {setquienPulsado:React.Dispatch<React.SetStateAction<numbe
       justifyContent="center"
       alignItems="center"
       onClick={()=> props.setquienPulsado(1)} 
-      p={props.quienPulsado==1 ? "15px": "10px"}
-      borderLeft="2px solid black" // Borde separador
+      p={props.quienPulsado==1 ? "15px": "8px"}
+      borderLeft={ "2px solid white"} 
     >
       <Box
         bg="white" 
-        boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)" 
+        boxShadow={props.quienPulsado==1 ? "": "0px 4px 6px rgba(0, 0, 0, 0.1)"} 
         p="5px"                       
         borderRadius="80px"            
       >
@@ -72,11 +72,11 @@ function Barra(props: {setquienPulsado:React.Dispatch<React.SetStateAction<numbe
       alignItems="center"
       onClick={()=> props.setquienPulsado(2)} 
       p={props.quienPulsado==2 ? "15px": "10px"}
-      borderLeft="2px solid black" // Borde separador
+      borderLeft= { "2px solid white"} 
     >
       <Box
         bg="white" 
-        boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)" 
+        boxShadow={props.quienPulsado==2 ? "": "0px 4px 6px rgba(0, 0, 0, 0.1)"} 
         p="5px"                       
         borderRadius="80px"            
       >

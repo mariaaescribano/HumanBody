@@ -29,7 +29,7 @@ import PopUpMessage from '@/components/global/message/PopUpMessage';
 import PopUpErrorMessage from '@/components/global/message/PopUpErrorMessage';
 import PurpleSpinner from '@/components/global/random/Spinner';
 import CustomCard from '@/components/global/cards/CustomCard';
-import { API_URL, crearRecibo, dameDatosDelRecibo, getFecha, getInternetDateParts, getTamanyoPantalla } from '../../../GlobalHelper';
+import { API_URL, crearRecibo, dameDatosDelRecibo, formatDateToISOFriendly, getFecha, getInternetDateParts, getTamanyoPantalla } from '../../../GlobalHelper';
 import { CircProgressMini } from '@/components/myday/CircProgressMini';
 import MacroCalView from '@/components/myday/MacroCalView';
 import ElementoPrimero from '@/components/myday/ElementoPrimero';
@@ -379,7 +379,7 @@ export default function MyDay()
 
                 {/* Texto */}
                 <Text color={"black"} fontSize="md" fontWeight="700">
-                  {fecha}
+                  {formatDateToISOFriendly(fecha)}
                 </Text>
               </HStack>
                 </VStack>

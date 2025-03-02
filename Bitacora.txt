@@ -48,10 +48,14 @@ ORDEN: prote: "#610C04" -fats:"#abdefa" -carbs:"#EDC9AF"
 
 
 
-PARA HOY
-- hacer diarios de alimentos 
---> hacer funcion verPosterior y eliminar o desactivar boton cuando no hay mas fechas ni por delante ni por detras
---> hacer funcion ISO friendly para las fechas
+PARA MAÑANA
 
-- hacer ficha de explicacion
+--> añadir fidelidad a los dias (trajetita más)
+
+--> funcion extra para Alimentos: marcar como fav y q te aparezcan + arriba 
+
+--> hacer menu arriba
+
+--> diseñar BD de design meal
+
 

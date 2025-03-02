@@ -28,7 +28,7 @@ import axios from 'axios';
 import React, { useEffect, useState, useRef } from 'react';
 import PurpleSpinner from '@/components/global/random/Spinner';
 import CustomCard from '@/components/global/cards/CustomCard';
-import { API_URL, calcularPorcentaje, calcularPorcentajes, crearRecibo, dameDatosDelRecibo, getFecha, getTamanyoPantalla } from '../../../GlobalHelper';
+import { API_URL, calcularPorcentaje, calcularPorcentajes, crearRecibo, dameDatosDelRecibo, formatDateToISOFriendly, getFecha, getTamanyoPantalla } from '../../../GlobalHelper';
 import MacroCalView from '@/components/myday/MacroCalView';
 import { ArrowLeftIcon, ArrowRightIcon } from "@chakra-ui/icons";
 import MacroNutrCard from '@/components/signin/MacroNutrCard';
@@ -80,6 +80,9 @@ export default function mealDiary()
   const [pieChardData, setpieChardData ] = useState<number[]>([20, 40, 30, 10]);
 
   const [reciboObjetivo, setreciboObjetivo ] = useState< reciboSkeleton | null >(null);
+
+  // esconde boton de la der o izq porq ya no hay más días que ver
+  const [verFlecha, setverFlecha ] = useState<number>(2); // 0 ve las dos, 1 no ve la de la izq y 2 no ve la de la der
  
   ///////////////////// END DECLARATIONS /////////////////////
 
@@ -218,14 +221,23 @@ export default function mealDiary()
   const cogeDiaAnterior = () =>
   {
     let index = idsFechas.current.indexOf(idFecha);
-    console.log(idsFechas.current[index-1])
+    if(index-1 == 0)
+      setverFlecha(1)
+    else
+      setverFlecha(0)
     if(idsFechas.current[index-1])
       setidFecha(idsFechas.current[index-1])
   };
 
   const cogeDiaPosterior = () =>
   {
-    
+    let index = idsFechas.current.indexOf(idFecha);
+    if(index+1 == idsFechas.current.length)
+      setverFlecha(2)
+    else
+      setverFlecha(0)
+    if(idsFechas.current[index+1])
+      setidFecha(idsFechas.current[index+1])
   };
 
 
@@ -375,43 +387,56 @@ export default function mealDiary()
             justify="center"
             borderRadius={"20px"}
             >
-            <HStack justify="space-between" width="100%" align="center">
-                {/* Botón con flecha hacia la izquierda */}
+           <HStack justify="center" width="100%" align="center" position="relative">
+              {/* Botón con flecha hacia la izquierda */}
+              {verFlecha !== 1 && (
                 <IconButton
-                icon={<ArrowLeftIcon />}
-                aria-label="Go Left"
-                onClick={cogeDiaAnterior}
-                variant="ghost"
+                  icon={<ArrowLeftIcon />}
+                  aria-label="Go Left"
+                  onClick={cogeDiaAnterior}
+                  variant="ghost"
+                  position="absolute"
+                  left={0} // Fija la posición a la izquierda
                 />
+              )}
 
-                {/* Contenido Central */}
-                <VStack alignItems={"center"}>
-                  <Text color={"black"} fontSize="2xl" fontWeight="700">
-                      MY DAY
+              {/* Contenido Central */}
+              <VStack alignItems="center">
+                <Text color="black" fontSize="2xl" fontWeight="700">
+                  MY DAY
+                </Text>
+                <HStack spacing="5px" alignItems="center">
+                  {/* Ícono SVG */}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    height="20px"
+                    viewBox="0 -960 960 960"
+                    width="20px"
+                    fill="#000000"
+                  >
+                    <path d="M202.87-71.87q-37.78 0-64.39-26.61t-26.61-64.39v-554.26q0-37.78 26.61-64.39t64.39-26.61H240v-80h85.5v80h309v-80H720v80h37.13q37.78 0 64.39 26.61t26.61 64.39v554.26q0 37.78-26.61 64.39t-64.39 26.61H202.87Zm0-91h554.26V-560H202.87v397.13Zm0-477.13h554.26v-77.13H202.87V-640Zm0 0v-77.13V-640Z" />
+                  </svg>
+
+                  {/* Texto */}
+                  <Text color="black" fontSize="md" fontWeight="700">
+                    {formatDateToISOFriendly(fecha)}
                   </Text>
-                  <HStack spacing="5px" alignItems="center">
-                      {/* Ícono SVG */}
+                </HStack>
+              </VStack>
 
-                        <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#000000">
-                          <path d="M202.87-71.87q-37.78 0-64.39-26.61t-26.61-64.39v-554.26q0-37.78 26.61-64.39t64.39-26.61H240v-80h85.5v80h309v-80H720v80h37.13q37.78 0 64.39 26.61t26.61 64.39v554.26q0 37.78-26.61 64.39t-64.39 26.61H202.87Zm0-91h554.26V-560H202.87v397.13Zm0-477.13h554.26v-77.13H202.87V-640Zm0 0v-77.13V-640Z"/>
-                        </svg>
-
-
-                      {/* Texto */}
-                      <Text color={"black"} fontSize="md" fontWeight="700">
-                      {fecha}
-                      </Text>
-                  </HStack>
-                </VStack>
-
-                {/* Flecha hacia la derecha */}
+              {/* Flecha hacia la derecha */}
+              {verFlecha !== 2 && (
                 <IconButton
-                icon={<ArrowRightIcon />}
-                aria-label="Go Right"
-                onClick={cogeDiaPosterior}
-                variant="ghost"
+                  icon={<ArrowRightIcon />}
+                  aria-label="Go Right"
+                  onClick={cogeDiaPosterior}
+                  variant="ghost"
+                  position="absolute"
+                  right={0} // Fija la posición a la derecha
                 />
+              )}
             </HStack>
+
         </Card>
 
        {/* calorias y macronutrients overall view */}

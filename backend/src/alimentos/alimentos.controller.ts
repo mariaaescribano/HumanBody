@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
 import { AlimentosService } from './alimentos.service';
 import { alimentosSkeleton } from 'src/dto/alimentos.dto';
 
@@ -12,15 +12,21 @@ export class AlimentosController {
     return { foods: foods };
   }
 
+  @Get("userFoodMacro/:idMacro/:userNom")
+  async getuserFoodMacro(@Param('idMacro') idMacro: number, @Param('userNom') userNom: string) {
+    const foods = await this.alimentosService.findUserMacroFoods(idMacro, userNom);
+    return { foods: foods };
+  }
+
   @Get("search/:foodName")
   async findMatchingFoodController(@Param('foodName') foodName: string) {
     const foods = await this.alimentosService.findMatchingFood(foodName);
     return { foods: foods };
   }
 
-  @Post("createAlimento")
-  async createAlimento(@Body() body: alimentosSkeleton) {
-    return await this.alimentosService.createAlimento(body);
+  @Post("createAlimento/:userNom")
+  async createAlimento(@Body() body: alimentosSkeleton, @Param('userNom') userNom: string) {
+    return await this.alimentosService.createAlimento(body, userNom);
   }
 
   @Get("alimento/:idAlimento")
@@ -28,4 +34,12 @@ export class AlimentosController {
     const alimento = await this.alimentosService.returnAlimentoConcretoFuncion(idAlimento);
     return { alimento: alimento };
   }
+
+  @Delete("deleteAlimento/:idAlimento/:userNom")
+  async deleteAlimento(@Param('idAlimento') idAlimento: number, @Param('userNom') userNom: string) {
+    const seHaEliminado = await this.alimentosService.deleteAlimentoFuncion(idAlimento, userNom);
+    return seHaEliminado ? true : false;
+  }
+
+  
 }

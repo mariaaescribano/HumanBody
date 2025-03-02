@@ -14,10 +14,10 @@ const MeryTooltip = (props: { texto: string }) => {
   return (
     <>
       {props.texto && (
-        <Box ml="8px"  zIndex="10" onClick={toggleTextVisibility} cursor="pointer" position="relative">
+        <Box ml="8px" onClick={toggleTextVisibility} cursor="pointer" position="relative">
           {/* Mostrar texto con posición absoluta */}
           {isTextVisible && (
-            <Box position="absolute" top="100%" whiteSpace={{sm: "wrap", md:"nowrap"}}  h="auto" left="0" mt="4px" bg="black" p="2px" borderRadius="4px">
+            <Box position="absolute" zIndex="10" top="100%" whiteSpace={{sm: "wrap", md:"nowrap"}}  h="auto" left="0" mt="4px" bg="black" p="2px" borderRadius="4px">
               <Text color="white" fontSize="sm"  p="4px">
                 {props.texto}
               </Text>

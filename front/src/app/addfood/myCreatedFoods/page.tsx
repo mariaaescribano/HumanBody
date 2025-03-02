@@ -40,9 +40,10 @@ import Barra from '@/components/addfood/buscarAlimento/Barra';
 import AlimentoMiniCard from '@/components/addfood/buscarAlimento/AlimentoMiniCard';
 import { miniCartaAlimento } from '../../../../../backend/src/dto/alimentos.dto';
 
-export default function BuscarAlimento() 
+export default function myCreatedFoods() 
 {
   const [cargado, setcargado] = useState<boolean>(false); 
+    const userNom = useRef<string>("");
 
   // mostrar alimentos con predominancia de un macronutriente
   const [quienPulsado, setquienPulsado] = useState<number>(0); 
@@ -57,6 +58,10 @@ export default function BuscarAlimento()
   // mostrar alimentos q hagan match
   useEffect(() => 
   {
+    let nom = sessionStorage.getItem("userNom")
+    if(nom)
+        userNom.current = nom;
+
     if(comidabuscada!= "")
       setquienPulsado(3)
 
@@ -115,36 +120,40 @@ export default function BuscarAlimento()
 
   const getMacroNutrientsFoods = async () =>
   {
-    try
+    console.log("jwodq")
+    if(userNom.current)
     {
-      const response = await axios.get(
-        `${API_URL}/alimentos/macroPredomina/${quienPulsado}`,
+        try
         {
-          headers: {
-              'Content-Type': 'application/json'
-          },
+            const response = await axios.get(
+            `${API_URL}/alimentos/userFoodMacro/${quienPulsado}/${userNom.current}`,
+                {
+                headers: {
+                    'Content-Type': 'application/json'
+                },});
+
+                console.log(response.data)
+            if(response.data.foods != null)
+            {
+                const recoge = [];
+                for(let i=0; i< response.data.foods.length; i++)
+                {
+                let objeto: miniCartaAlimento = 
+                {
+                    id:response.data.foods[i].id,
+                    nombre: response.data.foods[i].nombre,
+                    predomina:response.data.foods[i].predomina,
+                    calorias_100gr: response.data.foods[i].calorias_100gr
+                }
+                recoge.push(objeto)
+                }
+                setalimentosLista(recoge)
+                setcargado(true)
+            }
         }
-      );
-      if(response.data.foods != null)
-      {
-        const recoge = [];
-        for(let i=0; i< response.data.foods.length; i++)
-        {
-          let objeto: miniCartaAlimento = 
-          {
-            id:response.data.foods[i].id,
-            nombre: response.data.foods[i].nombre,
-            predomina:response.data.foods[i].predomina,
-            calorias_100gr: response.data.foods[i].calorias_100gr
-          }
-          recoge.push(objeto)
+        catch (error) {
+        console.error('Error fetching data:', error);
         }
-        setalimentosLista(recoge)
-        setcargado(true)
-      }
-    }
-    catch (error) {
-    console.error('Error fetching data:', error);
     }
   };
 
@@ -175,45 +184,12 @@ export default function BuscarAlimento()
             cursor="pointer"
             justifySelf="flex-start"
             as="a"
-            href="../myday"
+            href="../../myday"
           >
               ←
           </Text>
 
           <Buscador setcomidabuscada={setcomidabuscada} comidabuscada={comidabuscada}></Buscador>
-
-          <SimpleGrid columns={{ base: 1, md: 2 }} spacing="20px" mt="20px">
-            <Button
-              fontSize="sm"
-              borderRadius="16px"
-              bg="purple.100"
-              w={{sd:"70%", md: "70%"}}
-              mt="20px"
-              h="90%"
-              as="a"
-              href = "./myCreatedFoods"
-              p="10px"
-              _hover={{bg:"gray.100"}}
-              leftIcon={<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M240-360h280l80-80H240v80Zm0-160h240v-80H240v80Zm-80-160v400h280l-80 80H80v-560h800v120h-80v-40H160Zm756 212q5 5 5 11t-5 11l-36 36-70-70 36-36q5-5 11-5t11 5l48 48ZM520-120v-70l266-266 70 70-266 266h-70ZM160-680v400-400Z"/></svg>}
-              > MY CREATED FOODS
-              </Button>
-
-              <Button
-              fontSize="sm"
-              borderRadius="16px"
-              bg="purple.100"
-              w={{sd:"70%", md: "70%"}}
-              mt="20px"
-              h="90%"
-              as="a"
-              href= "./crearAlimento"
-              p="10px"
-              _hover={{bg:"gray.100"}}
-              leftIcon={<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M120-120v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm584-528 56-56-56-56-56 56 56 56Z"/></svg>}
-              > CREATE A FOOD
-              </Button>
-
-          </SimpleGrid>
 
           <Barra setquienPulsado={setquienPulsado} quienPulsado={quienPulsado}></Barra>
 
@@ -221,10 +197,12 @@ export default function BuscarAlimento()
           {alimentosLista.length > 0 && alimentosLista.map((alimento, index) => (
             <AlimentoMiniCard 
               key={index}
+              userNom={userNom.current}
               idAlimento = {alimento.id} 
               nameAlimento={alimento.nombre} 
               predomina={alimento.predomina} 
-              calorias={alimento.calorias_100gr} 
+              calorias={alimento.calorias_100gr}
+              getMacroNutrientsFoods={getMacroNutrientsFoods} 
             />
           ))} 
 
