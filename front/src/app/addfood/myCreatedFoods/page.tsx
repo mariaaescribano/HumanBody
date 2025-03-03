@@ -197,6 +197,7 @@ export default function myCreatedFoods()
           {alimentosLista.length > 0 && alimentosLista.map((alimento, index) => (
             <AlimentoMiniCard 
               key={index}
+              editando={true}
               userNom={userNom.current}
               idAlimento = {alimento.id} 
               nameAlimento={alimento.nombre} 

@@ -40,7 +40,13 @@ export class UsuariosService {
   }
 
 
-
+  async dameIdFichaDeUserName(userNom:string) {
+    const sql = 'SELECT	ficha_id FROM usuarios WHERE nombre = ?';
+    const params = [userNom];
+    const result = await this.databaseService.query(sql, params);
+    return result[0].ficha_id;
+  }
+  
 
 
 

@@ -23,6 +23,39 @@ export class FichasService {
     return result;
   }
 
+  async updateAlimFav(idFicha:number, idAlimento:number) 
+  {
+    try 
+    {
+      console.log("aaaaaaaaaa")
+      const sql = `UPDATE ficha SET alimentos_fav_id = CONCAT(alimentos_fav_id, ',', ?) WHERE id = ?`;
+      await this.databaseService.query(sql, [ idAlimento, idFicha]);
+      return true;
+    } 
+    catch (error) {
+      console.log("Error al actualizar la base de datos:", error);
+      return false;
+    }
+  }
 
+  async removeAlimFav(idFicha: number, idAlimento: number) {
+    try {
+      const sql = `
+        UPDATE ficha 
+        SET alimentos_fav_id = TRIM(BOTH ',' FROM REPLACE(
+          CONCAT(',', alimentos_fav_id, ','), 
+          CONCAT(',', ?, ','), 
+          ','
+        )) 
+        WHERE id = ?;
+      `;
+      await this.databaseService.query(sql, [idAlimento, idFicha]);
+      return true;
+    } catch (error) {
+      console.log("Error al actualizar la base de datos:", error);
+      return false;
+    }
+  }
+  
   
 }

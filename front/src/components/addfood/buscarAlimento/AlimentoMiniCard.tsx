@@ -11,10 +11,11 @@ import { FatIcono } from "@/components/icons/FatIcon";
 import axios from "axios";
 
 
-export default function AlimentoMiniCard(props: {idAlimento:number, nameAlimento:string, userNom?:string, predomina:number, calorias:string, getMacroNutrientsFoods?:any}) {
+export default function AlimentoMiniCard(props: {idAlimento:number, editando?:boolean, nameAlimento:string, userNom:string, predomina:number, calorias:string, getMacroNutrientsFoods?:any}) {
 
   const [screenSize, setscreenSize] = useState<string>(""); 
   const [hoverColor, sethoverColor] = useState<string>(""); 
+  const [add, setadd] = useState<boolean | undefined>(undefined);
   const icono = useRef<any>(null);
 
   useEffect(() => 
@@ -68,6 +69,41 @@ export default function AlimentoMiniCard(props: {idAlimento:number, nameAlimento
   };
 
 
+  // cuando se marca se añade a su ficha
+  useEffect(() => 
+  {
+    if(add == true || add == false)
+      marcarComoFav();
+
+  }, [add])
+
+  const marcarComoFav = async () =>
+  {
+    if(props.idAlimento)
+    {
+      try
+      {
+        const response = await axios.put(
+          `${API_URL}/fichas/updateAlimFav/${props.userNom}/${props.idAlimento}/${add}`,
+          {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+          }
+        );
+
+        if(response.data.message == "ok") // es q se ha eliminado
+        {
+          
+        }
+      }
+      catch (error) {
+      console.error('Error fetching data:', error);
+      }
+    }
+  };
+
+
   return (
     <>
   {hoverColor !== "" && (
@@ -113,10 +149,14 @@ export default function AlimentoMiniCard(props: {idAlimento:number, nameAlimento
 
       <HStack>
         {/* basura */}
-        <Box onClick={borrarAlimento} ml="auto" display="flex" alignItems="center" cursor="pointer" mr="20px" >
+        {props.editando && props.editando==true && <Box onClick={borrarAlimento} ml="auto" display="flex" alignItems="center" cursor="pointer" mr="20px" >
           <svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="#FFFFFF"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg>
-        </Box>
+        </Box>}
 
+        
+        {add == false || add == undefined && <svg onClick={()=>  setadd(!add)} xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="m354-287 126-76 126 77-33-144 111-96-146-13-58-136-58 135-146 13 111 97-33 143ZM233-120l65-281L80-590l288-25 112-265 112 265 288 25-218 189 65 281-247-149-247 149Zm247-350Z"/></svg>}
+        {add == true && <svg onClick={()=>  setadd(!add)} xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="m233-120 65-281L80-590l288-25 112-265 112 265 288 25-218 189 65 281-247-149-247 149Z"/></svg>}
+        
         {/* add */}
         <Box as="a" href={ `./verAlimento?idAlimento=${props.idAlimento}`} ml="auto" display="flex" alignItems="center" cursor="pointer" mr="20px" >
           <svg  xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill={"white"}>

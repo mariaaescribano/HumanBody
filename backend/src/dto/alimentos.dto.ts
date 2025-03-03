@@ -7,6 +7,7 @@ export interface alimentosSkeleton
     gramos:string;
     recibo_id:number;
     predomina:number; // 0-prote, 1-fats, 2-carbs
+    es_fav_deUsu?:boolean;
 };
 
 export interface miniCartaAlimento 
@@ -15,4 +16,5 @@ export interface miniCartaAlimento
     nombre:string;
     predomina:number;
     calorias_100gr:string;
+    es_fav_deUsu?:boolean;
 };

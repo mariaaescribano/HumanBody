@@ -20,8 +20,7 @@ FACILITADORES
 [] 
 
 {}
-
-const crearRecibo = async () => 
+ 
 
 useEffect(() => 
 {
@@ -36,9 +35,34 @@ const dameDatosDeAlimento = async () =>
 
 };
 
+const dameDatosDeAlimento = () =>
+{
+
+};
+
 #
 
 @
+
+
+    try {
+
+    } 
+    catch (error) {
+      console.log("Error al actualizar la base de datos:", error);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 IMPORTANTE: ESTRUCTURACIÓN
@@ -50,11 +74,18 @@ ORDEN: prote: "#610C04" -fats:"#abdefa" -carbs:"#EDC9AF"
 
 PARA MAÑANA
 
---> añadir fidelidad a los dias (trajetita más)
-
 --> funcion extra para Alimentos: marcar como fav y q te aparezcan + arriba 
+ahora mismo: ya se marcan los alim favs en bd, devolver todos alimentos en buscar alimentos ordenados
 
 --> hacer menu arriba
+
+
+
+--> hacer pruebas de q todo esta bien
+
+--> poner text botones en blanco?
+
+--> objetivos pagina
 
 --> diseñar BD de design meal
 

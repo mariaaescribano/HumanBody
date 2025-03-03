@@ -2,18 +2,21 @@ import { Injectable } from '@nestjs/common';
 import { DatabaseService } from '../Database/database.service';
 import { diasSkeleton } from 'src/dto/dias.dto';
 import { UsuariosService } from 'src/usuarios/usuarios.service';
+import { FidelidadService } from 'src/fidelidad/fidelidad.service';
 
 
 @Injectable()
 export class DiasService {
   constructor(private readonly databaseService: DatabaseService, 
-    private readonly usuariosService: UsuariosService
+    private readonly usuariosService: UsuariosService,
+    private readonly fidelidadService: FidelidadService
   ) {}
 
   async createDia(reciboId: number, fecha:string, userNom:string) 
   {
+    const idFidelidad = await this.fidelidadService.createFidelidad();
     const sql = 'INSERT INTO `dias`(`fidelidad_id`, `recibo_id`, `calorias_total`, `alimentos_id`, `fecha` ) VALUES (?,?,?,?, ?)';
-    const params = [-1, reciboId, "0", "", fecha];
+    const params = [idFidelidad, reciboId, "0", "", fecha];
     const result = await this.databaseService.query(sql, params);
     const insertId = result.insertId;
     await this.usuariosService.updateDiasUsuario(insertId, userNom);
@@ -75,6 +78,17 @@ export class DiasService {
     const result = await this.databaseService.query(sql, params);
     return result;
   }
+
+
+  async dameIdFidelidadDeIdDia (idDia: number) {
+    const sql = 'SELECT fidelidad_id FROM dias WHERE id = ?';
+    const params = [idDia];
+    const result = await this.databaseService.query(sql, params);
+    return result[0].fidelidad_id;
+  }
+
+
+  
 
 
 }

@@ -43,6 +43,7 @@ import { miniCartaAlimento } from '../../../../../backend/src/dto/alimentos.dto'
 export default function BuscarAlimento() 
 {
   const [cargado, setcargado] = useState<boolean>(false); 
+  const userName = useRef<string>("");
 
   // mostrar alimentos con predominancia de un macronutriente
   const [quienPulsado, setquienPulsado] = useState<number>(0); 
@@ -57,6 +58,10 @@ export default function BuscarAlimento()
   // mostrar alimentos q hagan match
   useEffect(() => 
   {
+    let nom = sessionStorage.getItem("userNom");
+    if(nom)
+      userName.current = nom;
+
     if(comidabuscada!= "")
       setquienPulsado(3)
 
@@ -224,6 +229,7 @@ export default function BuscarAlimento()
               idAlimento = {alimento.id} 
               nameAlimento={alimento.nombre} 
               predomina={alimento.predomina} 
+              userNom={userName.current} 
               calorias={alimento.calorias_100gr} 
             />
           ))} 
