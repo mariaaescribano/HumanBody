@@ -8,8 +8,6 @@ import Advice from './Advice';
 
 export default function MacroCalView(props: {macroPorcentaje:macroPorcentajes}) 
 {
-    
-  console.log(props.macroPorcentaje.carbs)
   return (
     <>
     {props.macroPorcentaje && 

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Res, HttpException, HttpStatus } from '@nestjs/common';
 import { UsuariosService } from './usuarios.service';
 import { FichasService } from 'src/fichas/fichas.service';
 
@@ -33,9 +33,18 @@ export class UsuariosController {
     return  reciboYcalorias[0]  ;
   }
 
+
+
+
+
+
+
+
+
   @Post("login")
   async validUser(@Body() body) {
     let userExists = await this.usuariosService.userValidCredentials(body);
     return { exists: userExists };
+
   }
 }

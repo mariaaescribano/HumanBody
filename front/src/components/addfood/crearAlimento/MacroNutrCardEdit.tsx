@@ -65,7 +65,6 @@ export default function MacroNutrCardEdit(props: {recibo:reciboSkeleton, setreci
    // hacer suma
     useEffect(() => 
     {
-        console.log(props.recibo, entra.current)
         if(props.recibo != null && entra.current == true)
         {
             entra.current = false;
@@ -84,7 +83,6 @@ export default function MacroNutrCardEdit(props: {recibo:reciboSkeleton, setreci
             nuevoRecibo.grasas= Math.round(sumaGrasas).toString();
 
             props.setrecibo(nuevoRecibo)
-            console.log(nuevoRecibo)
         }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

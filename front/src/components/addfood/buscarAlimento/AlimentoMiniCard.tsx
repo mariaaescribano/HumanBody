@@ -11,17 +11,30 @@ import { FatIcono } from "@/components/icons/FatIcon";
 import axios from "axios";
 
 
-export default function AlimentoMiniCard(props: {idAlimento:number, editando?:boolean, nameAlimento:string, userNom:string, predomina:number, calorias:string, getMacroNutrientsFoods?:any}) {
+export default function AlimentoMiniCard(props: {idAlimento:number, favDeUser?:boolean, editando?:boolean, nameAlimento:string, userNom:string, predomina:number, calorias:string, getMacroNutrientsFoods?:any}) {
 
   const [screenSize, setscreenSize] = useState<string>(""); 
   const [hoverColor, sethoverColor] = useState<string>(""); 
   const [add, setadd] = useState<boolean | undefined>(undefined);
   const icono = useRef<any>(null);
 
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    // Simulación de carga asincrónica de datos o cualquier lógica necesaria
+    setTimeout(() => setIsLoaded(true), 300); 
+  }, []);
+
   useEffect(() => 
   {
     getTamanyoPantalla(setscreenSize);
   }, [])
+
+  useEffect(() => 
+  {
+    if(props.favDeUser && (props.favDeUser == true || props.favDeUser == false))
+      setadd(props.favDeUser)
+  }, [props.favDeUser])
 
   useEffect(() => 
   {
@@ -69,22 +82,14 @@ export default function AlimentoMiniCard(props: {idAlimento:number, editando?:bo
   };
 
 
-  // cuando se marca se añade a su ficha
-  useEffect(() => 
-  {
-    if(add == true || add == false)
-      marcarComoFav();
-
-  }, [add])
-
-  const marcarComoFav = async () =>
+  const marcarComoFav = async (anyado:boolean) =>
   {
     if(props.idAlimento)
     {
       try
       {
         const response = await axios.put(
-          `${API_URL}/fichas/updateAlimFav/${props.userNom}/${props.idAlimento}/${add}`,
+          `${API_URL}/fichas/updateAlimFav/${props.userNom}/${props.idAlimento}/${anyado}`,
           {
             headers: {
                 'Content-Type': 'application/json'
@@ -94,7 +99,7 @@ export default function AlimentoMiniCard(props: {idAlimento:number, editando?:bo
 
         if(response.data.message == "ok") // es q se ha eliminado
         {
-          
+          setadd(!add)
         }
       }
       catch (error) {
@@ -103,8 +108,8 @@ export default function AlimentoMiniCard(props: {idAlimento:number, editando?:bo
     }
   };
 
-
-  return (
+  // lo devuelve solo si esta cragado 100%
+  return isLoaded ? ( (
     <>
   {hoverColor !== "" && (
     <Flex
@@ -154,8 +159,8 @@ export default function AlimentoMiniCard(props: {idAlimento:number, editando?:bo
         </Box>}
 
         
-        {add == false || add == undefined && <svg onClick={()=>  setadd(!add)} xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="m354-287 126-76 126 77-33-144 111-96-146-13-58-136-58 135-146 13 111 97-33 143ZM233-120l65-281L80-590l288-25 112-265 112 265 288 25-218 189 65 281-247-149-247 149Zm247-350Z"/></svg>}
-        {add == true && <svg onClick={()=>  setadd(!add)} xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="m233-120 65-281L80-590l288-25 112-265 112 265 288 25-218 189 65 281-247-149-247 149Z"/></svg>}
+        {add == false || add == undefined && <svg onClick={()=>  marcarComoFav(true)} xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="m354-287 126-76 126 77-33-144 111-96-146-13-58-136-58 135-146 13 111 97-33 143ZM233-120l65-281L80-590l288-25 112-265 112 265 288 25-218 189 65 281-247-149-247 149Zm247-350Z"/></svg>}
+        {add == true && <svg onClick={()=>  marcarComoFav(false)} xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="m233-120 65-281L80-590l288-25 112-265 112 265 288 25-218 189 65 281-247-149-247 149Z"/></svg>}
         
         {/* add */}
         <Box as="a" href={ `./verAlimento?idAlimento=${props.idAlimento}`} ml="auto" display="flex" alignItems="center" cursor="pointer" mr="20px" >
@@ -171,5 +176,5 @@ export default function AlimentoMiniCard(props: {idAlimento:number, editando?:bo
 </>
 
   
-  );
+  )): null;
 }

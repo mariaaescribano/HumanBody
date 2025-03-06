@@ -22,7 +22,7 @@ export class FidelidadController {
     if(dameIdFidelidad)
     {
       let todoBien = await this.fidelidadService.actualizaFidelidad(dameIdFidelidad, body);
-      return { message: todoBien ? "Fidelidad de dia actualizado" : "No ok" };
+      return { message: todoBien ? "ok" : "No ok" };
     }
     return "no ok";
   }

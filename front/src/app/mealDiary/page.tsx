@@ -26,7 +26,7 @@ import {
 import axios from 'axios';
 // Custom components
 import React, { useEffect, useState, useRef } from 'react';
-import PurpleSpinner from '@/components/global/random/Spinner';
+import PurpleSpinner from '@/components/global/random/PurpleSpinner';
 import CustomCard from '@/components/global/cards/CustomCard';
 import { API_URL, calcularPorcentaje, calcularPorcentajes, crearRecibo, dameDatosDelRecibo, formatDateToISOFriendly, getFecha, getTamanyoPantalla } from '../../../GlobalHelper';
 import MacroCalView from '@/components/myday/MacroCalView';
@@ -40,6 +40,7 @@ import InputField from '@/components/global/random/InputField';
 import EBookButton from '@/components/global/random/EBookButton';
 import { diasSkeleton } from '../../../../backend/dist/src/dto/dias.dto';
 import { CaloryIcon } from '@/components/icons/CaloryIcon';
+import { PieChardMacroNutr2 } from '@/components/global/cards/PieChardMacroNutr2';
 
 ///////////////// ESTRATEGIA /////////////////
 // va a coger todos los dias_ids y los va a guardar
@@ -78,6 +79,7 @@ export default function mealDiary()
   // y el porcentaje aqui
   const [macroPorcentaje, setmacroPorcentajes ] = useState< macroPorcentajes | null >(null);
   const [pieChardData, setpieChardData ] = useState<number[]>([20, 40, 30, 10]);
+  const [calorias, setcalorias ] = useState<string>("");
 
   const [reciboObjetivo, setreciboObjetivo ] = useState< reciboSkeleton | null >(null);
 
@@ -123,6 +125,7 @@ export default function mealDiary()
           setidFecha(parseInt(diaHoy, 10));
         else
           setidFecha(parseInt(response.data.diaId[response.data.diaId.length-1], 10));
+        //si Hoy no existe, muestra el ultimo de la lista
       }
     }
       catch (error) {
@@ -135,9 +138,12 @@ export default function mealDiary()
   {
     const cogeDiaYRecibo = async () =>
     {
+      calculaComportamientoFlechas();
+
       let diaObjeto = await dameDiaConcreto(idFecha);
       if (diaObjeto.dia[0]) 
       {
+        setcalorias(diaObjeto.dia[0].calorias_total)
         setfecha(diaObjeto.dia[0].fecha)
         let reciboObj = sessionStorage.getItem("reciboObjetivo")
         if(reciboObj)
@@ -217,14 +223,13 @@ export default function mealDiary()
       }
   };
 
-
   const cogeDiaAnterior = () =>
   {
     let index = idsFechas.current.indexOf(idFecha);
-    if(index-1 == 0)
-      setverFlecha(1)
-    else
-      setverFlecha(0)
+    // if(index-1 == 0)
+    //   setverFlecha(1)
+    // else
+    //   setverFlecha(0)
     if(idsFechas.current[index-1])
       setidFecha(idsFechas.current[index-1])
   };
@@ -232,12 +237,38 @@ export default function mealDiary()
   const cogeDiaPosterior = () =>
   {
     let index = idsFechas.current.indexOf(idFecha);
-    if(index+1 == idsFechas.current.length)
-      setverFlecha(2)
-    else
-      setverFlecha(0)
+    // if(index+1 == idsFechas.current.length)
+    //   setverFlecha(2)
+    // else
+    //   setverFlecha(0)
     if(idsFechas.current[index+1])
       setidFecha(idsFechas.current[index+1])
+  };
+
+  // dependiendo del dia en el q estemos y la cantidad de dias mas q hay, salen las 2 flechas o no
+  const calculaComportamientoFlechas = () =>
+  {
+    // simula q es el resultado final (esta estrategia no se puede hacer con variables de estado)
+    let flechaSimula = -1;
+
+    // coger index del dia en el q estamos
+    let index = idsFechas.current.indexOf(idFecha);
+
+    console.log(idsFechas.current[index-1], idsFechas.current[index+1])
+    // si hay dias antes q el, mostrar flecha izq
+    if(idsFechas.current[index-1])
+      flechaSimula = 1; // se puede ver la flecha izq
+
+    // si hay dias despues de el, mostrar felcha der
+    if(idsFechas.current[index+1])
+    {
+      if(flechaSimula == 1)
+        flechaSimula = 0; // se pueden ver las 2
+      else
+        flechaSimula = 2; // solo se puede ver la izq
+    }
+
+    setverFlecha(flechaSimula)
   };
 
 
@@ -389,21 +420,22 @@ export default function mealDiary()
             >
            <HStack justify="center" width="100%" align="center" position="relative">
               {/* Botón con flecha hacia la izquierda */}
-              {verFlecha !== 1 && (
-                <IconButton
-                  icon={<ArrowLeftIcon />}
-                  aria-label="Go Left"
-                  onClick={cogeDiaAnterior}
-                  variant="ghost"
-                  position="absolute"
-                  left={0} // Fija la posición a la izquierda
-                />
-              )}
+         
+              <IconButton
+                icon={<ArrowLeftIcon />}
+                aria-label="Go Left"
+                disabled={verFlecha == 1 || verFlecha == 0 ? false: true}
+                onClick={cogeDiaAnterior}
+                variant="ghost"
+                position="absolute"
+                left={0} // Fija la posición a la izquierda
+              />
+         
 
               {/* Contenido Central */}
               <VStack alignItems="center">
                 <Text color="black" fontSize="2xl" fontWeight="700">
-                  MY DAY
+                  MEAL DIARY
                 </Text>
                 <HStack spacing="5px" alignItems="center">
                   {/* Ícono SVG */}
@@ -425,16 +457,17 @@ export default function mealDiary()
               </VStack>
 
               {/* Flecha hacia la derecha */}
-              {verFlecha !== 2 && (
-                <IconButton
-                  icon={<ArrowRightIcon />}
-                  aria-label="Go Right"
-                  onClick={cogeDiaPosterior}
-                  variant="ghost"
-                  position="absolute"
-                  right={0} // Fija la posición a la derecha
-                />
-              )}
+
+              <IconButton
+                icon={<ArrowRightIcon />}
+                aria-label="Go Right"
+                disabled={verFlecha == 2 || verFlecha == 0 ? false: true}
+                onClick={cogeDiaPosterior}
+                variant="ghost"
+                position="absolute"
+                right={0} // Fija la posición a la derecha
+              />
+
             </HStack>
 
         </Card>
@@ -448,20 +481,22 @@ export default function mealDiary()
                   align="center"    // Centra los elementos verticalmente
               >
                   <SimpleGrid
-                      w={{ base: "100%", md: "70%" }}  
-                      columns={{ base: 1, md: 2 }}  // En pantallas pequeñas, 1 columna; en pantallas medianas, 2 columnas
-                      spacing={{ base: "30px", md: "120px" }}  // Espacio entre los elementos
-                  >
-                      <Box w={{ sd: "auto", md: "250px" }} mt={{ base: "0px", md: "25px", xl: "25px" }}>
-                          <PieChardMacroNutr pieChartData={pieChardData} />
-                      </Box>
-                      <MacroCalView macroPorcentaje={macroPorcentaje}/>
-                  </SimpleGrid>
+  w={{ base: "100%", md: "70%" }}  
+  columns={{ base: 1, md: 2 }}  // En pantallas pequeñas, 1 columna; en pantallas medianas, 2 columnas
+  spacing={{ base: "0px", md: "120px" }}  // Espacio entre los elementos
+  justifyContent={{ base: "center", md: "space-between" }}  // Centrado en pantallas pequeñas, espacio entre en pantallas medianas
+>
+  <Box   w="400px" mt={{ base: "0px", md: "25px", xl: "25px" }}>
+      <PieChardMacroNutr2 pieChartData={pieChardData} calories={calorias} />
+  </Box>
+  <MacroCalView macroPorcentaje={macroPorcentaje}/>
+</SimpleGrid>
+
               </Flex>
             </Box>
 
             {/* calories showBox */}
-            <Flex direction='column' mb={'20px'} mt={{ base: "0px", md: "-30px" }}>
+            {/* <Flex direction='column' mb={'20px'} mt={{ base: "0px", md: "-30px" }}>
                     <FormLabel
                       display='flex'
                       ms='10px'
@@ -482,14 +517,13 @@ export default function mealDiary()
                       maxH="44px"
                       textAlign="center"
                     >
-                      {/* If value is passed as JSX (e.g., icon and text), render it */}
                       {<Box p="5px" display="flex" alignItems="center">
                         <CaloryIcon />
                         <Text ml="10px" mr="10px">{!dia.current ? "0 kcal" : dia.current?.calorias_total + " kcal"}</Text>
                       </Box>
                       }
                     </Flex>
-            </Flex>
+            </Flex> */}
     
             <Box w="100%" borderBottom="2px solid black" my="20px" />
             <EBookButton texto={'What happens if...?'}></EBookButton>

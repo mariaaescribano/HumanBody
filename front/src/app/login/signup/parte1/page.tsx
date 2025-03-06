@@ -27,13 +27,22 @@ import { StringIsNull } from '../../../../../GlobalHelper';
 import PopUpMessage from '@/components/global/message/PopUpMessage';
 import PopUpErrorMessage from '@/components/global/message/PopUpErrorMessage';
 import { createUserSkeleton } from '../../../../../../backend/src/dto/usuarios.dto';
-import PurpleSpinner from '@/components/global/random/Spinner';
+import PurpleSpinner from '@/components/global/random/PurpleSpinner';
 import InputField from '@/components/global/random/InputField';
+import CustomCard from '@/components/global/cards/CustomCard';
+import TitleCard from '@/components/global/cards/TitleCard';
+
+// COSITAS GUAYS:
+// - no deja q el navegador haga autocomplete
+// - no cohe ninguna contra del navegador
+
 
 export default function SignUp1() 
 {
   const textColor = useColorModeValue('secondaryGray.900', 'white');
 
+  // hace falta q sean useState para poder seleccionar en su campo select cada una
+  // DATOS DE USUARIO
   const [peso, setPeso] = useState<string>("");
   const [altura, setAltura] = useState<string>("");
   const [exerciseFrequency, setexerciseFrequency] = useState<string>("");
@@ -43,10 +52,25 @@ export default function SignUp1()
   const [genero, setgenero] = useState<string>("");
   const [edad, setedad] = useState<string>("");
 
+  // despues de pulsar Next
+  // comprobar q ha rellenado todos los datos
   const [filled, setfilled] = useState<boolean>(true);
-  const [nomExiste, setnomExiste] = useState<boolean>(false);
-  const [datosAntes, setDatosAntes] = useState<boolean | undefined>(undefined);
+  // para saber si falta nom o contra despues de pulsar Next
+  const [faltanDatos, setfaltanDatos] = useState<{nom:boolean; contra:boolean;}>({nom:false, contra:false});  
 
+
+  // nomExiste ya en BD
+  const [nomExiste, setnomExiste] = useState<boolean>(false);
+
+  // para saber si ya existia los datos de usuario (a lo mejor esta volviendo a atras desde signup2)
+  // en ese caso, se vuelven a ponr todos los datos
+  const [datosAntes, setDatosAntes] = useState<boolean | undefined>(undefined);
+ 
+  // para saber si se le ha dado next, si es el caso esperar
+  const [btnPulsado, setbtnPulsado] = useState<boolean>(false);
+
+
+  // 0: se comprueba si hay datos de user en ss
   useEffect(() => 
   {
     const userStr = sessionStorage.getItem("user");
@@ -77,40 +101,45 @@ export default function SignUp1()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // 1: comprobar si todos los datos estan rellenos
   const comprobarSiPoderPaso2 = () =>
   {
+    setbtnPulsado(false)
+
+    // si ya estan en true, se mantienen, sino se actualizan
+    setfaltanDatos(prev => ({
+      nom: prev.nom || StringIsNull(nom),
+      contra: prev.contra || StringIsNull(contra)
+    }));
+
+    // Verificar si todos los campos están completos
     if(!StringIsNull(peso)
     && !StringIsNull(altura)
     && !StringIsNull(exerciseFrequency)
     && !StringIsNull(objetivo)
     && !StringIsNull(nom)
     && !StringIsNull(contra)
-    && !StringIsNull(genero) && nomExiste== false)
+    && !StringIsNull(genero) && !nomExiste)
     {
-        // quitar comillas
-        let pesoSinComillas = peso.replace(/^"|"$/g, '');
-        let alturaSinComillas = altura.replace(/^"|"$/g, '');
-        let edadSinComillas = edad.replace(/^"|"$/g, '');
-        let generoSinComillas = genero.replace(/^"|"$/g, '');
-        let nombreSinComillas = nom.replace(/^"|"$/g, '');
-        let contraSinComillas = contra.replace(/^"|"$/g, '');
-
-       const user:createUserSkeleton = {
-        nombre:nombreSinComillas,
-        contra:contraSinComillas,
-        peso:pesoSinComillas,
-        altura:alturaSinComillas,
-        nivel_actividad:exerciseFrequency,
-        calorias_objetivo:"",
-        objetivo:objetivo,
+      // quitar comillas
+      const limpiarComillas = (str: string) => str.replace(/^"|"$/g, '');
+       
+      const user = {
+        nombre: limpiarComillas(nom),
+        contra: limpiarComillas(contra),
+        peso: limpiarComillas(peso),
+        altura: limpiarComillas(altura),
+        nivel_actividad: exerciseFrequency,
+        calorias_objetivo: "",
+        objetivo,
         recibo: NaN,
-        genero: generoSinComillas,
-        edad:edadSinComillas
+        genero: limpiarComillas(genero),
+        edad: limpiarComillas(edad)
       };
 
+      setbtnPulsado(true)
       sessionStorage.clear();
       sessionStorage.setItem("user", JSON.stringify(user));
-
       location.href = "./parte2";
 
     }
@@ -122,30 +151,64 @@ export default function SignUp1()
 
   const writingName = (e:any) =>
   {
-    let nom =e.target.value;
+    if(faltanDatos.nom == true)
+    {
+      setfilled(true)
+      setfaltanDatos(prev => ({
+        nom: false,
+        contra: prev.contra
+      }));
+    }
+
+    let nom = e.target.value;
     setnom(nom)
-    if(nom!= "")
+    if(!StringIsNull(nom))
+    {
       existeName(nom);
+    }
+    else
+    {
+      setnomExiste(false);
+    }
   };
+
+  const writingContra = (e:any) =>
+  {
+    if(faltanDatos.contra == true)
+    {
+      setfilled(true)
+      setfaltanDatos(prev => ({
+        nom: prev.nom,
+        contra: false
+      }));
+    }
+
+    let contra = e.target.value;
+    setcontra(contra)
+  };
+
 
   const existeName = async (nombre:string) =>
   {
-    try{
-    const response = await axios.get(
-      `${API_URL}/usuarios/userExist/${nombre}`,
-      {
-        headers: {
-            'Content-Type': 'application/json'
-        },
+    if(!StringIsNull(nombre))
+    {
+      try{
+      const response = await axios.get(
+        `${API_URL}/usuarios/userExist/${nombre}`,
+        {
+          headers: {
+              'Content-Type': 'application/json'
+          },
+        }
+      );
+        if(response.data != null)
+        {
+          setnomExiste(response.data.exists);
+        }
       }
-    );
-      if(response.data != null)
-      {
-        setnomExiste(response.data.exists);
+      catch (error) {
+        console.log('Error fetching data:', error);
       }
-    }
-    catch (error) {
-    console.error('Error fetching data:', error);
     }
   } ;
 
@@ -162,33 +225,42 @@ export default function SignUp1()
     >
       {filled == false && <PopUpErrorMessage cancel={filled} setCancel={setfilled} title={'Error'} texto={'Please, fill up all the data.'} ></PopUpErrorMessage>}
 
-      {datosAntes !== undefined && <Card p="30px" width={{base:"80%", md: "100%"}} mb={{sd:"20px", md: "200px"}} maxWidth={"800px"} mt="20px" align="center" justify="center" borderRadius={"20px"}>
-          <Text color={textColor} fontSize="2xl" fontWeight="700" mb="60px">
-              CREATING AN ACCOUNT
-          </Text>
-          <Flex direction="column" w="100%">
-          <Stack direction="column" spacing="20px">
-              <SimpleGrid columns={{ base: 1, md: 2 }} gap="20px">
+      {datosAntes !== undefined && 
+      <>
+        <CustomCard mb={"10px"} hijo={ 
+          <TitleCard title={`CREATING AN ACCOUNT`} letsgo={comprobarSiPoderPaso2} goback={() => location.href = "../login"} tooltip={''} btnDisabled={btnPulsado}></TitleCard>} >
+        </CustomCard>
+        
+        <Card p="30px" width={{base:"80%", md: "100%"}} mb={"100px"} maxWidth={"800px"} mt="20px" align="center" justify="center" borderRadius={"20px"}>
+            <Flex direction="column" w="100%">
+            <Stack direction="column" spacing="20px">
+                <SimpleGrid columns={{ base: 1, md: 2 }} gap="20px">
                 <InputField
-                  mb="0px"
-                  id="first"
-                  placeholder="eg. Esthera"
-                  label="User name"
-                  value={nom}
-                  bg={nomExiste ? "red.200" : "white"}
-                  onChange={(e: any) => writingName(e)}
-                  toolTipText={nomExiste == true ? 'Name already exists.' : null}
+                    mb="0px"
+                    autoComplete="off"
+                    id="userNomInput"
+                    name="randomNom123"
+                    placeholder="eg. Esthera"
+                    label="User name"
+                    value={nom}
+                    bg={(nomExiste || faltanDatos.nom) ? "red.200" : "white"}
+                    onChange={(e: any) => writingName(e)}
+                    toolTipText={nomExiste ? 'Name already exists.' : undefined}
                 />
-                
-                  <InputField
-                      mb="0px"
-                      id="last"
-                      type="password"
-                      placeholder="eg. ****"
-                      label="Password"
-                      value={contra}
-                      onChange={(e:any) => setcontra(e.target.value)}
-                  />
+
+                <InputField
+                    mb="0px"
+                    id="userPassInput"
+                    name="randomPass456"
+                    autoComplete="new-password"
+                    bg={(faltanDatos.contra) ? "red.200" : "white"}
+                    type="password"
+                    placeholder="eg. ****"
+                    label="Password"
+                    value={contra}
+                    onChange={(e: any) => writingContra(e) }
+                />
+
                   {/* los select */}
                   <SelectSignIn type={0} selectedValue={peso} setSelected = {setPeso} />
                   <SelectSignIn type={1} selectedValue={altura} setSelected = {setAltura}/>
@@ -196,26 +268,13 @@ export default function SignUp1()
                   <SelectSignIn type={3} selectedValue={exerciseFrequency} setSelected = {setexerciseFrequency}/>
                   <SelectSignIn type={4} selectedValue={genero} setSelected = {setgenero}/>
                   <SelectSignIn type={5} selectedValue={edad} setSelected = {setedad}/>
-              </SimpleGrid>
-          </Stack>
-          <Flex justify="space-between" mt="24px">
-              <Button
-              variant="darkBrand"
-              fontSize="sm"
-              borderRadius="16px"
-              bg="purple.100"
-              w={{ base: '128px', md: '148px' }}
-              h="46px"
-              ms="auto"
-              _hover={{bg:"gray.100"}}
-              onClick={comprobarSiPoderPaso2}
-              >
-              Next
-              </Button>
-          </Flex>
-          <Text color="purple.100" as="a" cursor="pointer" href="../login">Do you have an account?</Text>
-          </Flex>
-      </Card>}
+                </SimpleGrid>
+            </Stack>
+           
+            <Text color="purple.300" as="a" mt="20px" cursor="pointer" href="../login">Do you have an account?</Text>
+            </Flex>
+        </Card>
+      </>}
 
       {datosAntes == undefined && <PurpleSpinner></PurpleSpinner>}
 

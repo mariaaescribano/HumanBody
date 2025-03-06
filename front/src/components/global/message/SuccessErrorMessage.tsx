@@ -13,12 +13,12 @@ export default function SuccessErrorMessage(props: {title: string, status:string
         alignItems='center'
         justifyContent='center'
         textAlign='center'
-        height='150px'
+        height='100px'
         borderRadius='10px'
         >
-        <AlertIcon boxSize='30px' mr={0} />
+        <AlertIcon boxSize='25px' mr={0} />
 
-        {props.title && <AlertTitle mt={4} mb={1} fontSize='lg'>
+        {props.title && <AlertTitle mt={4} mb={1} fontSize='md' display={{ base: "none", md: "block" }}>
             {props.title}
         </AlertTitle>}
 

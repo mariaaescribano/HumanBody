@@ -27,7 +27,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import SelectSignIn from '@/components/signin/SelectSignIn';
 import PopUpMessage from '@/components/global/message/PopUpMessage';
 import PopUpErrorMessage from '@/components/global/message/PopUpErrorMessage';
-import PurpleSpinner from '@/components/global/random/Spinner';
+import PurpleSpinner from '@/components/global/random/PurpleSpinner';
 import CustomCard from '@/components/global/cards/CustomCard';
 import { API_URL, crearRecibo, dameDatosDelRecibo, formatDateToISOFriendly, getFecha, getInternetDateParts, getTamanyoPantalla } from '../../../GlobalHelper';
 import ElementoPrimero from '@/components/myday/ElementoPrimero';
@@ -44,8 +44,6 @@ export default function MyDay()
   // lo necesario para 1 dia en sessionstorage
   const idReciboDeHoy = useRef<number>(-1);
   const idReciboObjetivo = useRef<number>(-1);
-
-  const [fidelidad, setfidelidad ] = useState<fidelidadSkeleton | null>(null);
 
   const [screenSize, setscreenSize ] = useState<string>("");
 
@@ -112,7 +110,6 @@ export default function MyDay()
     await dameDatosDelRecibo(idReciboDeHoy.current, setreciboDeHoy);
     await dameDatosDelRecibo(parseInt(idReciboObjetivoo, 10), setreciboObjetivo);
     idReciboObjetivo.current = parseInt(idReciboObjetivoo, 10);
-    await traeDatosFidelidad();
   };
 
 
@@ -143,37 +140,6 @@ export default function MyDay()
     sessionStorage.setItem("reciboDeHoy", idReciboDeHoy.current.toString())
   };
 
-  const traeDatosFidelidad = async () =>
-  {
-    let idDia = sessionStorage.getItem("diaId")
-    if(idDia)
-    {
-      try{
-        const response = await axios.get(
-          `${API_URL}/fidelidad/dameFidelidad/${idDia}`,
-          {
-            headers: {
-                'Content-Type': 'application/json'
-            },
-          }
-        );
-        if(response.data)
-        {
-          setfidelidad({   
-            heSidoFiel:response.data[0].loHaSido == 0 ? false : true,
-            porQue:response.data[0].why,
-            paraQue:response.data[0].forWhat
-          })
-        }  
-      }
-      catch (error) {
-      console.error('Error fetching data:', error);
-      }
-    }
-   
-  };
-
-
   const dameUsuarioReciboObjetivo = async (nombre:string) =>
   {
     try{
@@ -192,9 +158,6 @@ export default function MyDay()
       console.error('Error fetching data:', error);
       }
   };
-
- 
-
 
   const crearDia = async (reciboDeHoy:number) =>
   {
@@ -219,7 +182,6 @@ export default function MyDay()
   };
 
   
-
   // cada vez q el recibo cambia se actualiza el porcentaje
   useEffect(() => 
   {
@@ -243,44 +205,6 @@ export default function MyDay()
   const calcularPorcentaje = (parte:number, total:number) => {
     return total > 0 ? (parte / total) * 100 : 0;
   };
-
-
-  // cada vez q fidelidad cambia --> actualiza fidelidad de diaId
-  useEffect(() => 
-  {
-    const actualizaFidelidad = async () =>
-    {
-      let idDia = sessionStorage.getItem("diaId");
-      console.log(idDia, fidelidad)
-      if(idDia)
-      {
-        try
-        {
-          const response = await axios.put(
-              `${API_URL}/fidelidad/updateDiaFidelidad/${idDia}`,
-              fidelidad ,
-              {
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-              }
-          );
-        }
-        catch (error) 
-        {
-          console.error('Error fetching data:', error);
-          return false;
-        }
-      }
-    };
-
-    if(fidelidad)
-      actualizaFidelidad();
-      
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fidelidad]);
-
-
 
 
 // #region EBOOKS 
@@ -494,7 +418,7 @@ export default function MyDay()
         </CustomCard>
 
         {/* fidelidad card */}
-        <CustomCard hijo={<FidelidadCard fidelidad={fidelidad} setfidelidad={setfidelidad} ></FidelidadCard>}></CustomCard>
+        <CustomCard hijo={<FidelidadCard/>}></CustomCard>
                  
 
         { reciboObjetivo!= null && <>

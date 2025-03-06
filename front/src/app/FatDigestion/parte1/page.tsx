@@ -19,7 +19,6 @@ const Parte1FatDigestion = () =>
 
   const llegoAlFinal = () =>
   {
-    console.log("hola", position)
     if(screenSize == "xl")
     {
       if(position.x > 45 && position.x < 72
@@ -227,7 +226,6 @@ const Parte1FatDigestion = () =>
     const { clientX, clientY } = e;
     const { x, y } = getRelativePosition(clientX, clientY, container);
     setPosition({ x, y });
-    console.log({ x, y })
     llegoAlFinal();
     
   };

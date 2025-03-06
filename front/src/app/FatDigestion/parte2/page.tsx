@@ -285,7 +285,6 @@ const Parte2FatDigestion = () =>
     
       setPosition({ x: xPercentage, y: yPercentage });
       checkOverlap();
-      console.log({ xPercentage, yPercentage  })
     }
   };
 
@@ -325,7 +324,6 @@ const Parte2FatDigestion = () =>
 
     const { clientX, clientY } = e;
     const { x, y } = getRelativePosition(clientX, clientY, container);
-    console.log({ x, y })
     setPosition({ x, y });
     checkOverlap();
     
@@ -343,7 +341,6 @@ const Parte2FatDigestion = () =>
     const { x, y } = getRelativePosition(clientX, clientY, container);
     setPosition({ x, y });
     checkOverlap();
-    console.log({ x, y })
   };
 
   // Finalizar la interacción

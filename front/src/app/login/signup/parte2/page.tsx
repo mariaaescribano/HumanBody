@@ -26,10 +26,10 @@ import React, { useEffect, useState, useRef } from 'react';
 import { API_URL, exerciseFrequencyList, StringIsNull, objectivesList, ObjectIsNull, getTamanyoPantalla } from '../../../../../GlobalHelper';
 import { createUserSkeleton } from '../../../../../../backend/src/dto/usuarios.dto';
 import { MdArrowBack, MdHdrStrong } from 'react-icons/md';
-import PurpleSpinner from '@/components/global/random/Spinner';
+import PurpleSpinner from '@/components/global/random/PurpleSpinner';
 import MeryTooltip from '@/components/global/random/MeryToolTip';
 import CustomCard from '@/components/global/cards/CustomCard';
-import TitleCard from '@/components/signin/TitleCard';
+import TitleCard from '@/components/global/cards/TitleCard';
 import { CaloryIcon } from '@/components/icons/CaloryIcon';
 
 export default function SignUp2() 
@@ -48,9 +48,11 @@ export default function SignUp2()
   {
     const userStr = sessionStorage.getItem("user");
     getTamanyoPantalla(setscreenSize)
+    if (!userStr)  
+      location.href = '../signup/parte1';
+
     if (userStr) 
     {
-    
       const user = JSON.parse(userStr); 
       // coger indices de listas en vez del valor value
       let activityLevelIndex = exerciseFrequencyList.findIndex(item => item.value === user.nivel_actividad);
@@ -77,75 +79,36 @@ export default function SignUp2()
       sessionStorage.setItem("user", JSON.stringify(userWithCalories));
       sessionStorage.setItem("objectiveIndex", JSON.stringify(objectiveIndex.current));
     }
-    else
-      location.href = '../signup/parte1';
-    
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const calculaCalorias = (peso:string, altura:string, edad:string, genero:string, activityLevelIndex:number) =>
   { 
-    let TMBtotal = 0;
-
     const pesoNumber = peso ? parseFloat(peso) : 0; 
     const alturaNumber = altura ? parseFloat(altura) : 0;
     const edadNumber = edad ? parseFloat(edad) : 0;
 
-    if(genero == "Woman")
-    { 
-      TMBtotal=(10*pesoNumber)+(6.25*alturaNumber)-(5*edadNumber)-161;
-    }
-    else if(genero == "Man")
-    { 
-      TMBtotal=(10*pesoNumber)+(6.25*alturaNumber)-(5*edadNumber)+5;
-    }
-    TMB.current =  TMBtotal.toString();
+    const TMBtotal = genero === 'Woman'
+    ? (10 * pesoNumber) + (6.25 * alturaNumber) - (5 * edadNumber) - 161
+    : (10 * pesoNumber) + (6.25 * alturaNumber) - (5 * edadNumber) + 5;
+    TMB.current = TMBtotal.toString();
 
     let dameCantidadExercise = cantidadExercise(activityLevelIndex);  
     let multiplicaCalLifeStyle =  Math.round(dameCantidadExercise * TMBtotal);
     caloriesWithLifeStyle.current = multiplicaCalLifeStyle.toString();
     
-    if(objectiveIndex.current == 0)
-    { 
-      caloriesWithObjective.current= (multiplicaCalLifeStyle-400).toString();
-    }
-    if(objectiveIndex.current == 1)
-      { 
-        caloriesWithObjective.current= (multiplicaCalLifeStyle+300).toString();
-      }
-      if(objectiveIndex.current == 2)
-        { 
-          caloriesWithObjective.current= caloriesWithLifeStyle.current;
-        }
+    caloriesWithObjective.current = (objectiveIndex.current === 0)
+    ? (multiplicaCalLifeStyle - 400).toString()
+    : (objectiveIndex.current === 1)
+    ? (multiplicaCalLifeStyle + 300).toString()
+    : multiplicaCalLifeStyle.toString();
 
-        return caloriesWithObjective.current;
+    return caloriesWithObjective.current;
   };
 
-  const cantidadExercise = (activityLevelIndex:number) =>
-  {
-    let dev=0;
-    if(activityLevelIndex == 0)
-    { 
-      dev = 1.2;
-    }
-    if(activityLevelIndex == 1)
-      { 
-        dev = 1.375;
-      }
-      if(activityLevelIndex == 2)
-        { 
-          dev = 1.55;
-        }
-        if(activityLevelIndex == 3)
-          { 
-            dev = 1.725;
-          }
-          if(activityLevelIndex == 4)
-            { 
-              dev = 1.9;
-            }
-            return dev;
-  };
+  // se crea un array con activityLevelIndex y se accede a ella usando el index pasado
+  const cantidadExercise = (activityLevelIndex: number) => [1.2, 1.375, 1.55, 1.725, 1.9][activityLevelIndex] || 1.2;
     
 
   const letsgo = () =>
@@ -167,7 +130,7 @@ export default function SignUp2()
 >
     {!ObjectIsNull(user) && user != null && !StringIsNull(user.calorias_objetivo) && activityLevelIndex!= -1 &&
     <CustomCard mb={"10px"} hijo={ 
-      <TitleCard title={`${user.nombre}, is this what you want?`} letsgo={letsgo} goback={() => location.href = "../login/parte1"} tooltip={''}></TitleCard>} >
+      <TitleCard title={`${user.nombre}, is this what you want?`} letsgo={letsgo} goback={() => location.href = "../signup/parte1"} tooltip={''}></TitleCard>} >
     </CustomCard>}
 
     {!ObjectIsNull(user) && user != null && !StringIsNull(user.calorias_objetivo) && activityLevelIndex!= -1 &&
@@ -250,9 +213,9 @@ export default function SignUp2()
           {screenSize!= "" && screenSize == "sm" && 
           <Flex direction="column" w="100%" mb="10px">
           {[
-              { label: "Your basal calories are", price: `${TMB.current} kcal`, tooltip: "This are the calories that you need to exist :)" },
-              { label: "With your life style would change to", price: `${caloriesWithLifeStyle.current} kcal`, tooltip: "This are the calories that you need to have your lifestyle." },
-              { label: "With your objective would change to", price: `${caloriesWithObjective.current} kcal`, tooltip: "This are the calories that you need to obtain your goal." }
+              { label: "Your basal calories are", price: `${TMB.current} kcal`, tooltip: "These are the calories that you need to exist :)" },
+              { label: "With your life style would change to", price: `${caloriesWithLifeStyle.current} kcal`, tooltip: "These are the calories that you need to have your lifestyle." },
+              { label: "With your objective would change to", price: `${caloriesWithObjective.current} kcal`, tooltip: "These are the calories that you need to obtain your goal." }
           ].map((item, index) => (
               <VStack
                   key={index}

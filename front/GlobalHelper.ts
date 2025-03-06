@@ -2,7 +2,7 @@ export const API_URL = "http://localhost:3001";
 
 export function StringIsNull(text:string)
 {
-  if(text == null || text == undefined || text == "")
+  if(text == null || text == undefined || text === "" || text == "")
     return true;
   else
     return false;
@@ -81,25 +81,27 @@ export const colorFibra= '#ffe5f0';
 
 
 // crear recibo
-export const crearRecibo = async (recibo: reciboSkeleton) => 
-  {
-      try{
+export const crearRecibo = async (recibo: reciboSkeleton) => {
+  try {
       const response = await axios.post(
           `${API_URL}/recibos/createRecibo`,
           recibo,
           {
-          headers: {
-              'Content-Type': 'application/json'
-          },
+              headers: {
+                  'Content-Type': 'application/json'
+              }
           }
       );
-      if(response.data != null)
-          return response.data;
+
+      if (response.data) {
+          return response.data.idRecibo;
       }
-      catch (error) {
-      console.error('Error fetching data:', error);
-      }
-  };
+  } catch (error) {
+      console.error('Error al crear el recibo:', error);
+      throw new Error('Error al crear el recibo');
+  }
+};
+
 
 
   // coger datos del recibo
@@ -293,7 +295,6 @@ export function getTamanyoPantalla(setScreenSize:any)
       setScreenSize("md");
     } else if (mediaQuerySM.matches) {
       setScreenSize("sm");
-      console.log("small")
     }
   };
   updateScreenSize();
@@ -427,7 +428,6 @@ export function handleTouchMoveGlobalHelper(e: any, containerRef: any, maxX:numb
     const yPercentage = (relativeY / container.height) * 100;
 
     let posiConLimite = limitarPosi(maxX, maxY, xPercentage, yPercentage);
-    console.log(posiConLimite)
     setPosition({x: posiConLimite.restrictedX, y: posiConLimite.restrictedY});
     return ({x: posiConLimite.restrictedX, y: posiConLimite.restrictedY});
   }
@@ -490,7 +490,6 @@ export function handleMoveMouse(e:any, isInteracting:any, container: any, setPos
 
     const restrictedX = Math.min(Math.max(x, minX), maxX);  // Restricción en el eje X
     const restrictedY = Math.min(Math.max(y, minY), maxY);  // Restricción en el eje Y
-    console.log(restrictedX, restrictedY)
     setPosition({ x: restrictedX, y: restrictedY });
     return ({ x: restrictedX, y: restrictedY });
  

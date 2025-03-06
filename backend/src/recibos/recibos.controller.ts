@@ -9,7 +9,8 @@ export class RecibosController {
   @Post('createRecibo')
   async create(@Body() recibo: reciboSkeleton) 
   {
-    return await this.recibosService.createRecibo(recibo);
+    let idRecibo = await this.recibosService.createRecibo(recibo);
+    return { idRecibo }; 
   }
 
   @Get("recibo/:idRecibo")

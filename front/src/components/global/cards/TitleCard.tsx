@@ -1,9 +1,9 @@
 'use client';
-import { Flex, Box, Icon, Text, useColorModeValue, Card, Button, HStack, Image } from '@chakra-ui/react';
+import { Flex, Box, Icon, Text, useColorModeValue, Card, Button, HStack, Image, Spinner } from '@chakra-ui/react';
 import { MdArrowBack } from 'react-icons/md';
-import MeryTooltip from '../global/random/MeryToolTip';
+import MeryTooltip from '../random/MeryToolTip';
 
-export default function TitleCard(props: { title:string, letsgo:any, goback:any, tooltip:string}) {
+export default function TitleCard(props: { title:string, letsgo:any, goback:any, tooltip:string, btnDisabled?:boolean}) {
    const textColor = useColorModeValue('secondaryGray.900', 'white');
 
   return (
@@ -21,7 +21,7 @@ export default function TitleCard(props: { title:string, letsgo:any, goback:any,
         bottom="0" 
         align="center"
         justify="center" 
-        spacing="10px"
+        spacing="40px"
         >
             <Button
                 variant="darkBrand"
@@ -41,13 +41,25 @@ export default function TitleCard(props: { title:string, letsgo:any, goback:any,
                 fontSize="sm"
                 borderRadius="16px"
                 bg="purple.100"
-                w={{ base: '128px', md: '148px' }}
+                w={'auto'}
                 h="46px"
+                disabled={props.btnDisabled}
                 onClick={props.letsgo}
                 _hover={{ bg: "gray.100" }}
                 leftIcon={<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="m536-84-56-56 142-142-340-340-142 142-56-56 56-58-56-56 84-84-56-58 56-56 58 56 84-84 56 56 58-56 56 56-142 142 340 340 142-142 56 56-56 58 56 56-84 84 56 58-56 56-58-56-84 84-56-56-58 56Z"/></svg>}
             >
                 Yes, let's go!
+                 {props.btnDisabled==true && (
+                    <Spinner
+                    thickness="4px"
+                    ml={4}
+                    speed="0.65s"
+                    emptyColor="gray.200"
+                    color="white"
+                    borderRadius="50%" 
+                    size="sm"
+                    />
+                    )}
             </Button>
         </HStack>
     </>

@@ -27,7 +27,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import SelectSignIn from '@/components/signin/SelectSignIn';
 import PopUpMessage from '@/components/global/message/PopUpMessage';
 import PopUpErrorMessage from '@/components/global/message/PopUpErrorMessage';
-import PurpleSpinner from '@/components/global/random/Spinner';
+import PurpleSpinner from '@/components/global/random/PurpleSpinner';
 import CustomCard from '@/components/global/cards/CustomCard';
 import { API_URL, getInternetDateParts } from '../../../../GlobalHelper';
 import { CircProgressMini } from '@/components/myday/CircProgressMini';
@@ -120,7 +120,6 @@ export default function myCreatedFoods()
 
   const getMacroNutrientsFoods = async () =>
   {
-    console.log("jwodq")
     if(userNom.current)
     {
         try
@@ -132,7 +131,6 @@ export default function myCreatedFoods()
                     'Content-Type': 'application/json'
                 },});
 
-                console.log(response.data)
             if(response.data.foods != null)
             {
                 const recoge = [];

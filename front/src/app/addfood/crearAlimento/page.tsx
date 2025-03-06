@@ -26,7 +26,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import SelectSignIn from '@/components/signin/SelectSignIn';
 import PopUpMessage from '@/components/global/message/PopUpMessage';
 import PopUpErrorMessage from '@/components/global/message/PopUpErrorMessage';
-import PurpleSpinner from '@/components/global/random/Spinner';
+import PurpleSpinner from '@/components/global/random/PurpleSpinner';
 import CustomCard from '@/components/global/cards/CustomCard';
 import { API_URL, calcularPorcentajes, crearRecibo, esSoloNumeros, getTamanyoPantalla } from '../../../../GlobalHelper';
 import { alimentosSkeleton, miniCartaAlimento } from '../../../../../backend/src/dto/alimentos.dto';

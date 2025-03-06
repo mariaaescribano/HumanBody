@@ -5,7 +5,9 @@ import {
   Button,
   Card,
   Flex,
+  Link,
   SimpleGrid,
+  Spinner,
   Stack,
   Tab,
   TabList,
@@ -18,45 +20,97 @@ import {
 import axios from 'axios';
 // Custom components
 
-import React, { useEffect, useState } from 'react';
-import { API_URL } from '../../../../GlobalHelper';
+import React, { useEffect, useRef, useState } from 'react';
+import { API_URL, StringIsNull } from '../../../../GlobalHelper';
 import PopUpErrorMessage from '@/components/global/message/PopUpErrorMessage';
 import InputField from '@/components/global/random/InputField';
 
 
 export default function login() 
 {
-  const textColor = useColorModeValue('secondaryGray.900', 'white');
+  const textColor = useColorModeValue('secondaryGray.900', 'white'); 
   const [nom, setnom] = useState<string>("");
   const [contra, setcontra] = useState<string>("");
-  const [existe, setexiste] = useState<boolean>(true);
 
-  const existeUser = async () => {
-    try{
+  // si alguno esta mal
+  // 1- no nombre, 2- no contra, 3- ninguno
+  const [datosMal, setdatosMal] = useState<number>(0);
+
+  // gestionar errores del back
+  const [hayError, sethayError] = useState<boolean>(false);
+  const errorText = useRef<string>("");
+
+  // pulsado boton y se esta haciendo llamada al back
+  const [btnPulsado, setbtnPulsado] = useState<boolean>(false);
+
+
+
+  useEffect(() => {
+    const nomInput = document.getElementById("first") as HTMLInputElement;
+    const contraInput = document.getElementById("last") as HTMLInputElement;
+
+    if (nomInput) setnom(nomInput.value);
+    if (contraInput) setcontra(contraInput.value);
+  }, []);
+
+
+  const existeUser = async () => 
+  {
+    setbtnPulsado(true);
+
+    const isNomEmpty = StringIsNull(nom);
+    const isContraEmpty = StringIsNull(contra);
+  
+    if (isNomEmpty && isContraEmpty) {
+      setbtnPulsado(false);
+      return setdatosMal(3);
+    }
+    if (isNomEmpty) {
+      setbtnPulsado(false);
+      return setdatosMal(1);
+    }
+    if (isContraEmpty) {
+      setbtnPulsado(false);
+      return setdatosMal(2);
+    }
+    
+  
+    try {
       const response = await axios.post(
-          `${API_URL}/usuarios/login`,
-          {nom: nom, pass:contra},
-          {
-          headers: {
-              'Content-Type': 'application/json'
-          },
-          }
+        `${API_URL}/usuarios/login`,
+        { nom, pass: contra },
+        { headers: { "Content-Type": "application/json" } }
       );
-        if(response.data != null)
-        {
-          if(response.data.exists == true)
-          {
-            sessionStorage.clear()
-            sessionStorage.setItem("userNom", nom)
-            location.href = "../../myday"
-          }
-          else
-            setexiste(false)
-        }
+  
+      setbtnPulsado(false);
+  
+      if (response.data?.exists) {
+        sessionStorage.clear();
+        sessionStorage.setItem("userNom", nom);
+        location.href = "../../myday"
+      } else {
+        errorText.current = "User doesn't exist";
+        sethayError(true);
+        setdatosMal(3);
       }
-      catch (error) {
-      console.error('Error fetching data:', error);
+    } 
+    catch (error: any) 
+    {
+      setbtnPulsado(false);
+      sethayError(true);
+  
+      if (!error.response) {
+        errorText.current = "Network error, please check your connection";
+      } else if (error.response.status === 404) {
+        setdatosMal(3);
+        errorText.current = "Wrong password or user name";
+      } else if (error.response.status === 500) {
+        errorText.current = "Please, try again later";
+      } else {
+        setdatosMal(3);
+        errorText.current = "User doesn't exist";
       }
+    }
   };
 
   return (
@@ -70,7 +124,9 @@ export default function login()
         minH="100vh"
         position={"relative"}
     >
-         {existe == false && <PopUpErrorMessage cancel={existe} setCancel={setexiste} title={'Error'} texto={'Wrong user or password'} ></PopUpErrorMessage>}
+        {hayError == true && <PopUpErrorMessage cancel={hayError} setCancel={sethayError} title={'Error'} texto={errorText.current} ></PopUpErrorMessage>}
+        
+        
         <Card p="30px" width={{base:"80%", md: "100%"}} maxWidth={"500px"} mt="90px" align="center" justify="center" borderRadius={"20px"}>
             <Text color={textColor} fontSize="2xl" fontWeight="700" mb="20px">
             LOG IN
@@ -81,6 +137,8 @@ export default function login()
                 <InputField
                     mb="0px"
                     id="first"
+                    value={nom}
+                    bg={datosMal==1 || datosMal == 3 ? "red.200": ""}
                     placeholder="eg. Esthera"
                     label="User name"
                     onChange={(e:any) => setnom(e.target.value)}
@@ -88,9 +146,11 @@ export default function login()
                 <InputField
                     mb="0px"
                     id="last"
+                    bg={datosMal==2 || datosMal == 3 ? "red.200": ""}
                     type="password"
                     placeholder="eg. ****"
                     label="Password"
+                    value={contra}
                     onChange={(e:any) => setcontra(e.target.value)}
                 />
                 </SimpleGrid>
@@ -103,15 +163,29 @@ export default function login()
                 bg="purple.100"
                 w={{ base: '128px', md: '148px' }}
                 h="46px"
+                disabled={btnPulsado}
                 ms="auto"
                 _hover={{bg:"gray.100"}}
                 onClick={existeUser}
                 >
                 Next
+                {btnPulsado==true && (
+                  <Spinner
+                    size="sm"
+                    ml={4}
+                    color="white"
+                  />
+                )}
                 </Button>
-        
             </Flex>
-            <Text color="purple.100"  as="a" cursor="pointer" href="../login/signup/parte1">Not registered yet?</Text>
+
+
+            <Link href="../login/signup/parte1" w="150px">
+              <Text color="purple.300" as="span" cursor="pointer">
+                Not registered yet?
+              </Text>
+            </Link>
+            
             </Flex>
         </Card>
     </Flex>);

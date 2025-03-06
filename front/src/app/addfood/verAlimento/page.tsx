@@ -26,7 +26,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import SelectSignIn from '@/components/signin/SelectSignIn';
 import PopUpMessage from '@/components/global/message/PopUpMessage';
 import PopUpErrorMessage from '@/components/global/message/PopUpErrorMessage';
-import PurpleSpinner from '@/components/global/random/Spinner';
+import PurpleSpinner from '@/components/global/random/PurpleSpinner';
 import CustomCard from '@/components/global/cards/CustomCard';
 import { API_URL, calcularPorcentajes, convierteNumRedondeado, crearRecibo, dameDatosDelRecibo, esSoloNumeros, getTamanyoPantalla, StringIsNull, sumaDeMacros } from '../../../../GlobalHelper';
 import { alimentosSkeleton, miniCartaAlimento } from '../../../../../backend/src/dto/alimentos.dto';
@@ -222,7 +222,6 @@ export default function VerAlimento()
   {
     //  se coge su recibo
     let idreciboDeHoy = sessionStorage.getItem("reciboDeHoy");
-    console.log(idreciboDeHoy)
     if(idreciboDeHoy!= null)
     {
       await dameDatosDelRecibo(parseInt(idreciboDeHoy, 10), setreciboHoy);
@@ -241,7 +240,6 @@ export default function VerAlimento()
       // se hace la suma
       let idreciboDeHoy = sessionStorage.getItem("reciboDeHoy");
       let reciboSuma = sumaDeMacros(reciboPersonalizado, reciboHoy);
-      console.log(reciboSuma)
       if(reciboSuma && idreciboDeHoy)
       {
         update(reciboSuma, idreciboDeHoy);
@@ -288,7 +286,6 @@ export default function VerAlimento()
               },
             }
         );
-        console.log(response.data)
         if(response.data != null)
           return true;
       }

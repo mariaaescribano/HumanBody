@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { DatabaseService } from '../Database/database.service';
 import { reciboSkeleton } from 'src/dto/recibos.dto';
 
@@ -8,11 +8,21 @@ export class RecibosService {
 
   async createRecibo(recibo: reciboSkeleton) 
   {
-    const sql = 'INSERT INTO recibo (grasas, monoinsaturadas, poliinsaturadas, saturadas, prote, incompleto, completo, carbs, complejos, simples, fibra) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-    const params = [recibo.grasas, recibo.monoinsaturadas, recibo.poliinsaturadas, recibo.saturadas, recibo.prote, recibo.incompleto, recibo.completo, recibo.carbs, recibo.complejos, recibo.simples, recibo.fibra];
-    const result = await this.databaseService.query(sql, params);
-    const idRecibo = result.insertId;
-    return idRecibo;
+    if(recibo)
+    {
+      const sql = 'INSERT INTO recibo (grasas, monoinsaturadas, poliinsaturadas, saturadas, prote, incompleto, completo, carbs, complejos, simples, fibra) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+      const params = [recibo.grasas, recibo.monoinsaturadas, recibo.poliinsaturadas, recibo.saturadas, recibo.prote, recibo.incompleto, recibo.completo, recibo.carbs, recibo.complejos, recibo.simples, recibo.fibra];
+      try {
+        const result = await this.databaseService.query(sql, params);
+        return result.insertId;
+      } catch (error) {
+        console.error("Error al insertar recibo:", error);
+        throw new InternalServerErrorException(error.message);
+      }
+    }
+    else
+      throw new NotFoundException();
+   
   }
 
   async returnReciboConcretoFuncion(idRecibo: number) {
@@ -23,7 +33,6 @@ export class RecibosService {
 
   // cambia todos los campos del recibo con el id especificado
   async updateRecibo(idRecibo: number, updateData: reciboSkeleton) {
-    console.log(updateData)
     const sql = `UPDATE recibo SET 
     grasas = ?, 
     monoinsaturadas = ?, 

@@ -13,16 +13,17 @@ import axios from 'axios';
 import React, { useEffect, useState, useRef } from 'react';
 import { API_URL, ObjectIsNull, crearRecibo, getTamanyoPantalla } from '../../../../../GlobalHelper';
 import { createUserSkeleton, realUser } from '../../../../../../backend/src/dto/usuarios.dto';
-import PurpleSpinner from '@/components/global/random/Spinner';
+import PurpleSpinner from '@/components/global/random/PurpleSpinner';
 import MeryTooltip from '@/components/global/random/MeryToolTip';
 import EBookButton from '@/components/global/random/EBookButton';
 import CustomCard from '@/components/global/cards/CustomCard';
-import TitleCard from '@/components/signin/TitleCard';
+import TitleCard from '@/components/global/cards/TitleCard';
 import MacroNutrCard from '@/components/signin/MacroNutrCard';
 import { reciboSkeleton, showMacroNutrSignUp } from '../../../../../../backend/src/dto/recibos.dto';
 import { fichaSkeleton } from '../../../../../../backend/src/dto/fichas.dto';
 import { showEbook } from '../../../../../../backend/src/dto/ebook.dto';
 import FiberCard from '@/components/global/cards/FiberCard';
+import PopUpErrorMessage from '@/components/global/message/PopUpErrorMessage';
 
 export default function SignUp3() 
 {
@@ -31,6 +32,8 @@ export default function SignUp3()
     const [recibo, setrecibo] = useState<reciboSkeleton | null>(null);
     const [screenSize, setscreenSize] = useState<string>("");
     const objectiveIndex = useRef<number>(0);
+    const [btnPulsado, setbtnPulsado] = useState<boolean>(false);
+    const [error, seterror] = useState<boolean>(false);
 
     
     // coge datos del user de sessionstorage para poder adaptar bien los macros
@@ -52,7 +55,7 @@ export default function SignUp3()
             }
         }
         else
-        location.href = '../signup/parte2';
+            location.href = '../signup/parte2';
         
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -129,41 +132,61 @@ export default function SignUp3()
         crear();
     };
 
-    const crear = async () => 
-    {
-        if(!ObjectIsNull(recibo) && user)
-        {
-            let idRecibo = await crearRecibo(recibo);
-            //creamos ficha
-            const ficha: fichaSkeleton =
-            {
+    const crear = async () => {
+        setbtnPulsado(true);
+    
+        if (ObjectIsNull(recibo) || !recibo || !user) {
+            setbtnPulsado(false);
+            seterror(true);
+            return;
+        }
+    
+        try {
+            const idRecibo = await crearRecibo(recibo);
+            if (!idRecibo) throw new Error('No se pudo crear el recibo');
+            
+            // Crear ficha
+            const ficha: fichaSkeleton = {
                 peso: user.peso,
-                altura:user.altura,
-                nivel_actividad:user.nivel_actividad,
-                calorias_objetivo:user.calorias_objetivo,
-                objetivo:user.objetivo,
-                genero:user.genero,
-                edad:user.edad,
-                reciboId:idRecibo
-            }
-            let idFicha = await crearFicha(ficha);
-            let date = getCurrentDate();
-            // creamos por fin al usuario q se insertara
-            const userAinsertar: realUser =
+                altura: user.altura,
+                nivel_actividad: user.nivel_actividad,
+                calorias_objetivo: user.calorias_objetivo,
+                objetivo: user.objetivo,
+                genero: user.genero,
+                edad: user.edad,
+                reciboId: idRecibo,
+            };
+    
+            const idFicha = await crearFicha(ficha);
+            if (!idFicha) throw new Error('No se pudo crear la ficha');
+    
+            // Crear usuario
+            const date = getCurrentDate();
+            const userAinsertar: realUser = 
             {
-                nombre:user.nombre,
-                contra:user.contra,
-                dias_ids:"",
-                ficha_id:idFicha,
-                fecha_registro: date
-            }
-            await crearUsuario(userAinsertar);
-            //borrar session
+                nombre: user.nombre,
+                contra: user.contra,
+                dias_ids: "",
+                ficha_id: idFicha,
+                fecha_registro: date,
+            };
+    
+            const usuario = await crearUsuario(userAinsertar);
+            if (!usuario) throw new Error('No se pudo crear el user');
+    
+            // Limpiar sesión y redirigir
             sessionStorage.clear();
-            sessionStorage.setItem("userNom", user.nombre)
-            location.href="../../myday"
+            sessionStorage.setItem("userNom", user.nombre);
+            setbtnPulsado(false);
+            location.href = "../../myday";
+        } 
+        catch (error) // aqui captura los throw errors
+        {
+            seterror(true);
+            setbtnPulsado(false);
         }
     };
+    
 
     const getCurrentDate = () => 
     {
@@ -173,47 +196,53 @@ export default function SignUp3()
         const day = String(date.getDate()).padStart(2, '0');
         
         return `${year}-${month}-${day}`;
-      }
+    }
     
-    const crearFicha = async (ficha:fichaSkeleton) => 
-    {
-        try{
-        const response = await axios.post(
-            `${API_URL}/fichas/createFicha`,
-            ficha,
-            {
-            headers: {
-                'Content-Type': 'application/json'
-            },
+    const crearFicha = async (ficha: fichaSkeleton) => {
+        try {
+            const response = await axios.post(
+                `${API_URL}/fichas/createFicha`,
+                ficha,
+                {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
+    
+            if (response.data) {
+                return response.data;  // Devuelve la data si existe
+            } else {
+                throw new Error('Ficha vacía en la respuesta');
             }
-        );
-        if(response.data != null)
-            return response.data;
-        }
-        catch (error) {
-        console.error('Error fetching data:', error);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            throw new Error('Error al crear la ficha');
         }
     };
 
 
-    const crearUsuario = async (userAinsertar:realUser) => 
-    {
-        try{
-        const createNewUser = await axios.post(
-            `${API_URL}/usuarios/createUser`,
-            userAinsertar,
-            {
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            }
-        );
-        console.log(createNewUser.data)
-        }
-        catch (error) {
-        console.error('Error fetching data:', error);
+    const crearUsuario = async (userAinsertar: realUser) => {
+        try {
+            const createNewUser = await axios.post(
+                `${API_URL}/usuarios/createUser`,
+                userAinsertar,
+                {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                }
+            );
+            return createNewUser.data;
+        } 
+        catch (error) 
+        {
+            console.error('Error al crear el usuario:', error);
+            // Lanza un error para que se propague al nivel superior
+            throw new Error('Error al crear el usuario');
         }
     };
+    
 
 
 
@@ -345,10 +374,11 @@ export default function SignUp3()
         minH="100vh"
         position={"relative"}
         >
-
+            {error == true &&<PopUpErrorMessage title={'Error'} texto={'Please, try again later'}></PopUpErrorMessage>}
+                
             {!ObjectIsNull(recibo) && recibo != null && 
             <CustomCard hijo={ 
-                <TitleCard title={"PERSONAL DESIGNED PLAN"} letsgo={letsgo} goback={()=> location.href = "../signup/parte2"} tooltip={"This is a science-based plan, but if you feel uncomfortable, feel free to change it or talk with an expert :)"}></TitleCard>} >
+                <TitleCard title={"PERSONAL DESIGNED PLAN"} letsgo={letsgo} btnDisabled={btnPulsado} goback={()=> location.href = "../signup/parte2"} tooltip={"This is a science-based plan, but if you feel uncomfortable, feel free to change it or to talk with an expert :)"}></TitleCard>} >
             </CustomCard>}
 
             {!ObjectIsNull(recibo) && recibo != null && 
