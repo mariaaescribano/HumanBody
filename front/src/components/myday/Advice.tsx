@@ -21,10 +21,10 @@ export default function Adive(props: {soymacro: string })
  
   return (
    <>
-    <Box ml={{base:"0px", md:"8px"}}  zIndex="10" onClick={()=> setquieroVer(!quieroVer)} cursor="pointer" position="relative">
+    <Box ml={{base:"0px", md:"8px"}} onClick={()=> setquieroVer(!quieroVer)} cursor="pointer" position="relative">
         {/* Mostrar texto con posición absoluta */}
         {quieroVer && (
-        <Box position="absolute" top="100%" whiteSpace={{sm: "wrap", md:"nowrap"}}  h="auto" left="0" mt="4px" bg="black" p="2px" borderRadius="4px">
+        <Box position="absolute" zIndex="10" top="100%" whiteSpace={{sm: "wrap", md:"nowrap"}}  h="auto" left="0" mt="4px" bg="black" p="2px" borderRadius="4px">
             <Text color="white" fontSize="sm"  p="4px">
             You ate too much {props.soymacro}
             </Text>

@@ -46,7 +46,7 @@ export default function MacroNutrCard(props: {title:string, total:string, infoLi
                         <Text flexShrink={0} width={{ base: "100%", sm: "auto" }}>
                             {item.label}
                         </Text>
-                        <MeryTooltip texto={item.tooltip} />
+                        {/* <MeryTooltip texto={item.tooltip} /> */}
                     </HStack>
 
                     <Text
@@ -82,7 +82,7 @@ export default function MacroNutrCard(props: {title:string, total:string, infoLi
                         <Text flexShrink={0} width={{ base: "100%", sm: "auto" }}>
                             {item.label} : {item.price}
                         </Text>
-                        <MeryTooltip texto={item.tooltip} />
+                        {/* <MeryTooltip texto={item.tooltip} /> */}
                     </HStack>
                 </VStack>
             ))}

@@ -1,7 +1,7 @@
 'use client';
 // Chakra imports
 import { Flex, Box, Icon, Text,  HStack, Progress } from '@chakra-ui/react';
-import { CarbIcono, colorCarbs, colorFats, colorFibra, colorProte, FiberIcono, ProteIcono } from '../../../GlobalHelper';
+import { CarbIcono, colorCarbs, colorFats, colorFibra, colorProte, FiberIcono, ProteIcono } from '../../GlobalHelper';
 import { FatIcono } from '../icons/FatIcon';
 import { macroPorcentajes } from '../../../../backend/src/dto/recibos.dto';
 import Advice from './Advice';

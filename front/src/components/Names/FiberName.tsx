@@ -1,6 +1,6 @@
 import React from 'react';
 import { HStack, Text } from '@chakra-ui/react'; 
-import { FiberIcono } from '../../../GlobalHelper';
+import { FiberIcono } from '../../GlobalHelper';
 
 export const FiberName = (props:{fontSize:string}) => {
   return (

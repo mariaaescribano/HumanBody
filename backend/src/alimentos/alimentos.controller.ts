@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, BadRequestException, NotFoundException } from '@nestjs/common';
 import { AlimentosService } from './alimentos.service';
 import { alimentosSkeleton } from 'src/dto/alimentos.dto';
 import { UsuariosService } from 'src/usuarios/usuarios.service';
@@ -11,51 +11,88 @@ export class AlimentosController {
     private readonly fichaService: FichasService
   ) {}
 
+
   @Get("macroPredomina/:idMacro/:userNom")
-  async getNameExists(@Param('idMacro') idMacro: number, @Param('userNom') userNom: string) {
+  async getNameExists(@Param('idMacro') idMacroStr: string, @Param('userNom') userNom: string) 
+  {
+    const idMacro = Number(idMacroStr); 
+    if (isNaN(idMacro) && !userNom) {
+      throw new BadRequestException("Parámetros inválidos.");
+    }
+
     const foods = await this.alimentosService.findAllByIdMacro(idMacro);
-    const dameUserFichaId = await this.usuariosService.dameUserFichaId(userNom)
-    const user_alimentos_fav_ids = await this.fichaService.dameAlimentosFav(dameUserFichaId)
-    const arrayNumeros = user_alimentos_fav_ids.match(/\d+/g).map(Number);
-
-    // pone antes los alimentos de dentro de lista de favs
-    let devolverPorOrden: alimentosSkeleton[] = [];
-
-    for(let i=0; i< foods.length; i++)
+    if(!foods)
     {
-      let objeto: alimentosSkeleton = 
-      {
-        id: foods[i].id,
-        nombre:foods[i].nombre,
-        calorias_100gr:foods[i].calorias_100gr,
-        gramos:foods[i].gramos,
-        recibo_id:foods[i].recibo_id,
-        predomina:foods[i].predomina
-      };
-      if(arrayNumeros.includes(foods[i].id))
-      {
-        objeto.es_fav_deUsu = true;
-      } 
-      else
-      {
-        objeto.es_fav_deUsu = false;
-      } 
-      devolverPorOrden.push(objeto)
-    }   
+      throw new NotFoundException("Alimentos de macro no encontrados");
+    }
 
+    let alimentos = await this.getAlimentosOrdenPorFavsDeUser(foods, userNom)
+    return alimentos;
+  };
+
+
+
+
+  async getAlimentosOrdenPorFavsDeUser(foods:alimentosSkeleton[], userNom:string)
+  {
+    const dameUserFichaId = await this.usuariosService.dameUserFichaId(userNom);
+    const user_alimentos_fav_ids = await this.fichaService.dameAlimentosFav(dameUserFichaId);
+    let arrayNumeros: number[] = [];
+    if (typeof user_alimentos_fav_ids === "string") 
+    {
+      arrayNumeros = user_alimentos_fav_ids.match(/\d+/g)?.map(Number) || [];
+    }
+
+    const devolverPorOrden: alimentosSkeleton[] = foods.map(food => ({
+      id: food.id,
+      nombre: food.nombre,
+      calorias_100gr: food.calorias_100gr,
+      gramos: food.gramos,
+      recibo_id: food.recibo_id,
+      predomina: food.predomina,
+      es_fav_deUsu: arrayNumeros.includes(Number(food.id)) ? true : false,
+    }));
+    
     return { foods: devolverPorOrden };
   }
 
+
+
+
   @Get("userFoodMacro/:idMacro/:userNom")
-  async getuserFoodMacro(@Param('idMacro') idMacro: number, @Param('userNom') userNom: string) {
+  async getuserFoodMacro(@Param('idMacro') idMacro: number, @Param('userNom') userNom: string) 
+  {
+    if (isNaN(idMacro) && !userNom) {
+      throw new BadRequestException("Parámetros inválidos.");
+    }
+
     const foods = await this.alimentosService.findUserMacroFoods(idMacro, userNom);
-    return { foods: foods };
+    if(!foods)
+    {
+      throw new NotFoundException("Alimentos de macro no encontrados");
+    }
+
+    let alimentos = await this.getAlimentosOrdenPorFavsDeUser(foods, userNom)
+    return alimentos;
   }
 
-  @Get("search/:foodName")
-  async findMatchingFoodController(@Param('foodName') foodName: string) {
-    const foods = await this.alimentosService.findMatchingFood(foodName);
-    return { foods: foods };
+
+
+  @Get("search/:foodName/:userNom/:misCreaciones")
+  async findMatchingFoodController(
+   @Param('foodName') foodName: string,
+   @Param('userNom') userNom: string,
+   @Param('misCreaciones') misCreaciones: boolean) 
+  {
+    const foods = await this.alimentosService.findMatchingFood(foodName, misCreaciones, userNom);
+    if(foods)
+    {
+      let alimentos = await this.getAlimentosOrdenPorFavsDeUser(foods, userNom);
+      return alimentos ;
+    }
+    else
+      return [];
+   
   }
 
   @Post("createAlimento/:userNom")

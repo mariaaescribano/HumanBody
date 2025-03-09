@@ -8,11 +8,17 @@ import MacroCalView from './MacroCalView';
 import EBookButton from '../global/random/EBookButton';
 import { AddIcon } from '@chakra-ui/icons';
 import { macroPorcentajes } from '../../../../backend/src/dto/recibos.dto';
+import { useRouter } from 'next/navigation';
 
-export default function ElementoPrimero(props: {macroPorcentaje: macroPorcentajes }) {
-
+export default function ElementoPrimero(props: {macroPorcentaje: macroPorcentajes }) 
+{
+    const router = useRouter();
     const [caloriasObj, setcaloriasObj] = useState<number>(0);
     const [caloriasHoy, setcaloriasHoy] = useState<number>(0);
+
+    const manejarNavegacion = () => {
+        router.push("/addfood/buscarAlimento");
+    };
 
     useEffect(() => 
     {
@@ -30,7 +36,7 @@ export default function ElementoPrimero(props: {macroPorcentaje: macroPorcentaje
   return (
     <>
     {caloriasObj != 0 && <>
-        <Box mb={{ base: "20px", md: "50px" }} alignItems={"center"} justifyContent={"center"}>
+        <Box mb={{ base: "20px", md: "20px" }} alignItems={"center"} justifyContent={"center"}>
             <Flex
                 justify="center"  // Centra los elementos horizontalmente
                 align="center"    // Centra los elementos verticalmente
@@ -49,18 +55,29 @@ export default function ElementoPrimero(props: {macroPorcentaje: macroPorcentaje
         </Box>
 
         <Button
-        fontSize="sm"
-        borderRadius="16px"
-        bg="purple.100"
-        w="50%"
-        h="auto"
-        p="10px"
-        _hover={{bg:"gray.100"}}
-        rightIcon={<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M417-417H166v-126h251v-251h126v251h251v126H543v251H417v-251Z"/></svg>}
-        as="a"
-        href="../addfood/buscarAlimento"
-        >
+            fontSize="sm"
+            borderRadius="16px"
+            bg="purple.100"
+            w={{ base: "50%", md: "20%" }}
+            h="auto"
+            p="10px"
+            _hover={{ bg: "gray.100" }}
+            onClick={manejarNavegacion}
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="24px"
+                viewBox="0 -960 960 960"
+                fill="white"
+                style={{ filter: "drop-shadow(2px 5px 5px rgba(0, 0, 0, 0.1))" }}
+            >
+                <path d="M417-417H166v-126h251v-251h126v251h251v126H543v251H417v-251Z" />
+            </svg>
         </Button>
+
 
         <Box w="100%" borderBottom="2px solid black" my="20px" />
         <EBookButton texto={'Fasting'}></EBookButton>

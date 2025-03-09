@@ -1,8 +1,8 @@
 'use client';
-import { StringIsNull } from '../../../GlobalHelper';
+import { StringIsNull } from '../../GlobalHelper';
 import { Flex, FormLabel, Select, useColorModeValue, Text } from '@chakra-ui/react';
 import { useEffect, useRef, useState } from 'react';
-import { exerciseFrequencyList, objectivesList } from '../../../GlobalHelper';
+import { exerciseFrequencyList, objectivesList } from '../../GlobalHelper';
 
 /* 0-peso
 1-altura
@@ -243,7 +243,7 @@ export default function SelectSignIn(props: { type:number, selectedValue:string,
     return (
     <>
        { options.length > 0 && !StringIsNull(props.selectedValue) && 
-            <Flex direction="column" mb="14px">
+            <Flex direction="column" mb="4px">
                <FormLabel
                     display='flex'
                     ms='10px'

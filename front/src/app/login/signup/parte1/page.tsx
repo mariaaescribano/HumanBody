@@ -5,6 +5,7 @@ import {
   Button,
   Card,
   Flex,
+  Icon,
   Select,
   SimpleGrid,
   Spinner,
@@ -22,8 +23,8 @@ import axios from 'axios';
 
 import React, { useEffect, useState, useRef } from 'react';
 import SelectSignIn from '@/components/signin/SelectSignIn';
-import { API_URL } from '../../../../../GlobalHelper';
-import { StringIsNull } from '../../../../../GlobalHelper';
+import { API_URL } from '../../../../GlobalHelper';
+import { StringIsNull } from '../../../../GlobalHelper';
 import PopUpMessage from '@/components/global/message/PopUpMessage';
 import PopUpErrorMessage from '@/components/global/message/PopUpErrorMessage';
 import { createUserSkeleton } from '../../../../../../backend/src/dto/usuarios.dto';
@@ -31,6 +32,7 @@ import PurpleSpinner from '@/components/global/random/PurpleSpinner';
 import InputField from '@/components/global/random/InputField';
 import CustomCard from '@/components/global/cards/CustomCard';
 import TitleCard from '@/components/global/cards/TitleCard';
+import { MdArrowBack } from 'react-icons/md';
 
 // COSITAS GUAYS:
 // - no deja q el navegador haga autocomplete
@@ -102,28 +104,37 @@ export default function SignUp1()
   }, []);
 
   // 1: comprobar si todos los datos estan rellenos
-  const comprobarSiPoderPaso2 = () =>
+  const comprobarSiPoderPaso2 = () => 
   {
-    setbtnPulsado(false)
-
-    // si ya estan en true, se mantienen, sino se actualizan
-    setfaltanDatos(prev => ({
-      nom: prev.nom || StringIsNull(nom),
-      contra: prev.contra || StringIsNull(contra)
+    setbtnPulsado(true);
+    const isNomNull = StringIsNull(nom);
+    const isContraNull = StringIsNull(contra);
+    const isPesoNull = StringIsNull(peso);
+    const isAlturaNull = StringIsNull(altura);
+    const isExerciseNull = StringIsNull(exerciseFrequency);
+    const isObjetivoNull = StringIsNull(objetivo);
+    const isGeneroNull = StringIsNull(genero);
+    const isEdadNull = StringIsNull(edad);
+  
+    setfaltanDatos((prev) => ({
+      nom: prev.nom || isNomNull,
+      contra: prev.contra || isContraNull
     }));
 
-    // Verificar si todos los campos están completos
-    if(!StringIsNull(peso)
-    && !StringIsNull(altura)
-    && !StringIsNull(exerciseFrequency)
-    && !StringIsNull(objetivo)
-    && !StringIsNull(nom)
-    && !StringIsNull(contra)
-    && !StringIsNull(genero) && !nomExiste)
-    {
-      // quitar comillas
-      const limpiarComillas = (str: string) => str.replace(/^"|"$/g, '');
-       
+    const puedeContinuar =
+      !isPesoNull &&
+      !isAlturaNull &&
+      !isExerciseNull &&
+      !isObjetivoNull &&
+      !isGeneroNull &&
+      !isEdadNull &&
+      !isNomNull &&
+      !isContraNull &&
+      !nomExiste;
+
+    if (puedeContinuar) {
+      const limpiarComillas = (str: string) => str.replace(/^"|"$/g, "");
+
       const user = {
         nombre: limpiarComillas(nom),
         contra: limpiarComillas(contra),
@@ -134,20 +145,20 @@ export default function SignUp1()
         objetivo,
         recibo: NaN,
         genero: limpiarComillas(genero),
-        edad: limpiarComillas(edad)
+        edad: limpiarComillas(edad),
       };
 
-      setbtnPulsado(true)
       sessionStorage.clear();
       sessionStorage.setItem("user", JSON.stringify(user));
       location.href = "./parte2";
-
-    }
-    else
+    } 
+    else 
     {
       setfilled(false);
+      setbtnPulsado(false);
     }
   };
+  
 
   const writingName = (e:any) =>
   {
@@ -228,12 +239,13 @@ export default function SignUp1()
       {datosAntes !== undefined && 
       <>
         <CustomCard mb={"10px"} hijo={ 
-          <TitleCard title={`CREATING AN ACCOUNT`} letsgo={comprobarSiPoderPaso2} goback={() => location.href = "../login"} tooltip={''} btnDisabled={btnPulsado}></TitleCard>} >
+          <TitleCard title={`CREATING AN ACCOUNT`} firstBtnIcon={<Icon as={MdArrowBack}/>} secondBtnIcon={<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="m536-84-56-56 142-142-340-340-142 142-56-56 56-58-56-56 84-84-56-58 56-56 58 56 84-84 56 56 58-56 56 56-142 142 340 340 142-142 56 56-56 58 56 56-84 84 56 58-56 56-58-56-84 84-56-56-58 56Z"/></svg>}
+          letsgo={comprobarSiPoderPaso2} goback={() => location.href = "../login"} tooltip={''} btnDisabled={btnPulsado} firstBtnText={"No, go back"} secondBtnText={"Yes, let's go!"}></TitleCard>} >
         </CustomCard>
         
         <Card p="30px" width={{base:"80%", md: "100%"}} mb={"100px"} maxWidth={"800px"} mt="20px" align="center" justify="center" borderRadius={"20px"}>
             <Flex direction="column" w="100%">
-            <Stack direction="column" spacing="20px">
+            <Stack direction="column" spacing="10px">
                 <SimpleGrid columns={{ base: 1, md: 2 }} gap="20px">
                 <InputField
                     mb="0px"

@@ -1,16 +1,17 @@
 'use client';
-import { Flex, Box, Text, Checkbox, Button, HStack } from '@chakra-ui/react';
+import { Flex, Box, Text, Checkbox, Button, HStack, Spinner } from '@chakra-ui/react';
 import InputField from '../global/random/InputField';
 import { useEffect, useState } from 'react';
 import { fidelidadSkeleton } from '../../../../backend/src/dto/fidelidad.dto';
 import axios from 'axios';
-import { API_URL } from '../../../GlobalHelper';
+import { API_URL } from '../../GlobalHelper';
 import SuccessErrorMessage from '../global/message/SuccessErrorMessage';
 
 export default function FidelidadCard() 
 {
     const [fid, setFid] = useState<fidelidadSkeleton | null>(null);
     const [respuesta, setrespuesta] = useState<boolean | undefined>(undefined);
+    const [btnPulsado, setbtnPulsado] = useState<boolean>(false);
 
     // 0: mira si en BD ya hay datos de fidelidad
     useEffect(() => 
@@ -84,6 +85,7 @@ export default function FidelidadCard()
         let idDia = sessionStorage.getItem("diaId");
         if(idDia)
         {
+            setbtnPulsado(true)
             try
             {
                 const response = await axios.put(
@@ -107,6 +109,10 @@ export default function FidelidadCard()
             {
                 setrespuesta(false)  
                 console.log('Error fetching data:', error);
+            }
+            finally
+            {
+                setbtnPulsado(false)
             }
         }
     };
@@ -144,9 +150,17 @@ export default function FidelidadCard()
                         w={{sd:"70%", md: "70%"}}
                         h="90%"
                         p="10px"
+                        disabled={btnPulsado}
                         onClick={actualizaFidelidad} 
                         _hover={{bg:"gray.100"}}
                         > SAVE
+                        {btnPulsado==true && (
+                            <Spinner
+                            size="sm"
+                            ml={4}
+                            color="white"
+                            />
+                        )}
                         </Button>
                     </HStack>
                 </Box>

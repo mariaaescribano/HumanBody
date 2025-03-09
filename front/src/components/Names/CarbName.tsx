@@ -1,6 +1,6 @@
 import React from 'react';
 import { HStack, Text } from '@chakra-ui/react'; 
-import { CarbIcono } from '../../../GlobalHelper';
+import { CarbIcono } from '../../GlobalHelper';
 
 export const CarbsName = (props:{fontSize:string}) => {
   return (

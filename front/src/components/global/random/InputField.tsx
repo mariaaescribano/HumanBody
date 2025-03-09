@@ -2,6 +2,7 @@
 // Chakra imports
 import { Flex, FormLabel, Input, Text, useColorModeValue } from '@chakra-ui/react';
 import MeryTooltip from './MeryToolTip';
+import { CaloryIcon } from '@/components/icons/CaloryIcon';
 
 // Custom components
 
@@ -30,6 +31,7 @@ export default function InputField(props: {
 				fontWeight='bold'
 				_hover={{ cursor: 'pointer' }}>
 				{label}
+				
 				<Text fontSize='sm' fontWeight='400' ms='2px'>
 					{extra}
 				</Text>

@@ -1,4 +1,5 @@
 export const API_URL = "http://localhost:3001";
+export const tryAgain = "Please, try again later";
 
 export function StringIsNull(text:string)
 {
@@ -22,6 +23,13 @@ export function ArrayIsNull(array:any[])
     return true;
   else
     return false;
+};
+
+export const redirigirSiNoHayUserNom = () => {
+  const nom = sessionStorage.getItem("userNom");
+  if (!nom) {
+    location.href = `${window.location.origin}/login/login`;
+  }
 };
 
 
@@ -64,7 +72,7 @@ export async function getInternetDateParts() {
 // ICONOS PARA MACROS
 import { FaAppleAlt, FaFish , FaSeedling } from 'react-icons/fa';
 import { MdOilBarrel } from 'react-icons/md';
-import { reciboSkeleton } from '../backend/src/dto/recibos.dto';
+import { reciboSkeleton } from '../../backend/src/dto/recibos.dto';
 import axios from 'axios';
 export const ProteIcono = FaFish;
 export const CarbIcono = FaAppleAlt;
@@ -158,13 +166,16 @@ export const crearRecibo = async (recibo: reciboSkeleton) => {
 
 
 export const esSoloNumeros = (cadena: string): boolean => {
-    return /^\d+$/.test(cadena.trim());  // Elimina espacios antes de validar
+  // Verifica si la cadena contiene solo números y no tiene letras
+  return /^\d+$/.test(cadena.trim()) && !/[a-zA-Z]/.test(cadena.trim());
 };
+
 
 
 export const calcularPorcentajes = (numeros: number[]) => {
   const sumaTotal = numeros.reduce((acc, num) => acc + num, 0); // Sumar todos los números
   const porcentajes = numeros.map(num => (num / sumaTotal) * 100); // Calcular el porcentaje de cada número
+  //const porcentajes = numeros.map(num => Math.round((num / sumaTotal) * 100).toFixed(0));
   return porcentajes;
 };
 

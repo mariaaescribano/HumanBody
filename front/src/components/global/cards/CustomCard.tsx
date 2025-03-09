@@ -10,6 +10,7 @@ interface CardProps {
   borderRadius?: string; // Border-radius opcional
   minHeight?: string;
   mb?: string;
+  mt?: string;
 }
 
 export default function CustomCard({
@@ -18,6 +19,7 @@ export default function CustomCard({
   borderRadius = "20px", // Border-radius por defecto
   minHeight = "auto",
   mb="10px",
+  mt="20px",
 }: CardProps) {
 
   return (
@@ -28,7 +30,7 @@ export default function CustomCard({
       height="auto"
       minHeight={minHeight} 
       maxWidth="800px" 
-      mt="20px" 
+      mt={mt} 
       align="center" 
       justify="center" 
       borderRadius={borderRadius}

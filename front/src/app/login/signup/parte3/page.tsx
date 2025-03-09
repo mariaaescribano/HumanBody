@@ -4,6 +4,7 @@ import {
   Box,
   Flex,
   HStack,
+  Icon,
   Text,
   useColorModeValue,
   VStack,
@@ -11,7 +12,7 @@ import {
 import axios from 'axios';
 // Custom components
 import React, { useEffect, useState, useRef } from 'react';
-import { API_URL, ObjectIsNull, crearRecibo, getTamanyoPantalla } from '../../../../../GlobalHelper';
+import { API_URL, ObjectIsNull, crearRecibo, getTamanyoPantalla, tryAgain } from '../../../../GlobalHelper';
 import { createUserSkeleton, realUser } from '../../../../../../backend/src/dto/usuarios.dto';
 import PurpleSpinner from '@/components/global/random/PurpleSpinner';
 import MeryTooltip from '@/components/global/random/MeryToolTip';
@@ -24,6 +25,7 @@ import { fichaSkeleton } from '../../../../../../backend/src/dto/fichas.dto';
 import { showEbook } from '../../../../../../backend/src/dto/ebook.dto';
 import FiberCard from '@/components/global/cards/FiberCard';
 import PopUpErrorMessage from '@/components/global/message/PopUpErrorMessage';
+import { MdArrowBack } from 'react-icons/md';
 
 export default function SignUp3() 
 {
@@ -177,14 +179,16 @@ export default function SignUp3()
             // Limpiar sesión y redirigir
             sessionStorage.clear();
             sessionStorage.setItem("userNom", user.nombre);
-            setbtnPulsado(false);
             location.href = "../../myday";
         } 
         catch (error) // aqui captura los throw errors
         {
             seterror(true);
-            setbtnPulsado(false);
         }
+        // finally
+        // {
+        //     setbtnPulsado(false);
+        // }
     };
     
 
@@ -374,11 +378,13 @@ export default function SignUp3()
         minH="100vh"
         position={"relative"}
         >
-            {error == true &&<PopUpErrorMessage title={'Error'} texto={'Please, try again later'}></PopUpErrorMessage>}
+            {error == true &&<PopUpErrorMessage title={'Error'} texto={tryAgain}></PopUpErrorMessage>}
                 
             {!ObjectIsNull(recibo) && recibo != null && 
             <CustomCard hijo={ 
-                <TitleCard title={"PERSONAL DESIGNED PLAN"} letsgo={letsgo} btnDisabled={btnPulsado} goback={()=> location.href = "../signup/parte2"} tooltip={"This is a science-based plan, but if you feel uncomfortable, feel free to change it or to talk with an expert :)"}></TitleCard>} >
+                <TitleCard firstBtnText={"No, go back"} secondBtnText={"Yes, let's go!"} 
+                firstBtnIcon={<Icon as={MdArrowBack}/>} secondBtnIcon={<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="m536-84-56-56 142-142-340-340-142 142-56-56 56-58-56-56 84-84-56-58 56-56 58 56 84-84 56 56 58-56 56 56-142 142 340 340 142-142 56 56-56 58 56 56-84 84 56 58-56 56-58-56-84 84-56-56-58 56Z"/></svg>}
+                title={"PERSONAL DESIGNED PLAN"} letsgo={letsgo} btnDisabled={btnPulsado} goback={() => location.href = "../signup/parte2"} tooltip={''} ></TitleCard>} >
             </CustomCard>}
 
             {!ObjectIsNull(recibo) && recibo != null && 

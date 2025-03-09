@@ -1,7 +1,7 @@
 'use client';
 import { Flex, Box, Icon, Text, HStack, Image, VStack, Input } from '@chakra-ui/react';
 import { reciboSkeleton } from '../../../../../backend/src/dto/recibos.dto';
-import { esSoloNumeros } from '../../../../GlobalHelper';
+import { esSoloNumeros } from '../../../GlobalHelper';
 import InputField from '../random/InputField';
 import EBookButton from '../random/EBookButton';
 import { showEbook } from '../../../../../backend/src/dto/ebook.dto';
@@ -47,11 +47,23 @@ export default function FiberCard(props: { edit:boolean, recibo?:reciboSkeleton,
 
             
 
-          {props.edit && <Flex justify="center" w="100%" fontSize="xl" fontWeight={"bold"} gap="20px">
-            <Text mt="10px">TOTAL </Text>
-            <InputField onChange= {(e:any)=> {escribir(e.target.value)}}/>
-            <Text mt="10px">grams</Text>
-          </Flex>} 
+        {props.edit && <Flex justify="center" w="100%" fontSize="xl" fontWeight={"bold"} gap="20px">
+          <Text mt="10px">TOTAL </Text>
+          <Input
+            textAlign="center"
+            border="1px solid gray"
+            borderRadius={"10px"}
+            fontWeight='500'
+            variant='main'
+            w="25%"
+            value= {props.totalFiber && !isNaN(Number(props.totalFiber)) ? props.totalFiber : "0"}
+            onChange= {(e:any)=> {escribir(e.target.value)}}
+            h='44px'
+            maxH='44px'
+          />
+          {/* <InputField onChange= {(e:any)=> {escribir(e.target.value)}} alignText="center" value= {props.totalFiber ? props.totalFiber : "0"}/> */}
+          <Text mt="10px">grams</Text>
+        </Flex>} 
 
 
               
@@ -61,7 +73,7 @@ export default function FiberCard(props: { edit:boolean, recibo?:reciboSkeleton,
             {/* <MeryTooltip texto={"Fiber is a carb but it isn't summed with the carbohydrates."} /> */}
 
           <HStack>
-              <Text> {props.totalFiber} </Text>
+              <Text> {props.totalFiber ? props.totalFiber : "0"} </Text>
               <Text>grams </Text>
           </HStack></Flex>}
    

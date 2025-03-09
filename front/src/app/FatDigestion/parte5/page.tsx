@@ -18,7 +18,7 @@ import PopUpMessage from '@/components/global/message/PopUpMessage';
 import IzqPurpleMessage from '@/components/global/old/IzqPurpleMessage';
 import DerPurpleMessage from '@/components/global/DerPurpleMessage';
 import BarnerMorado from '@/components/global/BarnerMorado';
-import { EscribirTextoDinamico, getTamanyoPantalla, handleMouseEndGlobalHelper, handleMouseStartGlobalHelper, handleMoveMouse, handleTouchEndGlobalHelper, handleTouchMoveGlobalHelper, handleTouchStartGlobalHelper, moveWithKey, moveWithKeyBucle, putDefaultKeys, stopMoveWithKey } from '../../../../GlobalHelper';
+import { EscribirTextoDinamico, getTamanyoPantalla, handleMouseEndGlobalHelper, handleMouseStartGlobalHelper, handleMoveMouse, handleTouchEndGlobalHelper, handleTouchMoveGlobalHelper, handleTouchStartGlobalHelper, moveWithKey, moveWithKeyBucle, putDefaultKeys, stopMoveWithKey } from '../../../GlobalHelper';
 import { motion } from "framer-motion";
 import CardFFA from '@/components/FatDigestion/CardFFA';
 

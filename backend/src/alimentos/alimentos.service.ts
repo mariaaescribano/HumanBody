@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { DatabaseService } from '../Database/database.service';
 import { alimentosSkeleton } from 'src/dto/alimentos.dto';
 
@@ -22,10 +22,27 @@ export class AlimentosService {
   }
 
 
-  async findMatchingFood(foodName: string) {
-    const sql = 'SELECT * FROM alimento WHERE nombre LIKE ? LIMIT 30';
-    const result = await this.databaseService.query(sql, [`%${foodName}%`]);
-    return result;
+  async findMatchingFood(foodName: string, misCreaciones:boolean, userNom:string) {
+    if(foodName && misCreaciones)
+    { 
+      console.log(misCreaciones)
+      if(misCreaciones === true || misCreaciones === "true")
+      {
+        console.log("pasando")
+        const sql = 'SELECT * FROM alimento WHERE nombre LIKE ? AND userNom IS NOT NULL AND userNom = ? LIMIT 30';
+        const result = await this.databaseService.query(sql, [`%${foodName}%`, userNom]);
+        return result;        
+      } 
+      else
+      {
+        console.log("pasando1")
+        const sql = 'SELECT * FROM alimento WHERE nombre LIKE ? LIMIT 30';
+        const result = await this.databaseService.query(sql, [`%${foodName}%`]);
+        return result;
+      } 
+    }
+    else
+      throw new BadRequestException();
   }
   
   async createAlimento(body: alimentosSkeleton, userNom:string) {

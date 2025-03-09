@@ -17,6 +17,8 @@ CURIOSIDADES
 FACILITADORES
 |   
 
+||
+
 [] 
 
 {}
@@ -75,25 +77,24 @@ IMPORTANTE: ESTRUCTURACIÓN
 ORDEN: prote: "#610C04" -fats:"#abdefa" -carbs:"#EDC9AF"
 
 
-FUNCIONES Q HACER Q FALLEN bien
-usuarios/login
-fichas/createFicha
+/////////////////////////////////////////////
+MEJORAS
+
+MY CREATED FOODS
+--> reutilizar pagina de Search FOODS, o sea hacer 1 componente q sea el q se llame pasando datos y ya
+
+/////////////////////////////////////////////
 
 
-OBJETIVO
---> ir pagina por pagina haciendo bien el manejo de errores
 
 
 
-PARA HOY
---> acabar diseño en MealDiary
---> comprobar q funciona con otros usuarios
---> buscarAlimento crash  
+
+
+
 
 
 PARA MAÑANA
---> poner estrella tb en buscar comida (buscar a mano)
-
 --> hacer pruebas de q todo esta bien
 
 --> poner text botones en blanco?

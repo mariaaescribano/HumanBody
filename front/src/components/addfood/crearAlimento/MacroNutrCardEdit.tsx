@@ -5,7 +5,7 @@ import { ProteinsName } from '@/components/Names/ProteinName';
 import { Flex, Box, Icon, Text, HStack, Image, VStack, Input } from '@chakra-ui/react';
 import { reciboConstNames, reciboSkeleton } from '../../../../../backend/src/dto/recibos.dto';
 import { useEffect, useRef } from 'react';
-import { esSoloNumeros } from '../../../../GlobalHelper';
+import { esSoloNumeros, StringIsNull } from '../../../GlobalHelper';
 
 
 
@@ -14,12 +14,12 @@ export default function MacroNutrCardEdit(props: {recibo:reciboSkeleton, setreci
     // para "dejar" q el recibo se actualice
     // si se actualiza cuando actualizamos los resultados, en hacer suma, seria un bucle continuo
     let entra = useRef<boolean>(false)
-
    // le pasamos objeto a editar por parametro
    // pone los datos
    const escribir = (item:string, gramosCantidas:string) =>
     {
-        if(esSoloNumeros(gramosCantidas) || gramosCantidas=="" )
+        console.log(esSoloNumeros(gramosCantidas), gramosCantidas)
+        if(esSoloNumeros(gramosCantidas) == true || gramosCantidas=="")
         {
             entra.current = true;
             if(gramosCantidas=="")
@@ -61,7 +61,6 @@ export default function MacroNutrCardEdit(props: {recibo:reciboSkeleton, setreci
     };
 
     
-
    // hacer suma
     useEffect(() => 
     {
@@ -90,6 +89,23 @@ export default function MacroNutrCardEdit(props: {recibo:reciboSkeleton, setreci
 
 
 
+    const devuelveValor = (item:any) =>
+    {
+        if (item == "FATS") return props.recibo.grasas;
+        if (item == "Monounsaturated") return props.recibo.monoinsaturadas;
+        if (item == "Polyunsaturated") return props.recibo.poliinsaturadas;
+        if (item == "Saturated") return props.recibo.saturadas;
+        if (item == "PROTEINS") return props.recibo.prote;
+        if (item == "Incomplete") return props.recibo.incompleto;
+        if (item == "Complete") return props.recibo.completo;
+        if (item == "CARBS") return props.recibo.carbs;
+        if (item == "Complex") return props.recibo.complejos;
+        if (item == "Simples") return props.recibo.simples;
+        if (item == "Fiber") return props.recibo.fibra;
+    };
+
+
+
   return (
     <Flex direction="column" w="100%">
         <div>
@@ -105,7 +121,6 @@ export default function MacroNutrCardEdit(props: {recibo:reciboSkeleton, setreci
                     key={index}
                     align="center"
                     w="100%"
-                    
                     gap="20px"
                     fontSize={{ base: "md", sm: "lg" }} // Cambia el tamaño de la fuente en pantallas pequeñas
                     direction={{ base: "column", sm: "row" }} // En pantallas pequeñas, los elementos se apilan verticalmente, en pantallas grandes horizontalmente
@@ -131,7 +146,8 @@ export default function MacroNutrCardEdit(props: {recibo:reciboSkeleton, setreci
                         borderRadius={"10px"}
                         fontWeight='500'
                         variant='main'
-                        // value={(props.recibo as any)[item]} 
+                        textAlign={"center"}
+                        value={devuelveValor(item) || ''} 
                         w="20%"
                         onChange={(e:any)=> escribir(item, e?.target.value)}
                         _placeholder={{ fontWeight: '400', color: 'secondaryGray.600' }}
@@ -162,11 +178,12 @@ export default function MacroNutrCardEdit(props: {recibo:reciboSkeleton, setreci
                             {item + ": "} 
                         </Text>
                         <Input
-                            
+                            textAlign={"center"}
                             border="1px solid gray"
                             borderRadius={"10px"}
                             fontWeight='500'
                             variant='main'
+                            value={devuelveValor(item) || ''} 
                             onChange={(e:any)=> escribir(item, e?.target.value)}
                             _placeholder={{ fontWeight: '400', color: 'secondaryGray.600' }}
                             h='44px'

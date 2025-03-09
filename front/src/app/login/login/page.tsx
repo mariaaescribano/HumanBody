@@ -21,7 +21,7 @@ import axios from 'axios';
 // Custom components
 
 import React, { useEffect, useRef, useState } from 'react';
-import { API_URL, StringIsNull } from '../../../../GlobalHelper';
+import { API_URL, StringIsNull, tryAgain } from '../../../GlobalHelper';
 import PopUpErrorMessage from '@/components/global/message/PopUpErrorMessage';
 import InputField from '@/components/global/random/InputField';
 
@@ -33,7 +33,7 @@ export default function login()
   const [contra, setcontra] = useState<string>("");
 
   // si alguno esta mal
-  // 1- no nombre, 2- no contra, 3- ninguno
+  // 1- no nombre, 2- no contra, 3- ambos
   const [datosMal, setdatosMal] = useState<number>(0);
 
   // gestionar errores del back
@@ -105,13 +105,47 @@ export default function login()
         setdatosMal(3);
         errorText.current = "Wrong password or user name";
       } else if (error.response.status === 500) {
-        errorText.current = "Please, try again later";
+        errorText.current = tryAgain;
       } else {
         setdatosMal(3);
         errorText.current = "User doesn't exist";
       }
     }
   };
+
+
+  const writingName = (value:any) =>
+  {
+    if(datosMal == 1 || datosMal == 3)
+    {
+      sethayError(false)
+      if(datosMal == 1)
+        setdatosMal(0)
+      else if(datosMal == 3)
+        setdatosMal(2)
+    }
+
+    let nom = value;
+    setnom(nom)
+  };
+
+  const writingContra = (value:any) =>
+  {
+    if(datosMal == 2 || datosMal == 3)
+    {
+      sethayError(false)
+      if(datosMal == 2)
+        setdatosMal(0)
+      else if(datosMal == 3)
+        setdatosMal(1)
+    }
+
+    let nom = value;
+    setcontra(nom)
+  };
+
+
+
 
   return (
     <Flex
@@ -141,7 +175,7 @@ export default function login()
                     bg={datosMal==1 || datosMal == 3 ? "red.200": ""}
                     placeholder="eg. Esthera"
                     label="User name"
-                    onChange={(e:any) => setnom(e.target.value)}
+                    onChange={(e:any) => writingName(e.target.value)}
                 />
                 <InputField
                     mb="0px"
@@ -151,7 +185,7 @@ export default function login()
                     placeholder="eg. ****"
                     label="Password"
                     value={contra}
-                    onChange={(e:any) => setcontra(e.target.value)}
+                    onChange={(e:any) => writingContra(e.target.value)}
                 />
                 </SimpleGrid>
             </Stack>

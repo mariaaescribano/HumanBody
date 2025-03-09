@@ -28,7 +28,7 @@ import axios from 'axios';
 import React, { useEffect, useState, useRef } from 'react';
 import PurpleSpinner from '@/components/global/random/PurpleSpinner';
 import CustomCard from '@/components/global/cards/CustomCard';
-import { API_URL, calcularPorcentaje, calcularPorcentajes, crearRecibo, dameDatosDelRecibo, formatDateToISOFriendly, getFecha, getTamanyoPantalla } from '../../../GlobalHelper';
+import { API_URL, calcularPorcentaje, calcularPorcentajes, crearRecibo, dameDatosDelRecibo, formatDateToISOFriendly, getFecha, getTamanyoPantalla, redirigirSiNoHayUserNom } from '../../GlobalHelper';
 import MacroCalView from '@/components/myday/MacroCalView';
 import { ArrowLeftIcon, ArrowRightIcon } from "@chakra-ui/icons";
 import MacroNutrCard from '@/components/signin/MacroNutrCard';
@@ -41,6 +41,8 @@ import EBookButton from '@/components/global/random/EBookButton';
 import { diasSkeleton } from '../../../../backend/dist/src/dto/dias.dto';
 import { CaloryIcon } from '@/components/icons/CaloryIcon';
 import { PieChardMacroNutr2 } from '@/components/global/cards/PieChardMacroNutr2';
+import BarraMenu from '@/components/global/BarraMenu';
+import { useRouter } from 'next/navigation';
 
 ///////////////// ESTRATEGIA /////////////////
 // va a coger todos los dias_ids y los va a guardar
@@ -49,6 +51,7 @@ import { PieChardMacroNutr2 } from '@/components/global/cards/PieChardMacroNutr2
 
 export default function mealDiary() 
 {
+  const router = useRouter();
   const dia = useRef<diasSkeleton | null>(null);
   const userNom = useRef<string>("");
   const idsFechas = useRef<number[]>([]); // se guardan por orden cronológico
@@ -93,6 +96,7 @@ export default function mealDiary()
   // 0: encuentra datos en el ss
   useEffect(() => 
   {
+    redirigirSiNoHayUserNom();
     dia.current=null;
     getTamanyoPantalla(setscreenSize)
     let userNomm = sessionStorage.getItem("userNom");
@@ -408,6 +412,7 @@ export default function mealDiary()
         minH="100vh"
         position={"relative"}
       >
+        <BarraMenu></BarraMenu>
         {/* title */}
         <Card
             width={{ base: "90%", md: "100%" }}
@@ -475,55 +480,23 @@ export default function mealDiary()
        {/* calorias y macronutrients overall view */}
         <CustomCard hijo={
           <>
-            <Box mb={{ base: "20px", md: "50px" }} alignItems={"center"} justifyContent={"center"}>
+            <Box mb={{ base: "10px", md: "20px" }} alignItems={"center"} justifyContent={"center"}>
               <Flex
                   justify="center"  // Centra los elementos horizontalmente
                   align="center"    // Centra los elementos verticalmente
               >
                   <SimpleGrid
-  w={{ base: "100%", md: "70%" }}  
-  columns={{ base: 1, md: 2 }}  // En pantallas pequeñas, 1 columna; en pantallas medianas, 2 columnas
-  spacing={{ base: "0px", md: "120px" }}  // Espacio entre los elementos
-  justifyContent={{ base: "center", md: "space-between" }}  // Centrado en pantallas pequeñas, espacio entre en pantallas medianas
->
-  <Box   w="400px" mt={{ base: "0px", md: "25px", xl: "25px" }}>
-      <PieChardMacroNutr2 pieChartData={pieChardData} calories={calorias} />
-  </Box>
-  <MacroCalView macroPorcentaje={macroPorcentaje}/>
-</SimpleGrid>
-
+                    w={{ base: "100%", md: "70%" }}  
+                    columns={{ base: 1, md: 2 }} 
+                    spacing={{ base: "20px", md: "120px" }} 
+                  >
+                    <Box w={{ base: "150px", md: "400px" }} justifyContent={{ base: "center", md: "space-between" }}  mt={{ base: "0px", md: "25px", xl: "25px" }} mb={{ sd: "30px", md: "0px" }} ml={{ base: "20px", md: "-70px" }}>
+                        <PieChardMacroNutr2 pieChartData={pieChardData} calories={calorias} />
+                    </Box>
+                    <MacroCalView macroPorcentaje={macroPorcentaje}/>
+                  </SimpleGrid>
               </Flex>
             </Box>
-
-            {/* calories showBox */}
-            {/* <Flex direction='column' mb={'20px'} mt={{ base: "0px", md: "-30px" }}>
-                    <FormLabel
-                      display='flex'
-                      ms='10px'
-                      fontSize='sm'
-                      color={"black"}
-                      fontWeight='bold'
-                      _hover={{ cursor: 'pointer' }}>
-                      {"Calories"}
-                    </FormLabel>
-
-                    <Flex
-                      border="1px solid gray"
-                      borderRadius="10px"
-                      fontWeight="500"
-                      justifyContent="center"
-                      alignItems="center"
-                      h="44px"
-                      maxH="44px"
-                      textAlign="center"
-                    >
-                      {<Box p="5px" display="flex" alignItems="center">
-                        <CaloryIcon />
-                        <Text ml="10px" mr="10px">{!dia.current ? "0 kcal" : dia.current?.calorias_total + " kcal"}</Text>
-                      </Box>
-                      }
-                    </Flex>
-            </Flex> */}
     
             <Box w="100%" borderBottom="2px solid black" my="20px" />
             <EBookButton texto={'What happens if...?'}></EBookButton>

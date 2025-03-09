@@ -2,13 +2,23 @@
 import { Flex, Box, Icon, Text, useColorModeValue, Card, Button, HStack, Image, Spinner } from '@chakra-ui/react';
 import { MdArrowBack } from 'react-icons/md';
 import MeryTooltip from '../random/MeryToolTip';
+import SuccessErrorMessage from '../message/SuccessErrorMessage';
 
-export default function TitleCard(props: { title:string, letsgo:any, goback:any, tooltip:string, btnDisabled?:boolean}) {
+export default function TitleCard(props: 
+{ title:string, titleIcon?:any, 
+    firstBtnText:string, firstBtnIcon?:any, letsgo:any,
+    secondBtnText:string, secondBtnIcon?:any, goback:any,
+    mensajeError?: boolean|undefined, textMensajeError?:string, statusMensajeError?:string,
+    tooltip?:string, btnDisabled?:boolean}) 
+{
    const textColor = useColorModeValue('secondaryGray.900', 'white');
 
-  return (
+    return (
     <>
-        <HStack justify="start" gap="5px" align="start" mb="10px">
+        <HStack justify="start" gap="5px" align="start" mb="10px">   
+            <Box mt="7px">
+             {props.titleIcon && props.titleIcon}
+            </Box>
             <Text color={textColor} fontSize="2xl" fontWeight="700">
             {props.title}
             </Text>
@@ -32,37 +42,35 @@ export default function TitleCard(props: { title:string, letsgo:any, goback:any,
                 h="46px"
                 _hover={{ bg: "gray.100" }}
                 onClick={props.goback}
-                leftIcon={<Icon as={MdArrowBack} />}
+                leftIcon={props.firstBtnIcon}
             >
-                No, go back
+                {props.firstBtnText}
             </Button>
             <Button
                 variant="darkBrand"
                 fontSize="sm"
                 borderRadius="16px"
                 bg="purple.100"
-                w={'auto'}
+                w={{ base: '128px', md: '148px' }}
                 h="46px"
                 disabled={props.btnDisabled}
                 onClick={props.letsgo}
                 _hover={{ bg: "gray.100" }}
-                leftIcon={<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="m536-84-56-56 142-142-340-340-142 142-56-56 56-58-56-56 84-84-56-58 56-56 58 56 84-84 56 56 58-56 56 56-142 142 340 340 142-142 56 56-56 58 56 56-84 84 56 58-56 56-58-56-84 84-56-56-58 56Z"/></svg>}
+                leftIcon={props.secondBtnIcon}
             >
-                Yes, let's go!
-                 {props.btnDisabled==true && (
-                    <Spinner
-                    thickness="4px"
-                    ml={4}
-                    speed="0.65s"
-                    emptyColor="gray.200"
-                    color="white"
-                    borderRadius="50%" 
+                {props.secondBtnText}
+                {props.btnDisabled==true && (
+                 <Spinner
                     size="sm"
+                    ml={4}
+                    color="white"
                     />
-                    )}
+                )}
             </Button>
         </HStack>
+        
+        {props.mensajeError!= undefined && props.statusMensajeError && props.textMensajeError && props.statusMensajeError != "" &&
+        <SuccessErrorMessage status={props.statusMensajeError} title={props.textMensajeError}></SuccessErrorMessage>} 
     </>
-
   );
 }

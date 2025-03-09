@@ -1,6 +1,6 @@
 import React from 'react';
 import { HStack, Text } from '@chakra-ui/react'; 
-import { ProteIcono } from '../../../GlobalHelper';
+import { ProteIcono } from '../../GlobalHelper';
 
 export const ProteinsName = (props:{fontSize:string}) => {
   return (

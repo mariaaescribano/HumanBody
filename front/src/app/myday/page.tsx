@@ -29,7 +29,7 @@ import PopUpMessage from '@/components/global/message/PopUpMessage';
 import PopUpErrorMessage from '@/components/global/message/PopUpErrorMessage';
 import PurpleSpinner from '@/components/global/random/PurpleSpinner';
 import CustomCard from '@/components/global/cards/CustomCard';
-import { API_URL, crearRecibo, dameDatosDelRecibo, formatDateToISOFriendly, getFecha, getInternetDateParts, getTamanyoPantalla } from '../../../GlobalHelper';
+import { API_URL, crearRecibo, dameDatosDelRecibo, formatDateToISOFriendly, getFecha, getInternetDateParts, getTamanyoPantalla, redirigirSiNoHayUserNom } from '../../GlobalHelper';
 import ElementoPrimero from '@/components/myday/ElementoPrimero';
 import MacroNutrCard from '@/components/signin/MacroNutrCard';
 import { macroPorcentajes, reciboSkeleton, showMacroNutrSignUp } from '../../../../backend/src/dto/recibos.dto';
@@ -38,9 +38,13 @@ import { showEbook } from '../../../../backend/src/dto/ebook.dto';
 import FiberCard from '@/components/global/cards/FiberCard';
 import FidelidadCard from '@/components/myday/FidelidadCard';
 import BarraMenu from '@/components/global/BarraMenu';
+import { useRouter } from 'next/navigation';
+
+
 
 export default function MyDay() 
 {
+  const router = useRouter();
   // lo necesario para 1 dia en sessionstorage
   const idReciboDeHoy = useRef<number>(-1);
   const idReciboObjetivo = useRef<number>(-1);
@@ -71,7 +75,11 @@ export default function MyDay()
 
   const [fecha, setfecha ] = useState<string>("");
   ///////////////////// END DECLARATIONS /////////////////////
+  
 
+  const manejarNavegacion = () => {
+    router.push("/mealDiary");
+  };
 
 
 
@@ -79,12 +87,11 @@ export default function MyDay()
   // 0: mira si ya hay recibo y calorias para el dia de hoy, si no lo hay lo crea
   useEffect(() => 
   {
+    redirigirSiNoHayUserNom();
     let id = sessionStorage.getItem("reciboDeHoy");
     let idReciboObjetivoo = sessionStorage.getItem("reciboObjetivo");
     getTamanyoPantalla(setscreenSize)
-
-    // no hay nada en la BD, lo creo de zero
-    // console.log(id)
+      // no hay nada en la BD, lo creo de zero
     if(id == null )
     {
       creaRecibo();
@@ -96,7 +103,6 @@ export default function MyDay()
     }
     else
       location.href = "../login/login";
-     
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -398,23 +404,22 @@ export default function MyDay()
 
        <CustomCard hijo={ 
         <>
-        <Text mb="20px" textAlign="left" alignSelf="flex-start"
-            justifySelf="flex-start">Learn about the past ...</Text>
-        <Button
-               fontSize="sm"
-               borderRadius="16px"
-               bg="purple.100"
-               w="100%"
-               h="auto"
-               p="10px"
-               as="a"
-               href="../mealDiary"
-               _hover={{bg:"gray.100"}}
-                leftIcon={
-                  <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M240-80q-50 0-85-35t-35-85v-560q0-50 35-85t85-35h440v640H240q-17 0-28.5 11.5T200-200q0 17 11.5 28.5T240-160h520v-640h80v720H240Zm120-240h240v-480H360v480Zm-80 0v-480h-40q-17 0-28.5 11.5T200-760v447q10-3 19.5-5t20.5-2h40Zm-80-480v487-487Z"/></svg>}// onClick={comprobarSiPoderPaso2}
-               > DIARY OF MEALS
-               </Button>
-               </>}>
+          <Text mb="20px" textAlign="left" alignSelf="flex-start"
+              justifySelf="flex-start">Learn about the past ...</Text>
+          <Button
+          fontSize="sm"
+          borderRadius="16px"
+          bg="purple.100"
+          w="100%"
+          h="auto"
+          p="10px"
+          onClick={manejarNavegacion}
+          _hover={{bg:"gray.100"}}
+          leftIcon={
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M240-80q-50 0-85-35t-35-85v-560q0-50 35-85t85-35h440v640H240q-17 0-28.5 11.5T200-200q0 17 11.5 28.5T240-160h520v-640h80v720H240Zm120-240h240v-480H360v480Zm-80 0v-480h-40q-17 0-28.5 11.5T200-760v447q10-3 19.5-5t20.5-2h40Zm-80-480v487-487Z"/></svg>}// onClick={comprobarSiPoderPaso2}
+          > DIARY OF MEALS
+          </Button>
+        </>}>
         </CustomCard>
 
         {/* fidelidad card */}

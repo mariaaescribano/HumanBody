@@ -23,7 +23,7 @@ import {
 import axios from 'axios';
 // Custom components
 import React, { useEffect, useState, useRef } from 'react';
-import { API_URL, exerciseFrequencyList, StringIsNull, objectivesList, ObjectIsNull, getTamanyoPantalla } from '../../../../../GlobalHelper';
+import { API_URL, exerciseFrequencyList, StringIsNull, objectivesList, ObjectIsNull, getTamanyoPantalla } from '../../../../GlobalHelper';
 import { createUserSkeleton } from '../../../../../../backend/src/dto/usuarios.dto';
 import { MdArrowBack, MdHdrStrong } from 'react-icons/md';
 import PurpleSpinner from '@/components/global/random/PurpleSpinner';
@@ -37,6 +37,7 @@ export default function SignUp2()
   const textColor = useColorModeValue('secondaryGray.900', 'white');
   const [user, setUser] = useState<createUserSkeleton | null>(null);
   const [screenSize, setscreenSize] = useState<string>("");
+  const [btnPulsado, setbtnPulsado] = useState<boolean>(false)
   const [activityLevelIndex, setactivityLevelIndex] = useState<number>(-1);
   const objectiveIndex = useRef<number>(0);
 
@@ -113,6 +114,7 @@ export default function SignUp2()
 
   const letsgo = () =>
   {
+    setbtnPulsado(true)
     location.href = "../signup/parte3";
   };
     
@@ -130,7 +132,8 @@ export default function SignUp2()
 >
     {!ObjectIsNull(user) && user != null && !StringIsNull(user.calorias_objetivo) && activityLevelIndex!= -1 &&
     <CustomCard mb={"10px"} hijo={ 
-      <TitleCard title={`${user.nombre}, is this what you want?`} letsgo={letsgo} goback={() => location.href = "../signup/parte1"} tooltip={''}></TitleCard>} >
+      <TitleCard title={`${user.nombre}, is this what you want?`} firstBtnIcon={<Icon as={MdArrowBack}/>} secondBtnIcon={<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="m536-84-56-56 142-142-340-340-142 142-56-56 56-58-56-56 84-84-56-58 56-56 58 56 84-84 56 56 58-56 56 56-142 142 340 340 142-142 56 56-56 58 56 56-84 84 56 58-56 56-58-56-84 84-56-56-58 56Z"/></svg>} 
+      btnDisabled={btnPulsado} letsgo={letsgo} goback={() => location.href = "../signup/parte1"} tooltip={''} firstBtnText={"No, go back"} secondBtnText={"Yes, let's go!"}></TitleCard>} >
     </CustomCard>}
 
     {!ObjectIsNull(user) && user != null && !StringIsNull(user.calorias_objetivo) && activityLevelIndex!= -1 &&

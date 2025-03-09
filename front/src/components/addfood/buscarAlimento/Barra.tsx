@@ -3,7 +3,7 @@ import { Box, Input, Text, Flex } from '@chakra-ui/react'; // Chakra UI para est
 import {
     MdSearch
   } from 'react-icons/md';
-import { CarbIcono, ProteIcono } from '../../../../GlobalHelper';
+import { CarbIcono, ProteIcono } from '../../../GlobalHelper';
 import { FatIcono } from '@/components/icons/FatIcon';
 
 // Componente de búsqueda

@@ -13,7 +13,7 @@ export default function SuccessErrorMessage(props: {title: string, status:string
         alignItems='center'
         justifyContent='center'
         textAlign='center'
-        height='100px'
+        height={{ base: "50px", md: '100px' }}
         borderRadius='10px'
         >
         <AlertIcon boxSize='25px' mr={0} />

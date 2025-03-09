@@ -5,7 +5,7 @@ import { ProteinsName } from '@/components/Names/ProteinName';
 import { Flex, Box, Icon, Text, HStack, Image, VStack, Input, SimpleGrid, FormLabel, useColorModeValue } from '@chakra-ui/react';
 import { reciboConstNames, reciboSkeleton } from '../../../../../backend/src/dto/recibos.dto';
 import { useEffect, useRef } from 'react';
-import { esSoloNumeros } from '../../../../GlobalHelper';
+import { esSoloNumeros } from '../../../GlobalHelper';
 import InputField from '@/components/global/random/InputField';
 import { CaloryIcon } from '@/components/icons/CaloryIcon';
 
@@ -15,7 +15,7 @@ export default function CalorGramsSelectCard(props: { calories:string, grams:str
 {
    const textColorPrimary = useColorModeValue('secondaryGray.900', 'white');
 
-   const cambiaGrams = async (grams:string) =>
+    const cambiaGrams = async (grams:string) =>
     {
         let deja = esSoloNumeros(grams);
         if(deja == true || grams == "")
@@ -23,7 +23,7 @@ export default function CalorGramsSelectCard(props: { calories:string, grams:str
     };
 
     return (
-        <SimpleGrid columns={{ base: 1, md: 2 }} ml={{ base: "0px", md: "100px" }}>
+        <SimpleGrid columns={{ base: 1, md: 2 }}>
             <VStack >
                 <InputField
                     mb="20px"
@@ -53,8 +53,10 @@ export default function CalorGramsSelectCard(props: { calories:string, grams:str
                     fontWeight='500'
                     value={props.calories}
                     variant='main'
+                    bg="gray.200"
+                    cursor="default"
                     textAlign="center"
-                    isDisabled={true}
+                    readOnly={true}
                     // value={"10px"}
                     _placeholder={{ fontWeight: '400', color: 'secondaryGray.600' }}
                     h='44px'

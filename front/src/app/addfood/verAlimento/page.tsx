@@ -28,7 +28,7 @@ import PopUpMessage from '@/components/global/message/PopUpMessage';
 import PopUpErrorMessage from '@/components/global/message/PopUpErrorMessage';
 import PurpleSpinner from '@/components/global/random/PurpleSpinner';
 import CustomCard from '@/components/global/cards/CustomCard';
-import { API_URL, calcularPorcentajes, convierteNumRedondeado, crearRecibo, dameDatosDelRecibo, esSoloNumeros, getTamanyoPantalla, StringIsNull, sumaDeMacros } from '../../../../GlobalHelper';
+import { API_URL, calcularPorcentajes, convierteNumRedondeado, crearRecibo, dameDatosDelRecibo, esSoloNumeros, getTamanyoPantalla, redirigirSiNoHayUserNom, StringIsNull, sumaDeMacros, tryAgain } from '../../../GlobalHelper';
 import { alimentosSkeleton, miniCartaAlimento } from '../../../../../backend/src/dto/alimentos.dto';
 
 import { buildStyles, CircularProgressbarWithChildren } from 'react-circular-progressbar';
@@ -44,9 +44,12 @@ import CalorGramsSelectCard from '@/components/addfood/verAlimento/CalorGramsSel
 import MacroNutrCard from '@/components/signin/MacroNutrCard';
 import { showEbook } from '../../../../../backend/src/dto/ebook.dto';
 import { ProteinsName } from '@/components/Names/ProteinName';
+import { useRouter } from 'next/navigation';
+import BarraMenu from '@/components/global/BarraMenu';
 
 export default function VerAlimento() 
 {
+  const router = useRouter();
   const [reciboHoy, setreciboHoy ] = useState< reciboSkeleton | null >(null);
 
   const [btnfinishedPulsado, setbtnfinishedPulsado ] = useState<boolean>(false);
@@ -105,11 +108,11 @@ export default function VerAlimento()
   // 0: coge id y tamaño pantalla
   useEffect(() => 
   {
+    redirigirSiNoHayUserNom();
+    
     getTamanyoPantalla(setscreenSize)
-
     const queryParams = new URLSearchParams(location.search);
     const idAlimento = queryParams.get('idAlimento') || '';
-
     dameDatosDeAlimento(parseInt(idAlimento, 10));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -153,6 +156,7 @@ export default function VerAlimento()
       if(response.data != null)
       {
         let recibo = response.data.recibo[0];
+        console.log(recibo,parseInt(recibo.prote, 10), parseInt(recibo.carbs, 10))
        
         setreciboOriginal(recibo)
         setreciboPersonalizado(recibo)
@@ -220,6 +224,7 @@ export default function VerAlimento()
   // 1: cuando user le da a Add
   const addFood = async () =>
   {
+    setbtnfinishedPulsado(true)
     //  se coge su recibo
     let idreciboDeHoy = sessionStorage.getItem("reciboDeHoy");
     if(idreciboDeHoy!= null)
@@ -230,6 +235,7 @@ export default function VerAlimento()
     {
       setmensajeError(true)
     }
+    setbtnfinishedPulsado(false)
   };
 
   // 2: suma
@@ -474,10 +480,11 @@ export default function VerAlimento()
           position={"relative"}
       >
 
-
-        {/* titulo */}
-      {mensajeError == true &&<PopUpErrorMessage title={'Error'} texto={'Please, try again later.'}></PopUpErrorMessage>}
-        <CustomCard hijo={ 
+      <BarraMenu></BarraMenu>
+      
+      {/* titulo */}
+      {mensajeError == true &&<PopUpErrorMessage title={'Error'} texto={tryAgain}></PopUpErrorMessage>}
+        <CustomCard mt="0px" hijo={ 
           <>
           <Flex justify="start" gap="5px" align="center" mb="10px">
             <VStack>
@@ -493,7 +500,7 @@ export default function VerAlimento()
 
           <Box w="100%" borderBottom="2px solid black" my="20px" />
 
-          <HStack>
+          <HStack spacing="40px">
             <Button
                 variant="darkBrand"
                 fontSize="sm"
@@ -527,18 +534,22 @@ export default function VerAlimento()
                   />
                 )}
               </Button>
-            </HStack>
-            {mensajeError == false && <SuccessErrorMessage status={'success'} title={'Food added!'}></SuccessErrorMessage>} 
+          </HStack>
+
+          {mensajeError == false && <SuccessErrorMessage status={'success'} title={'Food added!'}></SuccessErrorMessage>} 
           
         </> }></CustomCard>
 
 
-        <CustomCard hijo={ 
+        <CustomCard mt="10px" hijo={ 
           <>
             <Box mb={{ base: '20px', md: '20px' }}>
               <SimpleGrid columns={{ base: 1, md: 2 }}>
-                <CalorGramsSelectCard calories={calories} grams={grams} setgrams={setgrams}></CalorGramsSelectCard>
-                {pieChardData.length > 0 && <Box w={{ base: '200px', md: '100%' }}  mt={{ base: "20px", md: "0px" }}>
+                <Box w='100%' ml={{ md: "140px" }}>
+                  <CalorGramsSelectCard calories={calories} grams={grams} setgrams={setgrams}></CalorGramsSelectCard>
+                </Box>
+                {pieChardData.length > 0 && 
+                <Box w={{ base: '200px', md: '100%' }} ml={{ md: "-40px" }} mt={{ base: "20px", md: "0px" }}>
                   <PieChardMacroNutr pieChartData={pieChardData} />
                 </Box>}
               </SimpleGrid>
@@ -547,21 +558,21 @@ export default function VerAlimento()
         }></CustomCard>
 
         {screenSize != "" && 
-        <CustomCard hijo={ 
+        <CustomCard mt="10px" hijo={ 
         <MacroNutrCard title={"PROTEINS"} total={reciboPersonalizado.prote == "" ? "0" : Math.round(parseInt(reciboPersonalizado.prote,10)).toString()} infoLista={proteinButtons} screenSize={screenSize} ebooklista={[]}></MacroNutrCard>}>
         </CustomCard>}
 
         {screenSize != "" && 
-        <CustomCard hijo={ 
+        <CustomCard mt="10px" hijo={ 
         <MacroNutrCard title={"FATS"} total={reciboPersonalizado.grasas == "" ? "0" : Math.round(parseInt(reciboPersonalizado.grasas,10)).toString()} infoLista={fatButtons} screenSize={screenSize} ebooklista={[]}></MacroNutrCard>}>
         </CustomCard>}
 
         {screenSize != "" && 
-        <CustomCard hijo={ 
+        <CustomCard mt="10px" hijo={ 
         <MacroNutrCard title={"CARBS"} total={reciboPersonalizado.carbs == "" ? "0" : Math.round(parseInt(reciboPersonalizado.carbs,10)).toString()} infoLista={carbButtons} screenSize={screenSize} ebooklista={[]}></MacroNutrCard>}>
         </CustomCard>}
     
-        {screenSize != "" && <CustomCard hijo={ 
+        {screenSize != "" && <CustomCard mt="10px" hijo={ 
         <FiberCard edit={false} totalFiber={reciboPersonalizado.fibra == "" ? "0" : Math.round(parseInt(reciboPersonalizado.fibra,10)).toString()} screenSize={screenSize}></FiberCard>}></CustomCard>}
 
     </Flex>}
