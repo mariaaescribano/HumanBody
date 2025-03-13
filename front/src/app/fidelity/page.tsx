@@ -190,7 +190,7 @@ export default function Fidelity()
         position={"relative"}
     >
 
-        <BarraMenu></BarraMenu>
+        <BarraMenu rellena={"heart"}></BarraMenu>
 
         {mensajeError == true && <PopUpErrorMessage title={'Error'} texto={'Please, try again later.'}></PopUpErrorMessage>}
 

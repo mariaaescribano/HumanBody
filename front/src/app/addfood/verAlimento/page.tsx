@@ -567,7 +567,7 @@ export default function VerAlimento()
         </CustomCard>}
     
         {screenSize != "" && <CustomCard mt="10px" hijo={ 
-        <FiberCard edit={false} viewing={true} totalFiber={reciboPersonalizado.fibra == "" ? "0" : Math.round(parseInt(reciboPersonalizado.fibra,10)).toString()} screenSize={screenSize}></FiberCard>}></CustomCard>}
+        <FiberCard edit={false} totalFiber={reciboPersonalizado.fibra == "" ? "0" : Math.round(parseInt(reciboPersonalizado.fibra,10)).toString()} screenSize={screenSize}></FiberCard>}></CustomCard>}
 
     </Flex>}
 

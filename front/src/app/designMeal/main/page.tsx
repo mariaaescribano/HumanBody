@@ -95,7 +95,8 @@ export default function DesignMealMain()
           gramosFuenteProte: '',
           gramosFuenteCarbs: '',
           gramosFuenteFat: '',
-          gramosFuenteFibra: ''
+          gramosFuenteFibra: '',
+          caloriasSelected:''
         };
         guarda.push(newMeal)
       } 
@@ -189,7 +190,7 @@ export default function DesignMealMain()
             position={"relative"}
         >
 
-            <BarraMenu></BarraMenu>
+            <BarraMenu rellena={"design"}></BarraMenu>
             
             {/* titulo */}
             <CustomCard mt="0px" hijo={
@@ -206,7 +207,7 @@ export default function DesignMealMain()
                 <Box>
                   <CustomCard
                     mt="0px"
-                    hijo={<MainCards meal={meals[0]} index={1} />}
+                    hijo={<MainCards meal={meals[0]} index={0} />}
                   />
                 </Box>
               </Flex>

@@ -550,7 +550,7 @@ export default function mealDiary()
         />    
 
         {screenSize != "" && <CustomCard mb="50px" hijo={ 
-        <FiberCard edit={false} ebooklista={fiberEbooks} totalFiber={reciboDeHoy.fibra} screenSize={screenSize}></FiberCard>}></CustomCard>}
+        <FiberCard edit={false} stillNeed={false} ebooklista={fiberEbooks} totalFiber={reciboDeHoy.fibra} screenSize={screenSize}></FiberCard>}></CustomCard>}
       </Flex>}  
 
       {macroPorcentaje == null && <PurpleSpinner></PurpleSpinner>} 

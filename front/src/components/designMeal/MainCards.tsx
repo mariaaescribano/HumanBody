@@ -11,8 +11,6 @@ export default function MainCards(props:{ meal: mealSkeleton, index:number })
     // si esta sin rellenar, el boton esta a color, sino esta desactivado
     // se pasa los datos de cada macro en MacroMinicards (siempre seran 4)
 
-    
-
     return (
         <>
             { props.meal && 

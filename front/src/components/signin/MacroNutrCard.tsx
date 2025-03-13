@@ -9,7 +9,7 @@ import { FatsName } from '../Names/FatsName';
 import { ProteinsName } from '../Names/ProteinName';
 import { CarbsName } from '../Names/CarbName';
 
-export default function MacroNutrCard(props: {title:string, total:string, 
+export default function MacroNutrCard(props: {title:string, total:string, stillNeed?:boolean,
     reciboObjetivo?: number, edit?:boolean,
     infoLista:showMacroNutrSignUp[], screenSize:string, ebooklista:showEbook[]}) 
 {
@@ -91,13 +91,18 @@ export default function MacroNutrCard(props: {title:string, total:string,
             </Flex>}
 
             <Box w="100%" borderBottom="2px solid black" my="20px" />
+            {!props.stillNeed &&  <Flex justify="space-between" w="100%" fontSize="xl" fontWeight={"bold"}>
+                <Text>{"TOTAL"} </Text>
+                <Text>{props.total} grams</Text>
+            </Flex> }
+
+            {props.stillNeed && props.stillNeed == true && 
+            <>
             <Flex justify="space-between" w="100%" fontSize="xl" fontWeight={"bold"}>
                 <Text>{"TOTAL PER NOW"} </Text>
                 <Text>{props.total} grams</Text>
-            </Flex> 
+            </Flex>
 
-            {props.edit && props.edit == true && 
-            <>
             <Box w="100%" borderBottom="2px solid black" my="20px" />
             <Flex justify="space-between" w="100%" fontSize="lg" fontWeight={"bold"}>
                 <Text>{"I STILL NEED"} </Text>

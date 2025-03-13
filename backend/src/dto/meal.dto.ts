@@ -4,7 +4,7 @@ export interface mealSkeleton
 {
     relleno:boolean;
     caloriasTotal:string;
-    caloriasSelected?:string;
+    caloriasSelected:string;
 
     proteTotal:string;
     fuenteProte:string;

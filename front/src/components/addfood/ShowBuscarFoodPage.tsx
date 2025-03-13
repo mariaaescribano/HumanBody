@@ -79,7 +79,7 @@ export default function ShowBuscarFoodPage(props:{verMisCreaciones:boolean})
   useEffect(() => 
   {
     if(comidabuscada!= "")
-      setquienPulsado(3)
+      setquienPulsado(4)
 
     if(comidabuscada.length >= 1)
       dameListaAlimentos()
@@ -138,7 +138,7 @@ export default function ShowBuscarFoodPage(props:{verMisCreaciones:boolean})
 
   useEffect(() => 
   {
-    if(quienPulsado!= 3)
+    if(quienPulsado!= 4)
       getMacroNutrientsFoods();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [quienPulsado]);

@@ -92,10 +92,5 @@ ORDEN: prote: "#610C04" -fats:"#abdefa" -carbs:"#EDC9AF"
 
 PARA MAÑANA
 
---> añadir fibra a buscador de alimentos
---> mirar bien y hacer bien explicativos las cartas de macro (q no se vea I STILL NEED..)
---> menus poner iconos rellenos cuando estemos en es apagina
+--> acabar de ver q todo funciona bien :)
 
-
-design meal AVENTURA :))))
---> ultima pagina

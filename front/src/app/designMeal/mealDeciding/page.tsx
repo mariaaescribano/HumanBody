@@ -30,6 +30,7 @@ import { reciboSkeleton } from '../../../../../backend/src/dto/recibos.dto';
 import AlimentoMacroMealViewCard from '@/components/designMeal/AlimentoMacroMealViewCard';
 import PurpleSpinner from '@/components/global/random/PurpleSpinner';
 import EBookButton from '@/components/global/random/EBookButton';
+import PopUpErrorMessage from '@/components/global/message/PopUpErrorMessage';
 
 export default function DesignMeal_MealDeciding() 
 {
@@ -51,7 +52,7 @@ export default function DesignMeal_MealDeciding()
   const [alimentosCarbs, setalimentosCarbs] = useState<alimentoMacroMealView[] | null>(null);
   const [alimentosFiber, setalimentosFiber] = useState<alimentoMacroMealView[] | null>(null);
 
-
+  const [mensajeError, setmensajeError] = useState<string>("");
   const [calories, setcalories] = useState<number>(0);
   const [meal, setmeal] = useState<mealSkeleton>();
   const [macroViendo, setmacroViendo] = useState<number>(-1); // q macro estamos rellenando ahora
@@ -96,7 +97,7 @@ export default function DesignMeal_MealDeciding()
   const gestionaDatosSS = async () =>
   {
     const datosGuardados = sessionStorage.getItem('arrayMeals');
-    if(datosGuardados)
+    if(datosGuardados!= undefined)
     {
       const arrayRecuperado = JSON.parse(datosGuardados);
       // posible error aqui
@@ -152,8 +153,7 @@ export default function DesignMeal_MealDeciding()
               if (i === 0) setalimentosProte(alimentos);
               if (i === 1) setalimentosFats(alimentos);
               if (i === 2) setalimentosCarbs(alimentos);
-              // Si i == 3, descomenta la siguiente línea si es necesario
-              // if (i === 3) setalimentosProte(alimentos);
+              if (i === 3) setalimentosProte(alimentos);
             } else {
               throw { message: '406', status: 406 };  // Lanza un error con código 406
             }
@@ -170,9 +170,12 @@ export default function DesignMeal_MealDeciding()
         backToMain();
       } else if (error.response?.status === 400) {
         console.log("Solicitud al backend mal formada.");
+      } 
+      else if (error.response?.status === 404) {
+        setmensajeError("Please, select foods as favourite to can Design a Meal");
       } else {
         console.log(error);
-        // setmensajeError(true);
+        setmensajeError("Please, try again later");
       }
     }
   };
@@ -280,7 +283,7 @@ export default function DesignMeal_MealDeciding()
         arrayRecuperado[mealIndex.current] = 
         {
           relleno: true,
-          caloriasTotal: calories,
+          caloriasTotal: meal?.caloriasTotal,
           proteTotal: selectedAlimentos.proteTotal,
           fuenteProte: selectedAlimentos.prote,
           carbsTotal: selectedAlimentos.carbsTotal,
@@ -292,7 +295,8 @@ export default function DesignMeal_MealDeciding()
           gramosFuenteProte: selectedAlimentos.proteGrams,
           gramosFuenteCarbs: selectedAlimentos.carbsGrams,
           gramosFuenteFat: selectedAlimentos.fatsGrams,
-          gramosFuenteFibra: selectedAlimentos.fiberGrams
+          gramosFuenteFibra: selectedAlimentos.fiberGrams,
+          caloriasSelected: calories
         };
         
         sessionStorage.setItem('arrayMeals', JSON.stringify(arrayRecuperado));
@@ -339,6 +343,23 @@ export default function DesignMeal_MealDeciding()
   };
 
 
+
+  useEffect(() => {
+    // Configura un temporizador cuando breakTry cambia
+    const timer = setTimeout(() => {
+        if (mensajeError!="") 
+        {
+          sessionStorage.removeItem("arrayMeals")
+          sessionStorage.removeItem("meals")
+          location.href = "../../myday"
+        }
+    }, 3000);
+    
+    // Limpieza de temporizadores al desmontar o cambiar breakTry
+    return () => clearTimeout(timer); 
+  }, [mensajeError]);
+
+
   return (
     <>
     {meal && alimentosProte && alimentosCarbs && alimentosFats &&
@@ -354,7 +375,9 @@ export default function DesignMeal_MealDeciding()
         position={"relative"}
     >
 
-        <BarraMenu></BarraMenu>
+        <BarraMenu rellena={"design"}></BarraMenu>
+
+        {mensajeError != "" &&<PopUpErrorMessage title={'Error'} texto={mensajeError}></PopUpErrorMessage>}
         
         {/* titulo */}
         <CustomCard mt="0px" hijo={ 
@@ -488,7 +511,7 @@ export default function DesignMeal_MealDeciding()
           </VStack>
         </Box>}
         {/* mensaje si alimentos esta vacio */}
-        {alimentosProte.length == 0 &&<Text>You don't have favourites foods in PROTEIN macronutrient.</Text>}
+        {macroViendo == 0 && alimentosProte.length == 0 &&<Text color="red">You don't have favourites foods in PROTEIN macronutrient.</Text>}
 
         {macroViendo == 1 && alimentosFats.length > 0 && 
         <Box ml={{ base: "30px", md: "0px" }} w="100%" mb="30px" display="flex" justifyContent="center">
@@ -504,7 +527,7 @@ export default function DesignMeal_MealDeciding()
           </VStack>
         </Box>}
         {/* mensaje si alimentos esta vacio */}
-        {alimentosFats.length == 0 &&<Text>You don't have favourites foods in PROTEIN macronutrient.</Text>}
+        {macroViendo == 1 && alimentosFats.length == 0 &&<Text color="red">You don't have favourites foods in FATS macronutrient</Text>}
 
         {macroViendo == 2 && alimentosCarbs.length > 0 && 
         <Box ml={{ base: "30px", md: "0px" }} w="100%" mb="30px" display="flex" justifyContent="center">
@@ -520,7 +543,23 @@ export default function DesignMeal_MealDeciding()
           </VStack>
         </Box>}
         {/* mensaje si alimentos esta vacio */}
-        {alimentosCarbs.length == 0 &&<Text>You don't have favourites foods in PROTEIN macronutrient.</Text>}
+        {macroViendo == 2 && alimentosCarbs.length == 0 &&<Text color="red">You don't have favourites foods in CARBS macronutrient</Text>}
+        
+        {macroViendo == 3 && alimentosCarbs.length > 0 && 
+        <Box ml={{ base: "30px", md: "0px" }} w="100%" mb="30px" display="flex" justifyContent="center">
+          <VStack>
+            {alimentosCarbs.map((item, index) => (
+              <AlimentoMacroMealViewCard key={index} macro={macroViendo} 
+              alimento={item} 
+              alimentos={alimentosCarbs}  setalimentos={setalimentosCarbs} 
+              selectedAlimentos={selectedAlimentos} setselectedAlimentos={setselectedAlimentos}
+              setcalories={setcalories}
+              />
+            ))}
+          </VStack>
+        </Box>}
+        {/* mensaje si alimentos esta vacio */}
+        {macroViendo == 3 && alimentosCarbs.length == 0 &&<Text color="red">You don't have favourites foods in FIBER</Text>}
         {/* /////////////////////////////////////////////////// */}
 
 
@@ -533,7 +572,9 @@ export default function DesignMeal_MealDeciding()
 
 
     </Flex>)}
-    {(!meal || !alimentosCarbs || !alimentosFats || !alimentosProte) &&<PurpleSpinner></PurpleSpinner>}
+    {(!meal || !alimentosCarbs || !alimentosFats || !alimentosProte) && mensajeError == "" && <PurpleSpinner></PurpleSpinner>}
+    {mensajeError != "" &&<PopUpErrorMessage title={'Error'} texto={mensajeError}></PopUpErrorMessage>}
+    
     </>);
 
 }

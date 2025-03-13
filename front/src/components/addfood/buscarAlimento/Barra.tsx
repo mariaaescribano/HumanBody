@@ -3,7 +3,7 @@ import { Box, Input, Text, Flex } from '@chakra-ui/react'; // Chakra UI para est
 import {
     MdSearch
   } from 'react-icons/md';
-import { CarbIcono, ProteIcono } from '../../../GlobalHelper';
+import { CarbIcono, colorFibra, FiberIcono, ProteIcono } from '../../../GlobalHelper';
 import { FatIcono } from '@/components/icons/FatIcon';
 
 // Componente de búsqueda
@@ -81,6 +81,27 @@ function Barra(props: {setquienPulsado:React.Dispatch<React.SetStateAction<numbe
         borderRadius="80px"            
       >
         <CarbIcono></CarbIcono>
+      </Box>
+    </Flex>
+
+     {/* Sección 3 */}
+     <Flex
+      flex="1"
+      // _hover={{ p: "15px" }}
+      bg={colorFibra} 
+      justifyContent="center"
+      alignItems="center"
+      onClick={()=> props.setquienPulsado(3)} 
+      p={props.quienPulsado==3 ? "15px": "10px"}
+      borderLeft= { "2px solid white"} 
+    >
+      <Box
+        bg="white" 
+        boxShadow={props.quienPulsado==3 ? "": "0px 4px 6px rgba(0, 0, 0, 0.1)"} 
+        p="5px"                       
+        borderRadius="80px"            
+      >
+        <FiberIcono></FiberIcono>
       </Box>
     </Flex>
   </Box>

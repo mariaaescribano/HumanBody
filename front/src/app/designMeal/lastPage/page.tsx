@@ -56,14 +56,14 @@ export default function LastPage()
         let dameProte = gestionaMacro(mealsNumber[i].fuenteProte, mealsNumber[i].gramosFuenteProte, mealsNumber[i].proteTotal)
         let dameFats = gestionaMacro(mealsNumber[i].fuenteFat, mealsNumber[i].gramosFuenteFat, mealsNumber[i].fatTotal)
         let dameCarbs = gestionaMacro(mealsNumber[i].fuenteCarbs, mealsNumber[i].gramosFuenteCarbs, mealsNumber[i].carbsTotal)
-        //let dameFiber = gestionaMacro(mealsNumber[i].fuenteProte, mealsNumber[i].gramosFuenteProte, mealsNumber[i].proteTotal)
+        let dameFiber = gestionaMacro(mealsNumber[i].fuenteProte, mealsNumber[i].gramosFuenteProte, mealsNumber[i].proteTotal)
 
         let mealObject: finalMealCard =
         {
             prote:dameProte,
             fats:dameFats,
             carbs:dameCarbs,
-            //fiber:alimentoMacroMealView;
+            fiber:dameFiber,
             pieData: [Number(dameProte.gramosMacro), Number(dameFats.gramosMacro), Number(dameCarbs.gramosMacro)],
             totalCalories:mealsNumber[i].caloriasSelected
         };
@@ -103,7 +103,7 @@ export default function LastPage()
             position={"relative"}
         >
 
-            <BarraMenu></BarraMenu>
+            <BarraMenu rellena={"design"}></BarraMenu>
             
             {/* titulo */}
             <CustomCard mt="0px" hijo={
@@ -115,8 +115,8 @@ export default function LastPage()
                 <SimpleGrid columns={{ base: 1, md: 1 }} w="100%">
                      {/* colocacion interna tarjetas de meals */}
                     {meals.map((item, index) => (
-                        <CustomCard hijo={
-                            <FinalMealCard meal={item} key={index} index={index}/>
+                        <CustomCard key={index} hijo={
+                            <FinalMealCard meal={item} index={index}/>
                         }></CustomCard>
                     ))}
               </SimpleGrid>

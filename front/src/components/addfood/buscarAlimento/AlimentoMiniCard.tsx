@@ -5,7 +5,7 @@ import {
     Text, Box, Flex,
     HStack,VStack
   } from '@chakra-ui/react';
-import { API_URL, CarbIcono, getTamanyoPantalla, ProteIcono } from "../../../GlobalHelper";
+import { API_URL, CarbIcono, colorFibra, FiberIcono, getTamanyoPantalla, ProteIcono } from "../../../GlobalHelper";
 import { useEffect, useRef, useState } from "react";
 import { FatIcono } from "@/components/icons/FatIcon";
 import axios from "axios";
@@ -51,6 +51,11 @@ export default function AlimentoMiniCard(props:
           sethoverColor("#EDC9AF");
           icono.current = <CarbIcono></CarbIcono>
         }
+        else if(props.predomina==3)
+          {
+            sethoverColor(colorFibra);
+            icono.current = <FiberIcono></FiberIcono>
+          }
    
   }, [props.predomina]);
 
