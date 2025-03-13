@@ -134,7 +134,8 @@ export default function SignUp3()
         crear();
     };
 
-    const crear = async () => {
+    const crear = async () => 
+    {
         setbtnPulsado(true);
     
         if (ObjectIsNull(recibo) || !recibo || !user) {
@@ -146,6 +147,9 @@ export default function SignUp3()
         try {
             const idRecibo = await crearRecibo(recibo);
             if (!idRecibo) throw new Error('No se pudo crear el recibo');
+
+            const idfidelitytomyself = await crearfidelitytomyself();
+            if (!idfidelitytomyself) throw new Error('No se pudo crear fidelitytomyself');
             
             // Crear ficha
             const ficha: fichaSkeleton = {
@@ -157,6 +161,7 @@ export default function SignUp3()
                 genero: user.genero,
                 edad: user.edad,
                 reciboId: idRecibo,
+                fidelitytomyselfId: idfidelitytomyself
             };
     
             const idFicha = await crearFicha(ficha);
@@ -175,11 +180,13 @@ export default function SignUp3()
     
             const usuario = await crearUsuario(userAinsertar);
             if (!usuario) throw new Error('No se pudo crear el user');
-    
-            // Limpiar sesión y redirigir
-            sessionStorage.clear();
-            sessionStorage.setItem("userNom", user.nombre);
-            location.href = "../../myday";
+            else
+            {
+                // Limpiar sesión y redirigir
+                sessionStorage.clear();
+                sessionStorage.setItem("userNom", user.nombre);
+                location.href = "../../myday";
+            }
         } 
         catch (error) // aqui captura los throw errors
         {
@@ -222,6 +229,27 @@ export default function SignUp3()
         } catch (error) {
             console.error('Error fetching data:', error);
             throw new Error('Error al crear la ficha');
+        }
+    };
+
+    const crearfidelitytomyself = async () => {
+        try {
+            const response = await axios.post(
+                `${API_URL}/fidelitytomyself/create`,
+                {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
+    
+            if (response.data) {
+                return response.data;  // Devuelve el id si se ha creado
+            } 
+        } 
+        catch (error) {
+            console.log('Error fetching data:', error);
+            throw new Error('Error creando fidelitytomyself ');
         }
     };
 

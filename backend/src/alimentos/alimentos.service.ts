@@ -2,7 +2,6 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { DatabaseService } from '../Database/database.service';
 import { alimentosSkeleton } from 'src/dto/alimentos.dto';
 
-
 @Injectable()
 export class AlimentosService {
   constructor(private readonly databaseService: DatabaseService) {}
@@ -64,6 +63,49 @@ export class AlimentosService {
     return result;
   }
 
+
+  /// conseguir alimentos fav de un macronutriente ///
+  async damealimentosFavObjetos(dameIdsAlimentosfav: string, macro: string) {
+    let idsAlimFavs = await this.deStringAArrayNumeros(dameIdsAlimentosfav);
   
- 
+    let guarda: any[] = []; 
+    for (let i = 0; i < idsAlimFavs.length; i++) 
+    {
+      const sql = 'SELECT * FROM alimento WHERE id = ? and predomina = ?';
+      const result = await this.databaseService.query(sql, [idsAlimFavs[i], macro]);
+      if(result[0]!= null && result[0] != undefined)
+        guarda.push(result[0]);
+    }
+  
+    return guarda;
+  }
+  
+  async deStringAArrayNumeros(input: string) {
+    let result: number[] = [];
+    let num = 0;
+    let isNegative = false;
+    
+    for (let i = 0; i < input.length; i++) {
+      const char = input[i];
+      
+      if (char === '-') {
+        isNegative = true;
+      } else if (char === ',' || i === input.length - 1) {
+        if (i === input.length - 1 && char !== ',') {
+          num = num * 10 + parseInt(char);
+        }
+        result.push(isNegative ? -num : num);
+        num = 0;
+        isNegative = false;
+      } else {
+        num = num * 10 + parseInt(char);
+      }
+    }
+    return result;
+  }
+  /// end conseguir alimentos fav de un macronutriente ///
+  
+  
+
+
 }

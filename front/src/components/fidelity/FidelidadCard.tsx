@@ -1,13 +1,14 @@
 'use client';
-import { Flex, Box, Text, Checkbox, Button, HStack, Spinner } from '@chakra-ui/react';
+import { Flex, Box, Text, Checkbox, Button, HStack, Spinner, Link } from '@chakra-ui/react';
 import InputField from '../global/random/InputField';
 import { useEffect, useState } from 'react';
 import { fidelidadSkeleton } from '../../../../backend/src/dto/fidelidad.dto';
 import axios from 'axios';
 import { API_URL } from '../../GlobalHelper';
 import SuccessErrorMessage from '../global/message/SuccessErrorMessage';
+import { HeartIcon } from '../icons/HeartIcon';
 
-export default function FidelidadCard() 
+export default function FidelidadCard(props:{ diaId:number | null }) 
 {
     const [fid, setFid] = useState<fidelidadSkeleton | null>(null);
     const [respuesta, setrespuesta] = useState<boolean | undefined>(undefined);
@@ -18,7 +19,15 @@ export default function FidelidadCard()
     {
         const traeDatosFidelidad = async () =>
         {
-            let idDia = sessionStorage.getItem("diaId")
+            // si el dia es del pasado (meal diary), le llega el id por parametro
+            let idDia = -1;
+            if(props.diaId == null)
+            {
+                idDia = Number(sessionStorage.getItem("diaId"))
+            }   
+            else
+                idDia = props.diaId 
+
             if(idDia)
             {
             try{
@@ -48,7 +57,7 @@ export default function FidelidadCard()
                 }
             }
             catch (error) {
-            console.error('Error fetching data:', error);
+                console.error('Error fetching data:', error);
             }
             }
             
@@ -134,15 +143,21 @@ export default function FidelidadCard()
     return (
         <>
             {fid != null && <Flex direction="column" w="100%">
-                <Box display="flex" justifyContent="space-between" mb="-5px" alignItems="center" p={4} borderRadius="md">
-                    <Text  fontWeight="bold" fontSize="25px">
-                        FIDELITY TO MYSELF
-                    </Text>
+                <Box display="flex" justifyContent="space-between" mb="-15px" alignItems="center" p={4} borderRadius="md">
+                    <HStack>
+                        <Link href="../fidelity">
+                            <HeartIcon></HeartIcon>
+                        </Link>
+                        <Text  fontWeight="bold" fontSize="25px">
+                            FIDELITY TO MYSELF
+                        </Text>
+                    </HStack>
 
                     <HStack>
                         {respuesta != undefined &&  <Box position="absolute" top="0" ml={{base:"0px", md: "-180px"}} zIndex="10" w="20%">
                         <SuccessErrorMessage status={'success'} title={'Fidelity updated!'} />
                     </Box>} 
+                        {props.diaId !== null && 
                         <Button
                         fontSize="sm"
                         borderRadius="16px"
@@ -161,7 +176,7 @@ export default function FidelidadCard()
                             color="white"
                             />
                         )}
-                        </Button>
+                        </Button>} 
                     </HStack>
                 </Box>
                 <Box w="100%" borderBottom="2px solid black" my="20px" />
@@ -177,6 +192,7 @@ export default function FidelidadCard()
                     onChange={(e: any) => cambia(e.target.value, 1)}
                     id="first"
                     value={fid.porQue}
+                    disabled={props.diaId == null ? false: true}
                     textAlign="center"
                     label="Why have I been loyal?"
                     placeholder="Because I want to feel better with my brain"
@@ -186,6 +202,7 @@ export default function FidelidadCard()
                     mb="20px"
                     textAlign="center"
                     value={fid.paraQue}
+                    disabled={props.diaId == null ? false: true}
                     onChange={(e: any) => cambia(e.target.value, 2)}
                     id="second"
                     label="For what have I been loyal?"

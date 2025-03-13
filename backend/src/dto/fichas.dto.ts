@@ -8,5 +8,6 @@ export interface fichaSkeleton
     objetivo:string;
     genero:string;
     edad:string;
+    fidelitytomyselfId?:number;
     reciboId?:string | null;
 };

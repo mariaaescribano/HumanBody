@@ -245,7 +245,7 @@ export default function SignUp1()
         
         <Card p="30px" width={{base:"80%", md: "100%"}} mb={"100px"} maxWidth={"800px"} mt="20px" align="center" justify="center" borderRadius={"20px"}>
             <Flex direction="column" w="100%">
-            <Stack direction="column" spacing="10px">
+            <Stack direction="column" spacing="10px" mb="10px">
                 <SimpleGrid columns={{ base: 1, md: 2 }} gap="20px">
                 <InputField
                     mb="0px"
@@ -283,7 +283,7 @@ export default function SignUp1()
                 </SimpleGrid>
             </Stack>
            
-            <Text color="purple.300" as="a" mt="20px" cursor="pointer" href="../login">Do you have an account?</Text>
+            {/* <Text color="purple.300" as="a" mt="20px" cursor="pointer" href="../login">Do you have an account?</Text> */}
             </Flex>
         </Card>
       </>}

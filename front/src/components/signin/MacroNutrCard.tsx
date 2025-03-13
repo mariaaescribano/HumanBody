@@ -9,7 +9,9 @@ import { FatsName } from '../Names/FatsName';
 import { ProteinsName } from '../Names/ProteinName';
 import { CarbsName } from '../Names/CarbName';
 
-export default function MacroNutrCard(props: {title:string, total:string, infoLista:showMacroNutrSignUp[], screenSize:string, ebooklista:showEbook[]}) 
+export default function MacroNutrCard(props: {title:string, total:string, 
+    reciboObjetivo?: number, edit?:boolean,
+    infoLista:showMacroNutrSignUp[], screenSize:string, ebooklista:showEbook[]}) 
 {
    const textColor = useColorModeValue('secondaryGray.900', 'white');
 
@@ -90,9 +92,17 @@ export default function MacroNutrCard(props: {title:string, total:string, infoLi
 
             <Box w="100%" borderBottom="2px solid black" my="20px" />
             <Flex justify="space-between" w="100%" fontSize="xl" fontWeight={"bold"}>
-                <Text>{"TOTAL "} </Text>
+                <Text>{"TOTAL PER NOW"} </Text>
                 <Text>{props.total} grams</Text>
             </Flex> 
+
+            {props.edit && props.edit == true && 
+            <>
+            <Box w="100%" borderBottom="2px solid black" my="20px" />
+            <Flex justify="space-between" w="100%" fontSize="lg" fontWeight={"bold"}>
+                <Text>{"I STILL NEED"} </Text>
+                <Text>{props.total} grams</Text>
+            </Flex> </>}
         
         </div>
     </Flex>

@@ -16,6 +16,7 @@ import {
   Tabs,
   Text,
   useColorModeValue,
+  VStack,
 } from '@chakra-ui/react';
 import axios from 'axios';
 // Custom components
@@ -189,6 +190,8 @@ export default function login()
                 />
                 </SimpleGrid>
             </Stack>
+
+            <VStack>
             <Flex justify="space-between" mt="24px">
                 <Button
                 variant="darkBrand"
@@ -214,11 +217,12 @@ export default function login()
             </Flex>
 
 
-            <Link href="../login/signup/parte1" w="150px">
-              <Text color="purple.300" as="span" cursor="pointer">
+            <Link href="../login/signup/parte1" w="150px" ml="30px">
+              <Text color="purple.200" as="span" cursor="pointer">
                 Not registered yet?
               </Text>
             </Link>
+            </VStack>
             
             </Flex>
         </Card>

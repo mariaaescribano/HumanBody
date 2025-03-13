@@ -29,13 +29,8 @@ import PopUpErrorMessage from '@/components/global/message/PopUpErrorMessage';
 import PurpleSpinner from '@/components/global/random/PurpleSpinner';
 import CustomCard from '@/components/global/cards/CustomCard';
 import { API_URL, calcularPorcentajes, convierteNumRedondeado, crearRecibo, dameDatosDelRecibo, esSoloNumeros, getTamanyoPantalla, redirigirSiNoHayUserNom, StringIsNull, sumaDeMacros, tryAgain } from '../../../GlobalHelper';
-import { alimentosSkeleton, miniCartaAlimento } from '../../../../../backend/src/dto/alimentos.dto';
-
-import { buildStyles, CircularProgressbarWithChildren } from 'react-circular-progressbar';
-
-import MacroNutrCardEdit from '@/components/addfood/crearAlimento/MacroNutrCardEdit';
-import { MdCheck } from 'react-icons/md';
-import { reciboSkeleton, reciboConstNames, showMacroNutrSignUp } from '../../../../../backend/src/dto/recibos.dto';
+import { alimentosSkeleton } from '../../../../../backend/src/dto/alimentos.dto';
+import { reciboSkeleton, showMacroNutrSignUp } from '../../../../../backend/src/dto/recibos.dto';
 import SuccessErrorMessage from '@/components/global/message/SuccessErrorMessage';
 import FiberCard from '@/components/global/cards/FiberCard';
 import InputField from '@/components/global/random/InputField';
@@ -43,7 +38,6 @@ import { PieChardMacroNutr } from '@/components/global/cards/PieChardMacroNutr';
 import CalorGramsSelectCard from '@/components/addfood/verAlimento/CalorGramsSelectCard';
 import MacroNutrCard from '@/components/signin/MacroNutrCard';
 import { showEbook } from '../../../../../backend/src/dto/ebook.dto';
-import { ProteinsName } from '@/components/Names/ProteinName';
 import { useRouter } from 'next/navigation';
 import BarraMenu from '@/components/global/BarraMenu';
 
@@ -536,7 +530,7 @@ export default function VerAlimento()
               </Button>
           </HStack>
 
-          {mensajeError == false && <SuccessErrorMessage status={'success'} title={'Food added!'}></SuccessErrorMessage>} 
+          {mensajeError == false && <Box mb="-20px"><SuccessErrorMessage status={'success'} title={'Food added!'}></SuccessErrorMessage></Box>} 
           
         </> }></CustomCard>
 
@@ -573,7 +567,7 @@ export default function VerAlimento()
         </CustomCard>}
     
         {screenSize != "" && <CustomCard mt="10px" hijo={ 
-        <FiberCard edit={false} totalFiber={reciboPersonalizado.fibra == "" ? "0" : Math.round(parseInt(reciboPersonalizado.fibra,10)).toString()} screenSize={screenSize}></FiberCard>}></CustomCard>}
+        <FiberCard edit={false} viewing={true} totalFiber={reciboPersonalizado.fibra == "" ? "0" : Math.round(parseInt(reciboPersonalizado.fibra,10)).toString()} screenSize={screenSize}></FiberCard>}></CustomCard>}
 
     </Flex>}
 

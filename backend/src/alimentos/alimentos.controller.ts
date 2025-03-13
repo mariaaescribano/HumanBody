@@ -77,6 +77,34 @@ export class AlimentosController {
   }
 
 
+  @Get("favAlimentos/:userNom/:macro")
+  async favAlimentosController(
+   @Param('userNom') userNom: string,
+   @Param('macro') macro: string)
+  {
+    if(userNom && macro)
+    {
+      let idFichaUser = await this.usuariosService.dameUserFichaId(userNom);
+      if(idFichaUser)
+      {
+       let dameIdsAlimentosfav = await this.fichaService.dameAlimentosFav(idFichaUser)
+        if(dameIdsAlimentosfav)
+        {
+          let alimentosFavObjetos = await this.alimentosService.damealimentosFavObjetos(dameIdsAlimentosfav, macro)
+          console.log(alimentosFavObjetos)
+          return alimentosFavObjetos
+        }
+        else
+          throw new NotFoundException();
+      }
+      else
+        throw new NotFoundException();
+    }
+    else
+      throw new BadRequestException();
+  }
+
+
 
   @Get("search/:foodName/:userNom/:misCreaciones")
   async findMatchingFoodController(

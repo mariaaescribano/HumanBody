@@ -17,9 +17,17 @@ export function ObjectIsNull(object:any)
     return false;
 };
 
-export function ArrayIsNull(array:any[])
+export function ArrayIsNullEmpty(array:any[])
 {
   if(array == null || array == undefined || array.length == 0)
+    return true;
+  else
+    return false;
+};
+
+export function ArrayIsNull(array:any[])
+{
+  if(array == null || array == undefined)
     return true;
   else
     return false;
@@ -30,6 +38,11 @@ export const redirigirSiNoHayUserNom = () => {
   if (!nom) {
     location.href = `${window.location.origin}/login/login`;
   }
+};
+
+export const toRoman = (num: number) => {
+  const romans = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"];
+  return romans[num] || num.toString();
 };
 
 
@@ -114,7 +127,7 @@ export const crearRecibo = async (recibo: reciboSkeleton) => {
 
   // coger datos del recibo
 
-  export const dameDatosDelRecibo = async (idRecibo:number, setactualiza:any) =>
+  export const dameDatosDelRecibo = async (idRecibo:number, setactualiza?:any): Promise<reciboSkeleton | void> =>
   {
     try{
       const response = await axios.get(
@@ -155,7 +168,10 @@ export const crearRecibo = async (recibo: reciboSkeleton) => {
           if (recibo.simples !== "") newRecibo.simples = recibo.simples;
           if (recibo.fibra !== "") newRecibo.fibra = recibo.fibra;
 
-          setactualiza(newRecibo);
+          if(setactualiza)
+            setactualiza(newRecibo);
+          else
+            return newRecibo;
         }
       }
       catch (error) {
@@ -510,4 +526,10 @@ export function handleMouseEndGlobalHelper(isInteracting:any)
 {
   isInteracting.current = false; // Finaliza el toque
 };
+
+
+
+
+
+
 

@@ -43,6 +43,7 @@ import { CaloryIcon } from '@/components/icons/CaloryIcon';
 import { PieChardMacroNutr2 } from '@/components/global/cards/PieChardMacroNutr2';
 import BarraMenu from '@/components/global/BarraMenu';
 import { useRouter } from 'next/navigation';
+import FidelidadCard from '@/components/fidelity/FidelidadCard';
 
 ///////////////// ESTRATEGIA /////////////////
 // va a coger todos los dias_ids y los va a guardar
@@ -478,7 +479,7 @@ export default function mealDiary()
         </Card>
 
        {/* calorias y macronutrients overall view */}
-        <CustomCard hijo={
+        <CustomCard mt="20px" hijo={
           <>
             <Box mb={{ base: "10px", md: "20px" }} alignItems={"center"} justifyContent={"center"}>
               <Flex
@@ -502,8 +503,16 @@ export default function mealDiary()
             <EBookButton texto={'What happens if...?'}></EBookButton>
           </>
         }></CustomCard>
+
+        <CustomCard mt="10px" hijo={ 
+          <>
+            <FidelidadCard diaId={dia.current?.fidelidad_id ? dia.current?.fidelidad_id : null}></FidelidadCard>
+          </>
+        }>
+        </CustomCard>
+       
    
-        <CustomCard hijo={ 
+        <CustomCard mt="10px" hijo={ 
             <>
             <Text color={"black"} fontSize="xl" w="100%"  fontWeight="700" textAlign="center">
                 TODAY'S MACRONUTRIENTS
@@ -512,11 +521,11 @@ export default function mealDiary()
         }>
         </CustomCard>
 
-        <CustomCard hijo={ 
+        <CustomCard mt="10px" hijo={ 
             <MacroNutrCard title={'PROTEINS'} total={reciboDeHoy.prote}  screenSize={screenSize}  infoLista={proteinButtons} ebooklista={proteinEbooks}></MacroNutrCard>} >
         </CustomCard>
 
-        <CustomCard 
+        <CustomCard mt="10px"
         hijo={ 
             <MacroNutrCard 
             title={'FATS'} 
@@ -528,7 +537,7 @@ export default function mealDiary()
         } 
         />
     
-        <CustomCard
+        <CustomCard mt="10px"
         hijo={ 
             <MacroNutrCard 
             title={'CARBS'} 

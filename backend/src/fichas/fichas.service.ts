@@ -12,8 +12,8 @@ export class FichasService {
   {
     if(ficha)
     {   
-      const sql = 'INSERT INTO `ficha`(`peso`, `altura`, `actividad`, `calorias_objetivo`, `objetivo`, `recibo_id`, `genero`, `edad`) VALUES (?,?,?,?,?,?,?,?)';
-      const params = [ficha.peso, ficha.altura, ficha.nivel_actividad, ficha.calorias_objetivo, ficha.objetivo, ficha.reciboId, ficha.genero, ficha.edad];
+      const sql = 'INSERT INTO `ficha`(`peso`, `altura`, `actividad`, `calorias_objetivo`, `objetivo`, `recibo_id`, `genero`, `edad` , `fidelitytomyself_id`) VALUES (?,?,?,?,?,?,?,?, ?)';
+      const params = [ficha.peso, ficha.altura, ficha.nivel_actividad, ficha.calorias_objetivo, ficha.objetivo, ficha.reciboId, ficha.genero, ficha.edad, ficha.fidelitytomyselfId];
       const result = await this.databaseService.query(sql, params);
       const idRecibo = result.insertId;
       return idRecibo;
@@ -71,6 +71,14 @@ export class FichasService {
       return false;
     }
   }
-  
+
+  public async dameIdFidelidad(idFicha: number) {
+    const sql = 'SELECT fidelitytomyself_id from ficha where id = ?';
+    const params = [idFicha];
+    const result = await this.databaseService.query(sql, params);
+    return result[0].fidelitytomyself_id;
+  }
+
+
   
 }

@@ -8,6 +8,7 @@ import { FichasModule } from './fichas/fichas.module';
 import { DiasModule } from './dias/dias.module';
 import { AlimentosModule } from './alimentos/alimentos.module';
 import { FidelidadModule } from './fidelidad/fidelidad.module';
+import { fidelitytomyselfModule } from './fidelitytomyself/fidelitytomyself.module';
 
 // CONTROLLERS
 import { AppController } from './app.controller';
@@ -17,10 +18,11 @@ import { FichasController } from './fichas/fichas.controller';
 import { AlimentosController } from './alimentos/alimentos.controller';
 import { DiasController } from './dias/dias.controller';
 import { FidelidadController } from './fidelidad/fidelidad.controller';
+import { fidelitytomyselfController } from './fidelitytomyself/fidelitytomyself.controller';
 
 @Module({
-  imports: [DatabaseModule, RecibosModule, UsuariosModule, FidelidadModule, FichasModule, AlimentosModule, DiasModule],  
-  controllers: [AppController, RecibosController, UsuariosController, FidelidadController, FichasController, AlimentosController, DiasController],
+  imports: [DatabaseModule, RecibosModule, UsuariosModule, fidelitytomyselfModule, FidelidadModule, FichasModule, AlimentosModule, DiasModule],  
+  controllers: [AppController, RecibosController, fidelitytomyselfController, UsuariosController, FidelidadController, FichasController, AlimentosController, DiasController],
   providers: [],
 })
 export class AppModule {}

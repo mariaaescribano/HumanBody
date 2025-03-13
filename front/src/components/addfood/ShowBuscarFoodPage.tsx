@@ -65,10 +65,10 @@ export default function ShowBuscarFoodPage(props:{verMisCreaciones:boolean})
 
   useEffect(() => 
   {
+    redirigirSiNoHayUserNom();
     let nom = sessionStorage.getItem("userNom")
     if(nom)
       userName.current = nom;
-    redirigirSiNoHayUserNom();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -188,7 +188,6 @@ export default function ShowBuscarFoodPage(props:{verMisCreaciones:boolean})
       }
       catch (error:any) 
       {
-        console.log("holaa")
         if(error.status== 400)
           console.log("Solicitud al back mal formada. Lo que se envió:", quienPulsado, userName.current)
         else
@@ -233,11 +232,11 @@ export default function ShowBuscarFoodPage(props:{verMisCreaciones:boolean})
         }></CustomCard>}
 
         {cargado ==true &&
-        <CustomCard mt="10px" hijo={
+        <CustomCard mt={props.verMisCreaciones == true ? "10px" : "0px"} hijo={
         <>
         <Buscador setcomidabuscada={setcomidabuscada} comidabuscada={comidabuscada}></Buscador>
 
-        {props.verMisCreaciones == false && <SimpleGrid columns={{ base: 1, md: 2 }} spacing="50px" mt="20px">
+        {props.verMisCreaciones == false && <SimpleGrid columns={{ base: 1, md: 2 }} spacing={{ base: "20px", md: "50px" }} mt="20px">
             <Button
             fontSize="sm"
             borderRadius="16px"

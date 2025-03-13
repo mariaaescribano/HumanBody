@@ -24,6 +24,15 @@ FACILITADORES
 {}
  
 
+{
+
+}
+
+if()
+{
+
+}
+
 useEffect(() => 
 {
 
@@ -77,30 +86,16 @@ IMPORTANTE: ESTRUCTURACIÓN
 ORDEN: prote: "#610C04" -fats:"#abdefa" -carbs:"#EDC9AF"
 
 
-/////////////////////////////////////////////
-MEJORAS
-
-MY CREATED FOODS
---> reutilizar pagina de Search FOODS, o sea hacer 1 componente q sea el q se llame pasando datos y ya
-
-/////////////////////////////////////////////
-
-
-
-
-
-
 
 
 
 
 PARA MAÑANA
---> hacer pruebas de q todo esta bien
 
---> poner text botones en blanco?
-
---> objetivos pagina
-
---> diseñar BD de design meal
+--> añadir fibra a buscador de alimentos
+--> mirar bien y hacer bien explicativos las cartas de macro (q no se vea I STILL NEED..)
+--> menus poner iconos rellenos cuando estemos en es apagina
 
 
+design meal AVENTURA :))))
+--> ultima pagina

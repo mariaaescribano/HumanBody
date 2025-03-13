@@ -71,7 +71,7 @@
 
 'use client';
 import dynamic from 'next/dynamic';
-import { ArrayIsNull, colorCarbs, colorFats, colorFibra, colorProte } from '../../../GlobalHelper';
+import { ArrayIsNullEmpty, colorCarbs, colorFats, colorFibra, colorProte } from '../../../GlobalHelper';
 
 const Chart = dynamic(() => import('react-apexcharts'), {
   ssr: false,
@@ -135,7 +135,7 @@ export const PieChardMacroNutr = (props: { pieChartData: number[] }) => {
       type="pie"
       width="100%"
       height="100%"
-      series={ArrayIsNull(roundedData) ? pieChartDataDefault : roundedData}
+      series={ArrayIsNullEmpty(roundedData) ? pieChartDataDefault : roundedData}
       style={{
         display: 'flex',
         justifyContent: 'center',

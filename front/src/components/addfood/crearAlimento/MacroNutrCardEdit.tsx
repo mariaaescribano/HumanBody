@@ -18,7 +18,6 @@ export default function MacroNutrCardEdit(props: {recibo:reciboSkeleton, setreci
    // pone los datos
    const escribir = (item:string, gramosCantidas:string) =>
     {
-        console.log(esSoloNumeros(gramosCantidas), gramosCantidas)
         if(esSoloNumeros(gramosCantidas) == true || gramosCantidas=="")
         {
             entra.current = true;

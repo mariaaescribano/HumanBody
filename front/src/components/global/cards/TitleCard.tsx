@@ -5,11 +5,15 @@ import MeryTooltip from '../random/MeryToolTip';
 import SuccessErrorMessage from '../message/SuccessErrorMessage';
 
 export default function TitleCard(props: 
-{ title:string, titleIcon?:any, 
-    firstBtnText:string, firstBtnIcon?:any, letsgo:any,
-    secondBtnText:string, secondBtnIcon?:any, goback:any,
-    mensajeError?: boolean|undefined, textMensajeError?:string, statusMensajeError?:string,
-    tooltip?:string, btnDisabled?:boolean}) 
+{   title:string, titleIcon?:any, //what you see in the main title
+    firstBtnText:string, firstBtnIcon?:any, goback:any, //the left button, for going back or cancel
+    secondBtnText:string, secondBtnIcon?:any, letsgo:any, // the right button, to continue or save
+    mensajeError?: boolean|undefined, // if mensajeError needs to be shown
+    textMensajeError?:string, statusMensajeError?:string, // what the message will shown and the status is always success
+    tooltip?:string, // to put the merytool tip near the title
+    btnDisabled?:boolean, //to let the second button disabled while waiting for back's response
+    btnDesactivado?:boolean // to not be able to push the button until x is finished
+    }) 
 {
    const textColor = useColorModeValue('secondaryGray.900', 'white');
 
@@ -53,7 +57,7 @@ export default function TitleCard(props:
                 bg="purple.100"
                 w={{ base: '128px', md: '148px' }}
                 h="46px"
-                disabled={props.btnDisabled}
+                disabled={props.btnDisabled || props.btnDesactivado}
                 onClick={props.letsgo}
                 _hover={{ bg: "gray.100" }}
                 leftIcon={props.secondBtnIcon}
@@ -70,7 +74,10 @@ export default function TitleCard(props:
         </HStack>
         
         {props.mensajeError!= undefined && props.statusMensajeError && props.textMensajeError && props.statusMensajeError != "" &&
-        <SuccessErrorMessage status={props.statusMensajeError} title={props.textMensajeError}></SuccessErrorMessage>} 
+        <Box mb="-20px">
+            <SuccessErrorMessage status={props.statusMensajeError} title={props.textMensajeError}>
+            </SuccessErrorMessage>
+        </Box>} 
     </>
   );
 }

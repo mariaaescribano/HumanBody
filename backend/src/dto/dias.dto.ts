@@ -7,3 +7,5 @@ export interface diasSkeleton
     alimentos_id:string;
     fecha:string;
 };
+
+

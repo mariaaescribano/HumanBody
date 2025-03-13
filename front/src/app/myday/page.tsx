@@ -36,7 +36,7 @@ import { macroPorcentajes, reciboSkeleton, showMacroNutrSignUp } from '../../../
 import { fidelidadSkeleton } from '../../../../backend/src/dto/fidelidad.dto';
 import { showEbook } from '../../../../backend/src/dto/ebook.dto';
 import FiberCard from '@/components/global/cards/FiberCard';
-import FidelidadCard from '@/components/myday/FidelidadCard';
+import FidelidadCard from '@/components/fidelity/FidelidadCard';
 import BarraMenu from '@/components/global/BarraMenu';
 import { useRouter } from 'next/navigation';
 
@@ -400,9 +400,9 @@ export default function MyDay()
         </Card>
 
        {/* calorias y macronutrients overall view */}
-        <CustomCard hijo={<ElementoPrimero macroPorcentaje={macroPorcentaje}></ElementoPrimero>}></CustomCard>
+        <CustomCard mt="20px" hijo={<ElementoPrimero macroPorcentaje={macroPorcentaje}></ElementoPrimero>}></CustomCard>
 
-       <CustomCard hijo={ 
+       <CustomCard mt="10px" hijo={ 
         <>
           <Text mb="20px" textAlign="left" alignSelf="flex-start"
               justifySelf="flex-start">Learn about the past ...</Text>
@@ -417,17 +417,17 @@ export default function MyDay()
           _hover={{bg:"gray.100"}}
           leftIcon={
             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M240-80q-50 0-85-35t-35-85v-560q0-50 35-85t85-35h440v640H240q-17 0-28.5 11.5T200-200q0 17 11.5 28.5T240-160h520v-640h80v720H240Zm120-240h240v-480H360v480Zm-80 0v-480h-40q-17 0-28.5 11.5T200-760v447q10-3 19.5-5t20.5-2h40Zm-80-480v487-487Z"/></svg>}// onClick={comprobarSiPoderPaso2}
-          > DIARY OF MEALS
+          > MY DIARY
           </Button>
         </>}>
         </CustomCard>
 
         {/* fidelidad card */}
-        <CustomCard hijo={<FidelidadCard/>}></CustomCard>
+        <CustomCard mt="10px" hijo={<FidelidadCard diaId={null}/>}></CustomCard>
                  
 
         { reciboObjetivo!= null && <>
-        <CustomCard hijo={ 
+        <CustomCard mt="10px" hijo={ 
             <>
             <Text color={"black"} fontSize="xl" w="100%"  fontWeight="700" textAlign="center">
                 TODAY'S MACRONUTRIENTS
@@ -436,14 +436,18 @@ export default function MyDay()
         }>
         </CustomCard>
 
-        <CustomCard hijo={ 
-            <MacroNutrCard title={'PROTEINS'} total={reciboDeHoy.prote}  screenSize={screenSize}  infoLista={proteinButtons} ebooklista={proteinEbooks}></MacroNutrCard>} >
+        <CustomCard mt="10px" hijo={ 
+            <MacroNutrCard title={'PROTEINS'} edit={true}
+            reciboObjetivo={Number(reciboObjetivo.prote) - Number(reciboDeHoy.prote)} 
+            total={reciboDeHoy.prote}  screenSize={screenSize} 
+            infoLista={proteinButtons} ebooklista={proteinEbooks}></MacroNutrCard>} >
         </CustomCard>
 
-        <CustomCard 
+        <CustomCard mt="10px"
         hijo={ 
             <MacroNutrCard 
-            title={'FATS'} 
+            title={'FATS'} edit={true}
+            reciboObjetivo={Number(reciboObjetivo.grasas) - Number(reciboDeHoy.grasas)}
             total={reciboDeHoy.grasas} 
             infoLista={fatButtons} 
             screenSize={screenSize} 
@@ -452,10 +456,11 @@ export default function MyDay()
         } 
         />
     
-        <CustomCard
+        <CustomCard mt="10px"
         hijo={ 
             <MacroNutrCard 
-            title={'CARBS'} 
+            title={'CARBS'} edit={true}
+            reciboObjetivo={Number(reciboObjetivo.carbs) - Number(reciboDeHoy.carbs)}
             total={reciboDeHoy.carbs} 
             infoLista={carbButtons} 
             screenSize={screenSize} 
@@ -464,8 +469,11 @@ export default function MyDay()
         } 
         />    
 
-        {screenSize != "" && <CustomCard mb="50px" hijo={ 
-              <FiberCard edit={false} totalFiber={reciboDeHoy.fibra} screenSize={screenSize}></FiberCard>}></CustomCard>}
+        {screenSize != "" && <CustomCard mb="50px" mt="10px" hijo={ 
+              <FiberCard edit={false} reciboObjetivo={Number(reciboObjetivo.fibra) - Number(reciboDeHoy.fibra)}
+              totalFiber={reciboDeHoy.fibra} screenSize={screenSize}
+              ebooklista={fiberEbooks}
+              ></FiberCard>}></CustomCard>}
 
 
         </>} 

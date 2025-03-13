@@ -9,7 +9,8 @@ import { FiberName } from '@/components/Names/FiberName';
 
 
 
-export default function FiberCard(props: { edit:boolean, recibo?:reciboSkeleton, setrecibo?:any, totalFiber?:string, screenSize:string, ebooklista?:showEbook[]  }) 
+export default function FiberCard(props: { edit:boolean, viewing?:boolean, recibo?:reciboSkeleton, reciboObjetivo?:number,
+  setrecibo?:any, totalFiber?:string, screenSize:string, ebooklista?:showEbook[]  }) 
 {
 
 
@@ -76,6 +77,12 @@ export default function FiberCard(props: { edit:boolean, recibo?:reciboSkeleton,
               <Text> {props.totalFiber ? props.totalFiber : "0"} </Text>
               <Text>grams </Text>
           </HStack></Flex>}
+
+          {props.edit == false && props.viewing == false && <><Box w="100%" borderBottom="2px solid black" my="20px" />
+            <Flex justify="space-between" w="100%" fontSize="lg" fontWeight={"bold"}>
+                <Text>{"I STILL NEED"} </Text>
+                <Text>{props.totalFiber} grams</Text>
+            </Flex></>} 
    
     </Flex>
 

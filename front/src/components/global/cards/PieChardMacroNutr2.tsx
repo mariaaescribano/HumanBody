@@ -1,7 +1,7 @@
 'use client';
 import dynamic from 'next/dynamic';
 import { Box, Flex, Text } from '@chakra-ui/react';
-import { ArrayIsNull, colorCarbs, colorFats, colorFibra, colorProte } from '../../../GlobalHelper';
+import { ArrayIsNullEmpty, colorCarbs, colorFats, colorFibra, colorProte } from '../../../GlobalHelper';
 import { CaloryIcon } from '@/components/icons/CaloryIcon';
 
 const Chart = dynamic(() => import('react-apexcharts'), {
@@ -67,7 +67,7 @@ export const PieChardMacroNutr2 = (props: { pieChartData: number[], calories: st
         type="pie"
         width="100%"
         height="100%"
-        series={ArrayIsNull(roundedData) ? pieChartDataDefault : roundedData}
+        series={ArrayIsNullEmpty(roundedData) ? pieChartDataDefault : roundedData}
       />
 
       <Flex
