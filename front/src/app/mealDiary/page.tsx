@@ -259,7 +259,6 @@ export default function mealDiary()
     // coger index del dia en el q estamos
     let index = idsFechas.current.indexOf(idFecha);
 
-    console.log(idsFechas.current[index-1], idsFechas.current[index+1])
     // si hay dias antes q el, mostrar flecha izq
     if(idsFechas.current[index-1])
       flechaSimula = 1; // se puede ver la flecha izq
@@ -506,7 +505,7 @@ export default function mealDiary()
 
         <CustomCard mt="10px" hijo={ 
           <>
-            <FidelidadCard diaId={dia.current?.fidelidad_id ? dia.current?.fidelidad_id : null}></FidelidadCard>
+            <FidelidadCard soloLeer={true} diaId={dia.current?.fidelidad_id ? dia.current?.fidelidad_id : null}></FidelidadCard>
           </>
         }>
         </CustomCard>

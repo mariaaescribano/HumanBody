@@ -153,7 +153,7 @@ export default function DesignMeal_MealDeciding()
               if (i === 0) setalimentosProte(alimentos);
               if (i === 1) setalimentosFats(alimentos);
               if (i === 2) setalimentosCarbs(alimentos);
-              if (i === 3) setalimentosProte(alimentos);
+              if (i === 3) setalimentosFiber(alimentos);
             } else {
               throw { message: '406', status: 406 };  // Lanza un error con código 406
             }
@@ -284,13 +284,13 @@ export default function DesignMeal_MealDeciding()
         {
           relleno: true,
           caloriasTotal: meal?.caloriasTotal,
-          proteTotal: selectedAlimentos.proteTotal,
+          proteTotal: selectedAlimentos.proteTotal == "" ? meal?.proteTotal : selectedAlimentos.proteTotal,
           fuenteProte: selectedAlimentos.prote,
-          carbsTotal: selectedAlimentos.carbsTotal,
+          carbsTotal: selectedAlimentos.carbsTotal == "" ? meal?.carbsTotal : selectedAlimentos.proteTotal,
           fuenteCarbs: selectedAlimentos.carbs,
-          fatTotal: selectedAlimentos.fatsTotal,
+          fatTotal: selectedAlimentos.fatsTotal == "" ?  meal?.fatTotal : selectedAlimentos.fatsTotal,
           fuenteFat: selectedAlimentos.fats,
-          fibraTotal: selectedAlimentos.fatsTotal,
+          fibraTotal: selectedAlimentos.fiberTotal == "" ? meal?.fibraTotal : selectedAlimentos.fiberTotal,
           fuenteFibra: selectedAlimentos.fiber,
           gramosFuenteProte: selectedAlimentos.proteGrams,
           gramosFuenteCarbs: selectedAlimentos.carbsGrams,
@@ -362,7 +362,7 @@ export default function DesignMeal_MealDeciding()
 
   return (
     <>
-    {meal && alimentosProte && alimentosCarbs && alimentosFats &&
+    {meal && alimentosProte && alimentosCarbs && alimentosFats && alimentosFiber &&
     (<Flex
         direction="column"
         align="center"
@@ -375,7 +375,7 @@ export default function DesignMeal_MealDeciding()
         position={"relative"}
     >
 
-        <BarraMenu rellena={"design"}></BarraMenu>
+        <BarraMenu></BarraMenu>
 
         {mensajeError != "" &&<PopUpErrorMessage title={'Error'} texto={mensajeError}></PopUpErrorMessage>}
         
@@ -545,13 +545,13 @@ export default function DesignMeal_MealDeciding()
         {/* mensaje si alimentos esta vacio */}
         {macroViendo == 2 && alimentosCarbs.length == 0 &&<Text color="red">You don't have favourites foods in CARBS macronutrient</Text>}
         
-        {macroViendo == 3 && alimentosCarbs.length > 0 && 
+        {macroViendo == 3 && alimentosFiber.length > 0 && 
         <Box ml={{ base: "30px", md: "0px" }} w="100%" mb="30px" display="flex" justifyContent="center">
           <VStack>
-            {alimentosCarbs.map((item, index) => (
+            {alimentosFiber.map((item, index) => (
               <AlimentoMacroMealViewCard key={index} macro={macroViendo} 
               alimento={item} 
-              alimentos={alimentosCarbs}  setalimentos={setalimentosCarbs} 
+              alimentos={alimentosFiber}  setalimentos={setalimentosFiber} 
               selectedAlimentos={selectedAlimentos} setselectedAlimentos={setselectedAlimentos}
               setcalories={setcalories}
               />
@@ -559,7 +559,7 @@ export default function DesignMeal_MealDeciding()
           </VStack>
         </Box>}
         {/* mensaje si alimentos esta vacio */}
-        {macroViendo == 3 && alimentosCarbs.length == 0 &&<Text color="red">You don't have favourites foods in FIBER</Text>}
+        {macroViendo == 3 && alimentosFiber.length == 0 &&<Text color="red">You don't have favourites foods in FIBER</Text>}
         {/* /////////////////////////////////////////////////// */}
 
 

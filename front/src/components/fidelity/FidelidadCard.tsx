@@ -8,7 +8,7 @@ import { API_URL } from '../../GlobalHelper';
 import SuccessErrorMessage from '../global/message/SuccessErrorMessage';
 import { HeartIcon } from '../icons/HeartIcon';
 
-export default function FidelidadCard(props:{ diaId:number | null }) 
+export default function FidelidadCard(props:{ soloLeer?:boolean, diaId:number | null }) 
 {
     const [fid, setFid] = useState<fidelidadSkeleton | null>(null);
     const [respuesta, setrespuesta] = useState<boolean | undefined>(undefined);
@@ -182,17 +182,17 @@ export default function FidelidadCard(props:{ diaId:number | null })
                 <Box w="100%" borderBottom="2px solid black" my="20px" />
 
                 <Box display="flex" justifyContent="center" alignItems="center" mt="10px" mb="20px">
-                    <Checkbox colorScheme="purple" isChecked={fid.heSidoFiel} onChange={handleCheckboxChange}>
+                    <Checkbox colorScheme="purple" isChecked={fid.heSidoFiel} onChange={props.soloLeer== null ? handleCheckboxChange : () =>{}}>
                         Have I been loyal?
                     </Checkbox>
                 </Box>
 
                 <InputField
                     mb="20px"
-                    onChange={(e: any) => cambia(e.target.value, 1)}
+                    onChange={(e: any) => props.soloLeer == null ? cambia(e.target.value, 1) : ()=>{}}
                     id="first"
                     value={fid.porQue}
-                    disabled={props.diaId == null ? false: true}
+                    disabled={props.soloLeer == null ? false: true}
                     textAlign="center"
                     label="Why have I been loyal?"
                     placeholder="Because I want to feel better with my brain"
@@ -202,8 +202,8 @@ export default function FidelidadCard(props:{ diaId:number | null })
                     mb="20px"
                     textAlign="center"
                     value={fid.paraQue}
-                    disabled={props.diaId == null ? false: true}
-                    onChange={(e: any) => cambia(e.target.value, 2)}
+                    disabled={props.soloLeer == null ? false: true}
+                    onChange={(e: any) =>props.soloLeer == null ? cambia(e.target.value, 2): ()=>{}}
                     id="second"
                     label="For what have I been loyal?"
                     placeholder="For getting closer to my best version"

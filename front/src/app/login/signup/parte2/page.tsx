@@ -31,6 +31,7 @@ import MeryTooltip from '@/components/global/random/MeryToolTip';
 import CustomCard from '@/components/global/cards/CustomCard';
 import TitleCard from '@/components/global/cards/TitleCard';
 import { CaloryIcon } from '@/components/icons/CaloryIcon';
+import UserPersonalData from '@/components/miPerfil/UserPersonalData';
 
 export default function SignUp2() 
 {
@@ -137,125 +138,8 @@ export default function SignUp2()
     </CustomCard>}
 
     {!ObjectIsNull(user) && user != null && !StringIsNull(user.calorias_objetivo) && activityLevelIndex!= -1 &&
-    <CustomCard  mb={"100px"} hijo={ 
-      <>
-        <Box w="100%" borderBottom="2px solid black" my="20px" />
-
-
-        <Flex direction="column" w="100%" >
-            {[
-                { label: "Gender", price:  user.genero },
-                { label: "Weight", price: user.peso +" kg" },
-                { label: "Height", price: user.altura+" cm" },
-                { label: "Activity level", price:  exerciseFrequencyList[activityLevelIndex].label },
-                { label: "Objective", price:  objectivesList[objectiveIndex.current].label }
-
-            ].map((item, index) => (
-              <Flex key={index} align="center" w="100%" fontSize="lg">
-                  {/* Item Name */}
-                  <Text flexShrink={0}>{item.label}</Text>
-                  
-                  {/* Dotted Line (Flexible) */}
-                  <Text flex="1" mx="8px" whiteSpace="nowrap" overflow="hidden">
-                      ........................................................................................................................................................
-                  </Text>
-              
-                  {/* Price */}
-                  <Text flexShrink={0}>{item.price}</Text>
-              </Flex>
-          
-            ))}
-
-          <Box w="100%" borderBottom="2px solid black" my="20px" />
-
-          {/* Total large screen */}
-          {screenSize!= "" && (screenSize == "md" || screenSize == "xl") && 
-          <Flex direction="column" w="100%">
-          {[
-              { label: "Your basal calories are", price: `${TMB.current} kcal`, tooltip: "This are the calories that you need to exist :)" },
-              { label: "With your life style would change to", price: `${caloriesWithLifeStyle.current} kcal`, tooltip: "This are the calories that you need to have your lifestyle." },
-              { label: "With your objective would change to", price: `${caloriesWithObjective.current} kcal`, tooltip: "This are the calories that you need to obtain your goal." }
-          ].map((item, index) => (
-              <Flex
-                  key={index}
-                  align="center"
-                  w="100%"
-                  fontSize={{ base: "md", sm: "lg" }} // Cambia el tamaño de la fuente en pantallas pequeñas
-    
-                  direction={{ base: "column", sm: "row" }} // En pantallas pequeñas, los elementos se apilan verticalmente, en pantallas grandes horizontalmente
-                  justify="start" // Alinea todo a la izquierda
-              >
-                  {/* Información del título y tooltip alineados a la izquierda */}
-                  <HStack justify="start" gap="5px" align="start">
-                      <Text flexShrink={0} width={{ base: "100%", sm: "auto" }}>
-                          {item.label}
-                      </Text>
-                      <MeryTooltip texto={item.tooltip} />
-                  </HStack>
-
-                  {/* Dotted Line (Flexible) */}
-                  <Text
-                      flex="1"
-                      mx="8px"
-                      whiteSpace="nowrap"
-                      overflow="hidden"
-                      display={{ base: "none", sm: "block" }} // Oculta la línea punteada en pantallas pequeñas
-                  >
-                      ........................................................................................................................................................
-                  </Text>
-
-                  {/* Price */}
-                  <Text flexShrink={0} width={{ base: "100%", sm: "auto" }}>
-                      {item.price}
-                  </Text>
-              </Flex>
-          ))}
-          </Flex>}
-
-          {/* Total small screen */}
-          {screenSize!= "" && screenSize == "sm" && 
-          <Flex direction="column" w="100%" mb="10px">
-          {[
-              { label: "Your basal calories are", price: `${TMB.current} kcal`, tooltip: "These are the calories that you need to exist :)" },
-              { label: "With your life style would change to", price: `${caloriesWithLifeStyle.current} kcal`, tooltip: "These are the calories that you need to have your lifestyle." },
-              { label: "With your objective would change to", price: `${caloriesWithObjective.current} kcal`, tooltip: "These are the calories that you need to obtain your goal." }
-          ].map((item, index) => (
-              <VStack
-                  key={index}
-                  align="center"
-                  w="100%"
-                  fontSize={{ base: "md", sm: "lg" }}
-                  mb="20px"
-                  justify="center" 
-              >
-                  <HStack gap="5px">
-                      <Text>
-                          {item.label}
-                      </Text>
-                      <MeryTooltip texto={item.tooltip} />
-                  </HStack>
-                  <Text  align="center">
-                      {item.price}
-                  </Text>
-              </VStack>
-          ))}
-          </Flex>}
-
-
-          {/* Horizontal Line */}
-          <Box w="100%" borderBottom="2px solid black" my="20px" />
-          <Flex justify="space-between" w="100%" fontSize="xl" fontWeight={"bold"} mb="20px">
-            <HStack>
-              <CaloryIcon />
-              <Text>TOTAL CALORIES </Text>
-            </HStack>
-              <Text>{caloriesWithObjective.current} kcal</Text>
-          </Flex>
-
-        
-        </Flex>
-      </>} >
-    </CustomCard>}
+    <UserPersonalData user={user} editando={false} activityLevelIndex={activityLevelIndex} objectiveIndex={objectiveIndex.current} TMB={TMB.current} 
+    caloriesWithLifeStyle={caloriesWithLifeStyle.current} caloriesWithObjective={caloriesWithObjective.current} screenSize={screenSize} />}
 
         
 

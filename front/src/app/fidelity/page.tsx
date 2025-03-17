@@ -125,7 +125,6 @@ export default function Fidelity()
     {
       setbtnPulsado(true)
       try {
-        console.log(`${API_URL}/fidelitytomyself/updatefidelitytomyself/${nom}`, datosCompletos)
         const response = await axios.put(
             `${API_URL}/fidelitytomyself/updatefidelitytomyself/${nom}`,
             datosCompletos,

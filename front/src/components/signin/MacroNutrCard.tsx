@@ -106,7 +106,7 @@ export default function MacroNutrCard(props: {title:string, total:string, stillN
             <Box w="100%" borderBottom="2px solid black" my="20px" />
             <Flex justify="space-between" w="100%" fontSize="lg" fontWeight={"bold"}>
                 <Text>{"I STILL NEED"} </Text>
-                <Text>{props.total} grams</Text>
+                <Text>{props.reciboObjetivo} grams</Text>
             </Flex> </>}
         
         </div>

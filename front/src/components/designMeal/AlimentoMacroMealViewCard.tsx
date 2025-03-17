@@ -168,7 +168,7 @@ export default function AlimentoMacroMealViewCard(props:{ key:number, macro:numb
                             >
                                 {Icono && <Icono />}
                             </Box>
-                            <Text color="white" ml="5px">
+                            <Text color={props.macro == 3 ? "black" : "white"} ml="5px">
                                 {alimentoLocal.nombreFuente} : {alimentoLocal.gramosFuente} grams
                             </Text>
                         </Flex>
@@ -200,7 +200,7 @@ export default function AlimentoMacroMealViewCard(props:{ key:number, macro:numb
                                 borderRadius="20px"
                                 mr="5px"
                             >
-                                <Text color="black">{alimentoLocal.calorias} kcal</Text>
+                                <Text  ml={{ base: "8px", md: "0px" }} color="black">{alimentoLocal.calorias} kcal</Text>
                             </Box>
 
                             {/* decrease */}

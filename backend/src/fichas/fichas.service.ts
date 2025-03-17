@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { DatabaseService } from '../Database/database.service';
 import { fichaSkeleton } from 'src/dto/fichas.dto';
 import { NotFoundError } from 'rxjs';
+import { createUserSkeleton } from 'src/dto/usuarios.dto';
 
 
 @Injectable()
@@ -28,6 +29,15 @@ export class FichasService {
     const result = await this.databaseService.query(sql, [idFicha]);
     return result;
   }
+
+  async getFichaFunction(idFicha: number) 
+  {
+    const sql = 'SELECT peso, altura, actividad , calorias_objetivo, objetivo, recibo_id, genero, edad FROM ficha WHERE id = ?';
+    const result = await this.databaseService.query(sql, [idFicha]);
+    return result;
+  }
+
+
 
   async updateAlimFav(idFicha:number, idAlimento:number) 
   {
@@ -79,6 +89,34 @@ export class FichasService {
     return result[0].fidelitytomyself_id;
   }
 
+  async updateFichaUser(dameIdFichaDeUserNameNum: number, ficha: fichaSkeleton) {
+    try {
+        const sql = `UPDATE ficha 
+                     SET peso=?, 
+                         altura=?, 
+                         actividad=?, 
+                         calorias_objetivo=?, 
+                         objetivo=?, 
+                         genero=?, 
+                         edad=?  
+                     WHERE id = ?`;
 
+        await this.databaseService.query(sql, [
+            ficha.peso,
+            ficha.altura,
+            ficha.nivel_actividad,
+            ficha.calorias_objetivo,
+            ficha.objetivo,
+            ficha.genero,
+            ficha.edad,
+            dameIdFichaDeUserNameNum
+        ]);
+
+        return true;
+    } catch (error) {
+        console.log("Error al actualizar la base de datos:", error);
+        return false;
+    }
+  }
   
 }

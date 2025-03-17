@@ -150,7 +150,6 @@ export default function VerAlimento()
       if(response.data != null)
       {
         let recibo = response.data.recibo[0];
-        console.log(recibo,parseInt(recibo.prote, 10), parseInt(recibo.carbs, 10))
        
         setreciboOriginal(recibo)
         setreciboPersonalizado(recibo)

@@ -129,7 +129,6 @@ export default function DesignMealMain()
     if(idRecibo)
     {
       let recibo = await dameDatosDelRecibo(idRecibo)
-      console.log(recibo)
       if(!ObjectIsNull(recibo))
       {
         // se divide cada macro
@@ -190,7 +189,7 @@ export default function DesignMealMain()
             position={"relative"}
         >
 
-            <BarraMenu rellena={"design"}></BarraMenu>
+            <BarraMenu></BarraMenu>
             
             {/* titulo */}
             <CustomCard mt="0px" hijo={

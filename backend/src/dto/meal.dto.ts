@@ -56,7 +56,7 @@ export interface finalMealCard
     prote:alimentoMacroMealView;
     fats:alimentoMacroMealView;
     carbs:alimentoMacroMealView;
-    fiber?:alimentoMacroMealView;
+    fiber:alimentoMacroMealView;
     pieData:number[];
     totalCalories:string;
 };

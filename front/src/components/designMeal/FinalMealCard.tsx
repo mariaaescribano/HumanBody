@@ -10,7 +10,8 @@ export default function FinalMealCard(props:{meal:finalMealCard, index:number})
 {
     return (
         <>
-        { props.meal && <SimpleGrid columns={{ base: 1, md: 2 }}>
+        { props.meal && 
+        <SimpleGrid columns={{ base: 1, md: 2 }} >
             {/* pie chard y title */}
             <Flex justify="flex-start" align="center">
                 <VStack>
@@ -24,15 +25,15 @@ export default function FinalMealCard(props:{meal:finalMealCard, index:number})
             </Flex> 
 
             {/* macros final cards */}
-            <Flex justify="flex-end" align="center">
-                <VStack>
-                    <HStack>
+            <Flex justify="center" align="center" w="100%" mt="20px">
+                <VStack align="center">
+                    <HStack >
                         <FinalMiniMacroCard macro={0} alimento={props.meal.prote} />
                         <FinalMiniMacroCard macro={1} alimento={props.meal.fats} />
                     </HStack>
-                    <HStack>
+                    <HStack >
                         <FinalMiniMacroCard macro={2} alimento={props.meal.carbs} />
-                        <FinalMiniMacroCard macro={3} alimento={props.meal.carbs} />
+                        <FinalMiniMacroCard macro={3} alimento={props.meal.fiber} />
                     </HStack>
                 </VStack>
             </Flex>  

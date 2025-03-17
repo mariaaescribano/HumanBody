@@ -41,8 +41,6 @@ import { MdArrowBack } from 'react-icons/md';
 
 export default function SignUp1() 
 {
-  const textColor = useColorModeValue('secondaryGray.900', 'white');
-
   // hace falta q sean useState para poder seleccionar en su campo select cada una
   // DATOS DE USUARIO
   const [peso, setPeso] = useState<string>("");
@@ -59,7 +57,6 @@ export default function SignUp1()
   const [filled, setfilled] = useState<boolean>(true);
   // para saber si falta nom o contra despues de pulsar Next
   const [faltanDatos, setfaltanDatos] = useState<{nom:boolean; contra:boolean;}>({nom:false, contra:false});  
-
 
   // nomExiste ya en BD
   const [nomExiste, setnomExiste] = useState<boolean>(false);

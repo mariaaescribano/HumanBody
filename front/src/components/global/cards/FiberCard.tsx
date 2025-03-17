@@ -82,7 +82,7 @@ export default function FiberCard(props: { edit:boolean, stillNeed?:boolean, rec
           <Box w="100%" borderBottom="2px solid black" my="20px" />
             <Flex justify="space-between" w="100%" fontSize="lg" fontWeight={"bold"}>
                 <Text>{"I STILL NEED"} </Text>
-                <Text>{props.totalFiber} grams</Text>
+                <Text>{props.reciboObjetivo} grams</Text>
             </Flex></>} 
    
     </Flex>

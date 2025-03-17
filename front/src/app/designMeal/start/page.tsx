@@ -73,7 +73,7 @@ export default function DesignMealStart()
         position={"relative"}
     >
 
-        <BarraMenu rellena={"design"}></BarraMenu>
+        <BarraMenu></BarraMenu>
         
         {/* titulo */}
         <CustomCard mt="0px" hijo={
