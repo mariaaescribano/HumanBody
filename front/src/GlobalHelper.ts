@@ -1,3 +1,4 @@
+
 export const API_URL = "http://localhost:3001";
 export const tryAgain = "Please, try again later";
 
@@ -37,6 +38,13 @@ export const redirigirSiNoHayUserNom = () => {
   const nom = sessionStorage.getItem("userNom");
   if (!nom) {
     location.href = `${window.location.origin}/login/login`;
+  }
+};
+
+export const redirigirSiNoHayNutriNom = () => {
+  const nom = sessionStorage.getItem("nutriNom");
+  if (!nom) {
+    location.href = `${window.location.origin}/nutritionist/login`;
   }
 };
 
@@ -96,6 +104,8 @@ export const colorProte= '#610C04';
 export const colorFats= '#abdefa';
 export const colorCarbs= '#EDC9AF';
 export const colorFibra= '#ffe5f0';
+export const colorNutricionist= '#d5f9e9';
+export const colorNutricionistBg= '#f9fefc';
 
 
 

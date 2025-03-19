@@ -11,6 +11,7 @@ interface CardProps {
   minHeight?: string;
   mb?: string;
   mt?: string;
+  p?: string;
 }
 
 export default function CustomCard({
@@ -20,11 +21,12 @@ export default function CustomCard({
   minHeight = "auto",
   mb="10px",
   mt="20px",
+  p="40px"
 }: CardProps) {
 
   return (
     <Card
-      p={"40px"} 
+      p={p} 
       width={{ base: "90%", md: "100%" }} 
       mb={mb} 
       height="auto"

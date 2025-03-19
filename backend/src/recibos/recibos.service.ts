@@ -53,4 +53,56 @@ export class RecibosService {
       , idRecibo]);
     return this.returnReciboConcretoFuncion(idRecibo); // Retorna el recibo actualizado
   }
+
+
+
+  // region updateMacro
+  async updateRecibo2(idRecibo: number, updates: Partial<Record<string, any>>) {
+    const keys = Object.keys(updates);
+    if (keys.length === 0) return this.returnReciboConcretoFuncion(idRecibo);
+
+    const setClause = keys.map((key) => `${key} = ?`).join(", ");
+    const values = keys.map((key) => updates[key]);
+
+    const sql = `UPDATE recibo SET ${setClause} WHERE id = ?`;
+    await this.databaseService.query(sql, [...values, idRecibo]);
+
+    return "ok";
+  }
+
+  // async updateReciboObjetivoProtes(idRecibo: number, body: {proteins, complete, incomplete}) {
+  //   const sql = `UPDATE recibo SET 
+  //   prote = ?,
+  //   incompleto = ?,
+  //   completo = ?
+  //   WHERE id = ?`;
+  //   await this.databaseService.query(sql, [body.proteins, body.incomplete, body.complete, idRecibo]);
+  //   return this.returnReciboConcretoFuncion(idRecibo); // Retorna el recibo actualizado
+  // }
+
+  // async updateReciboObjetivoFats(idRecibo: number, body: {fats, monoinsaturadas, poliinsaturadas, saturadas}) {
+  //   const sql = `UPDATE recibo SET 
+  //   grasas= ?, 	monoinsaturadas = ?,	poliinsaturadas = ?,	saturadas= ?
+  //   WHERE id = ?`;
+  //   await this.databaseService.query(sql, [body.fats, body.monoinsaturadas, body.poliinsaturadas, body.saturadas, idRecibo]);
+  //   return this.returnReciboConcretoFuncion(idRecibo); // Retorna el recibo actualizado
+  // }
+
+  // async updateReciboObjetivoCarbs(idRecibo: number, body: {carbs, complejos, simples}) {
+  //   const sql = `UPDATE recibo SET 
+  //   carbs= ?, 	complejos= ?, 	simples= ?
+  //   WHERE id = ?`;
+  //   await this.databaseService.query(sql, [body.carbs, body.complejos, body.simples, idRecibo]);
+  //   return this.returnReciboConcretoFuncion(idRecibo); // Retorna el recibo actualizado
+  // }
+
+  // async updateReciboObjetivoFiber(idRecibo: number, body: {fiber}) {
+  //   const sql = `UPDATE recibo SET fiber= ? WHERE id = ?`;
+  //   await this.databaseService.query(sql, [body.fiber, idRecibo]);
+  //   return this.returnReciboConcretoFuncion(idRecibo); // Retorna el recibo actualizado
+  // }
+
+
+
+  
 }

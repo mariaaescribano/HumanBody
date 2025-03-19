@@ -7,13 +7,14 @@ import { exerciseFrequencyList, objectivesList } from '@/GlobalHelper';
 import MeryTooltip from '../global/random/MeryToolTip';
 import { CaloryIcon } from '../icons/CaloryIcon';
 import SelectSignIn from '../signin/SelectSignIn';
+import NutriComent from '../nutritionistPatient/NutriComent';
 
 export default function UserPersonalData(props: { user : createUserSkeleton, editando:boolean,
     activityLevelIndex:number , objectiveIndex:number, TMB?:string, caloriesWithLifeStyle?:string, caloriesWithObjective:string,
     screenSize:string}) {
 
   return (
-    <CustomCard  mb={"100px"} mt="15px" hijo={ 
+    <CustomCard mt="15px" hijo={ 
         <>
           <Box w="100%" borderBottom="2px solid black" my="20px" />
           <Flex direction="column" w="100%" >
@@ -134,14 +135,18 @@ export default function UserPersonalData(props: { user : createUserSkeleton, edi
   
             {/* Horizontal Line */}
             <Box w="100%" borderBottom="2px solid black" my="20px" />
-            <Flex justify="space-between" w="100%" fontSize="xl" fontWeight={"bold"} mb="20px">
+            <Flex justify="space-between" w="100%" fontSize="xl" fontWeight={"bold"}>
               <HStack>
                 <CaloryIcon />
                 <Text>TOTAL CALORIES </Text>
               </HStack>
                 <Text>{props.caloriesWithObjective} kcal</Text>
             </Flex>
-  
+
+            <Box w="100%" borderBottom="2px solid black" my="20px" />
+            <Box display="flex" alignItems="center" justifyContent="center" >
+                <NutriComent text={'Remember to focus on muscle weight. '} />
+            </Box>
           
           </Flex>
         </>} >

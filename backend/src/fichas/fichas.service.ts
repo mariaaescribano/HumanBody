@@ -32,7 +32,7 @@ export class FichasService {
 
   async getFichaFunction(idFicha: number) 
   {
-    const sql = 'SELECT peso, altura, actividad , calorias_objetivo, objetivo, recibo_id, genero, edad FROM ficha WHERE id = ?';
+    const sql = 'SELECT perfilPic, peso, altura, actividad , calorias_objetivo, objetivo, recibo_id, genero, edad FROM ficha WHERE id = ?';
     const result = await this.databaseService.query(sql, [idFicha]);
     return result;
   }
@@ -45,6 +45,21 @@ export class FichasService {
     {
       const sql = `UPDATE ficha SET alimentos_fav_id = CONCAT(alimentos_fav_id, ',', ?) WHERE id = ?`;
       await this.databaseService.query(sql, [ idAlimento, idFicha]);
+      return true;
+    } 
+    catch (error) {
+      console.log("Error al actualizar la base de datos:", error);
+      return false;
+    }
+  }
+
+
+  async updatePerfilPic(perfilPic:string, fichaObjId:number) 
+  {
+    try 
+    {
+      const sql = `UPDATE ficha SET perfilPic = ? WHERE id = ?`;
+      await this.databaseService.query(sql, [ perfilPic, fichaObjId]);
       return true;
     } 
     catch (error) {

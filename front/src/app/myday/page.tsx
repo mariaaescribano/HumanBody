@@ -39,6 +39,7 @@ import FiberCard from '@/components/global/cards/FiberCard';
 import FidelidadCard from '@/components/fidelity/FidelidadCard';
 import BarraMenu from '@/components/global/BarraMenu';
 import { useRouter } from 'next/navigation';
+import NutritionistClientCard from '@/components/nutritionistPatient/NutritionistClientCard';
 
 
 
@@ -402,6 +403,8 @@ export default function MyDay()
        {/* calorias y macronutrients overall view */}
         <CustomCard mt="20px" hijo={<ElementoPrimero macroPorcentaje={macroPorcentaje}></ElementoPrimero>}></CustomCard>
 
+       <NutritionistClientCard userNom={undefined}></NutritionistClientCard>
+
        <CustomCard mt="10px" hijo={ 
         <>
           <Text mb="20px" textAlign="left" alignSelf="flex-start"
@@ -492,13 +495,8 @@ export default function MyDay()
               totalFiber={reciboDeHoy.fibra} screenSize={screenSize}
               ebooklista={fiberEbooks}
               ></FiberCard>}></CustomCard>}
-
-
         </>} 
-
        </Flex>} 
-
-
       {macroPorcentaje == null && <PurpleSpinner></PurpleSpinner>} 
       </>
     );

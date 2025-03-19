@@ -392,7 +392,10 @@ export default function CrearAlimento()
         infoLista={[reciboConstNames.monoinsaturadas,reciboConstNames.poliinsaturadas, reciboConstNames.saturadas]}>
         </MacroNutrCardEdit>}></CustomCard>}
 
-      {screenSize != "" &&  <CustomCard mt="10px" hijo={  <MacroNutrCardEdit recibo={recibo} setrecibo={setrecibo} totalMacro={reciboConstNames.carbs} screenSize={screenSize} infoLista={[reciboConstNames.complejos, reciboConstNames.simples]}></MacroNutrCardEdit>}></CustomCard>}
+      {screenSize != "" &&  <CustomCard mt="10px" hijo={  
+      <MacroNutrCardEdit recibo={recibo} setrecibo={setrecibo} 
+      totalMacro={reciboConstNames.carbs} screenSize={screenSize} infoLista={[reciboConstNames.complejos, reciboConstNames.simples]}>
+      </MacroNutrCardEdit>}></CustomCard>}
 
       {screenSize != "" && <CustomCard mt="10px" hijo={ 
       <FiberCard edit={true} recibo={recibo}  setrecibo={setrecibo} totalFiber={recibo.fibra} screenSize={screenSize}></FiberCard>}></CustomCard>}

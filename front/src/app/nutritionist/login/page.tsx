@@ -27,7 +27,7 @@ import PopUpErrorMessage from '@/components/global/message/PopUpErrorMessage';
 import InputField from '@/components/global/random/InputField';
 
 
-export default function login() 
+export default function NutritionistLogin() 
 {
   const textColor = useColorModeValue('secondaryGray.900', 'white'); 
   const [nom, setnom] = useState<string>("");
@@ -78,7 +78,7 @@ export default function login()
   
     try {
       const response = await axios.post(
-        `${API_URL}/usuarios/login`,
+        `${API_URL}/nutritionist/login`,
         { nom, pass: contra },
         { headers: { "Content-Type": "application/json" } }
       );
@@ -87,10 +87,10 @@ export default function login()
   
       if (response.data?.exists) {
         sessionStorage.clear();
-        sessionStorage.setItem("userNom", nom);
-        location.href = "../../myday"
+        sessionStorage.setItem("nutriNom", nom);
+        location.href = "./myPatients"
       } else {
-        errorText.current = "User doesn't exist";
+        errorText.current = "nutritionist doesn't exist";
         sethayError(true);
         setdatosMal(3);
       }
@@ -104,12 +104,12 @@ export default function login()
         errorText.current = "Network error, please check your connection";
       } else if (error.response.status === 404) {
         setdatosMal(3);
-        errorText.current = "Wrong password or user name";
+        errorText.current = "Wrong password or nutritionist name";
       } else if (error.response.status === 500) {
         errorText.current = tryAgain;
       } else {
         setdatosMal(3);
-        errorText.current = "User doesn't exist";
+        errorText.current = "nutritionist doesn't exist";
       }
     }
   };
@@ -152,7 +152,7 @@ export default function login()
     <Flex
         direction="column"
         align="center"
-        bg="purple.100"
+        bg={colorNutricionist}
         w="100%"
         h="100%"
         justify="center"
@@ -175,7 +175,7 @@ export default function login()
                     value={nom}
                     bg={datosMal==1 || datosMal == 3 ? "red.200": ""}
                     placeholder="eg. Esthera"
-                    label="User name"
+                    label="Nutritionist name"
                     onChange={(e:any) => writingName(e.target.value)}
                 />
                 <InputField
@@ -197,7 +197,7 @@ export default function login()
                 variant="darkBrand"
                 fontSize="sm"
                 borderRadius="16px"
-                bg="purple.100"
+                bg={colorNutricionist}
                 w={{ base: '128px', md: '148px' }}
                 h="46px"
                 disabled={btnPulsado}
@@ -217,15 +217,9 @@ export default function login()
             </Flex>
 
 
-            <Link href="../login/signup/parte1" w="150px" ml="30px">
+            <Link href="../login/login" w="150px" ml="30px">
               <Text color="purple.200" as="span" cursor="pointer">
-                Not registered yet?
-              </Text>
-            </Link>
-
-            <Link href="../../nutritionist/login" w="150px" ml="50px">
-              <Text color={colorNutricionist} as="span" cursor="pointer">
-                I'm nutricionist
+                I'm not nutritionist
               </Text>
             </Link>
             </VStack>

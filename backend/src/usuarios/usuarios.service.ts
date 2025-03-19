@@ -44,6 +44,19 @@ export class UsuariosService {
     return parseInt(result[0].ficha_id, 10);
   }
 
+  async editAvatarNombreFunction(userNom: string, name:string) {
+    try 
+    {
+      const sql = `UPDATE usuarios SET nombre = ? WHERE nombre = ?`;
+      await this.databaseService.query(sql, [ name, userNom]);
+      return true;
+    } 
+    catch (error) {
+      console.log("Error al actualizar la base de datos:", error);
+      return false;
+    }
+  }
+
 
 
 

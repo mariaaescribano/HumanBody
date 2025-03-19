@@ -6,11 +6,12 @@ import InputField from '../random/InputField';
 import EBookButton from '../random/EBookButton';
 import { showEbook } from '../../../../../backend/src/dto/ebook.dto';
 import { FiberName } from '@/components/Names/FiberName';
+import NutriComent from '@/components/nutritionistPatient/NutriComent';
 
 
 
 export default function FiberCard(props: { edit:boolean, stillNeed?:boolean, recibo?:reciboSkeleton, reciboObjetivo?:number,
-  setrecibo?:any, totalFiber?:string, screenSize:string, ebooklista?:showEbook[]  }) 
+  setrecibo?:any, totalFiber?:string, screenSize:string, ebooklista?:showEbook[], miPerfil?:number  }) 
 {
 
 
@@ -30,7 +31,8 @@ export default function FiberCard(props: { edit:boolean, stillNeed?:boolean, rec
     <Flex direction="column" w="100%">
         <HStack>
             <FiberName fontSize="2xl" /> 
-            <Text mb="5px" fontSize="2xl" fontWeight={"bold"}>{props.edit == true && (props.screenSize=="sm" ?  "PER 100 G": "PER 100 GRAMS")}
+            <Text mb="5px" fontSize="2xl" fontWeight={"bold"}>
+              {(props.edit == true && (props.miPerfil== null || props.miPerfil==undefined)) && (props.screenSize=="sm" ?  "PER 100 G": "PER 100 GRAMS")}
             </Text>
         </HStack>
 
@@ -48,7 +50,7 @@ export default function FiberCard(props: { edit:boolean, stillNeed?:boolean, rec
 
             
 
-        {props.edit && <Flex justify="center" w="100%" fontSize="xl" fontWeight={"bold"} gap="20px">
+        {(props.edit && props.miPerfil == 0) && <Flex justify="center" w="100%" fontSize="xl" fontWeight={"bold"} gap="20px">
           <Text mt="10px">TOTAL </Text>
           <Input
             textAlign="center"
@@ -68,7 +70,7 @@ export default function FiberCard(props: { edit:boolean, stillNeed?:boolean, rec
 
 
               
-        {props.edit == false  &&
+        {(props.edit == false  || props.miPerfil == 1) &&
           <Flex justify="space-between" w="100%" fontSize="xl" fontWeight={"bold"} gap="10px"> 
             <Text>TOTAL </Text>
             {/* <MeryTooltip texto={"Fiber is a carb but it isn't summed with the carbohydrates."} /> */}
@@ -84,6 +86,12 @@ export default function FiberCard(props: { edit:boolean, stillNeed?:boolean, rec
                 <Text>{"I STILL NEED"} </Text>
                 <Text>{props.reciboObjetivo} grams</Text>
             </Flex></>} 
+
+
+        <Box w="100%" borderBottom="2px solid black" my="20px" />
+        <Box display="flex" alignItems="center" justifyContent="center" >
+            <NutriComent text={'Add more proteins to your next meal ;) '} />
+        </Box>
    
     </Flex>
 

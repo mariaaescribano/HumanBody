@@ -9,6 +9,7 @@ import EBookButton from '../global/random/EBookButton';
 import { AddIcon } from '@chakra-ui/icons';
 import { macroPorcentajes } from '../../../../backend/src/dto/recibos.dto';
 import { useRouter } from 'next/navigation';
+import NutriComent from '../nutritionistPatient/NutriComent';
 
 export default function ElementoPrimero(props: {macroPorcentaje: macroPorcentajes }) 
 {
@@ -53,7 +54,7 @@ export default function ElementoPrimero(props: {macroPorcentaje: macroPorcentaje
                 </SimpleGrid>
             </Flex>
         </Box>
-
+        
         <Button
             fontSize="sm"
             borderRadius="16px"
@@ -78,6 +79,7 @@ export default function ElementoPrimero(props: {macroPorcentaje: macroPorcentaje
             </svg>
         </Button>
 
+        <NutriComent mt="20px" text={'Add more proteins to your next meal ;) '} />
 
         <Box w="100%" borderBottom="2px solid black" my="20px" />
         <EBookButton texto={'Fasting'}></EBookButton>

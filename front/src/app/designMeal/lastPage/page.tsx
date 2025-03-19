@@ -21,6 +21,7 @@ import  { alimentoMacroMealView, finalMealCard, mealSkeleton } from '../../../..
 import { dameDatosDelRecibo, ObjectIsNull, redirigirSiNoHayUserNom } from '@/GlobalHelper';
 import PurpleSpinner from '@/components/global/random/PurpleSpinner';
 import FinalMealCard from '@/components/designMeal/FinalMealCard';
+import InputField from '@/components/global/random/InputField';
 
 export default function LastPage() 
 {
@@ -30,20 +31,27 @@ export default function LastPage()
 
   // todos los meals pero con sus datos para show off
   const [meals, setmeals] = useState<finalMealCard[]>([]);
-
+  const [calories, setCalories] = useState<string>("");
+  const [actividad, setActividad] = useState<string>("");
 
   // IMPLEMENTACION
   // 0: coge el array de ss
-  useEffect(() => 
-  {
-    redirigirSiNoHayUserNom()
-    const datosGuardados = sessionStorage.getItem('arrayMeals');
-    if(datosGuardados)
-    {
-        const arrayRecuperado = JSON.parse(datosGuardados);
-        gestionaArrayMeals(arrayRecuperado);
-    }
+  useEffect(() => {
+      redirigirSiNoHayUserNom();
+
+      const datosGuardados = sessionStorage.getItem('arrayMeals');
+      const caloriasNecesitadas = sessionStorage.getItem('caloriasNecesitadas') ?? "";
+      const actividadGuardada = sessionStorage.getItem('actividad') ?? "";
+
+      setCalories(caloriasNecesitadas);
+      setActividad(actividadGuardada);
+
+      if (datosGuardados) {
+          const arrayRecuperado = JSON.parse(datosGuardados);
+          gestionaArrayMeals(arrayRecuperado);
+      }
   }, []);
+
 
 
   // 1: las separa para meterlos en los nuevos tipos de datos
@@ -112,11 +120,34 @@ export default function LastPage()
             
             {/* titulo */}
             <CustomCard mt="0px" hijo={
-                <Text fontSize="2xl" fontWeight="700">YOUR DESIGNED MEAL</Text>
+              <Text fontSize="2xl" fontWeight="700">YOUR DESIGNED MEAL</Text>
             }/>
 
-            <Button bg="red.100" onClick={borrar} boxShadow="0px 2px 4px rgba(0, 0, 0, 0.2)">Delete</Button>
-       
+            <Button bg="red.100" mt="5px" onClick={borrar} boxShadow="0px 2px 4px rgba(0, 0, 0, 0.2)">Delete</Button>
+            
+
+            {/* actividad */}
+            <CustomCard mt="20px" hijo={
+              <Flex direction="column" mb="4px">
+                  <InputField
+                  mb="20px"
+                  id="first"
+                  disabled={true}
+                  value={actividad}
+                  placeholder="Run 6km / Work all day long / Party with friends / ..."
+                  label="Today's activity where I will put my heart into:"
+                  textAlign={"center"}
+                  />
+                  <InputField
+                  mb="0px"
+                  id="second"
+                  disabled={true}
+                  value={calories+" kcal"}
+                  label="Calories I will need to healthily fulfill the activity:"
+                  textAlign={"center"}
+                  />
+              </Flex>
+          }/>
             
             {/* tarjetas de meals */}
             <Box ml={{ base: "30px", md: "0px" }} mb="60px" w={{ base: "100%", md: "auto" }}>

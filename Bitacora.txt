@@ -92,5 +92,6 @@ ORDEN: prote: "#610C04" -fats:"#abdefa" -carbs:"#EDC9AF"
 
 PARA MAÑANA
 
---> acabar de ver q todo funciona bien :)
+--> acabar miperfil
+--> hacer doc explicando programa + fotos
 

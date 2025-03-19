@@ -91,7 +91,6 @@ export class AlimentosController {
         if(dameIdsAlimentosfav)
         {
           let alimentosFavObjetos = await this.alimentosService.damealimentosFavObjetos(dameIdsAlimentosfav, macro)
-          console.log(alimentosFavObjetos)
           return alimentosFavObjetos
         }
         else

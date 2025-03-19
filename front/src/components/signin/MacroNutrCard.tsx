@@ -8,6 +8,7 @@ import { showEbook } from '../../../../backend/src/dto/ebook.dto';
 import { FatsName } from '../Names/FatsName';
 import { ProteinsName } from '../Names/ProteinName';
 import { CarbsName } from '../Names/CarbName';
+import NutriComent from '../nutritionistPatient/NutriComent';
 
 export default function MacroNutrCard(props: {title:string, total:string, stillNeed?:boolean,
     reciboObjetivo?: number, edit?:boolean,
@@ -108,9 +109,13 @@ export default function MacroNutrCard(props: {title:string, total:string, stillN
                 <Text>{"I STILL NEED"} </Text>
                 <Text>{props.reciboObjetivo} grams</Text>
             </Flex> </>}
-        
+            
+
+        <Box w="100%" borderBottom="2px solid black" my="20px" />
+        <Box display="flex" alignItems="center" justifyContent="center" >
+            <NutriComent text={'Add more proteins to your next meal ;) '} />
+        </Box>
         </div>
     </Flex>
-
   );
 }

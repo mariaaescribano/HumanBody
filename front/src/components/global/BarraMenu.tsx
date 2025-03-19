@@ -1,11 +1,5 @@
-import React, { useState } from 'react';
-import { Box, Input, Text, Flex, Card } from '@chakra-ui/react'; // Chakra UI para estilos
-import {
-    MdSearch
-  } from 'react-icons/md';
-import { DiaryIcon } from '../icons/DiaryIcon';
-import EBookButton from './random/EBookButton';
-import { DesignIcon } from '../icons/DesignIcon';
+import React from 'react';
+import { Flex, Card } from '@chakra-ui/react'; // Chakra UI para estilos
 import { useRouter } from 'next/navigation';
 
 

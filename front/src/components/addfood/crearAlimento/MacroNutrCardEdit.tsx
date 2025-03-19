@@ -6,10 +6,13 @@ import { Flex, Box, Icon, Text, HStack, Image, VStack, Input } from '@chakra-ui/
 import { reciboConstNames, reciboSkeleton } from '../../../../../backend/src/dto/recibos.dto';
 import { useEffect, useRef } from 'react';
 import { esSoloNumeros, StringIsNull } from '../../../GlobalHelper';
+import { text } from 'stream/consumers';
+import NutriComent from '@/components/nutritionistPatient/NutriComent';
 
 
 
-export default function MacroNutrCardEdit(props: {recibo:reciboSkeleton, setrecibo:any, totalMacro:string, screenSize:string, infoLista:string[] }) 
+export default function MacroNutrCardEdit(props: {recibo:reciboSkeleton, setrecibo:any, 
+    totalMacro:string, screenSize:string, infoLista:string[], miPerfil?:number }) 
 {
     // para "dejar" q el recibo se actualice
     // si se actualiza cuando actualizamos los resultados, en hacer suma, seria un bucle continuo
@@ -103,14 +106,22 @@ export default function MacroNutrCardEdit(props: {recibo:reciboSkeleton, setreci
         if (item == "Fiber") return props.recibo.fibra;
     };
 
-
-
   return (
     <Flex direction="column" w="100%">
         <div>
-        {props.totalMacro == reciboConstNames.grasas &&  <HStack><FatsName fontSize="2xl" /> <Text mb="5px" fontSize="2xl" fontWeight={"bold"}>{props.screenSize=="sm" ? "PER 100 G": "PER 100 GRAMS"}</Text></HStack>}
-        {props.totalMacro == reciboConstNames.prote && <HStack><ProteinsName fontSize="2xl" /> <Text mb="5px" fontSize="2xl" fontWeight={"bold"}>{props.screenSize=="sm" ? "PER 100 G": "PER 100 GRAMS"}</Text></HStack>}
-        {props.totalMacro == reciboConstNames.carbs && <HStack><CarbsName fontSize="2xl" /> <Text mb="5px" fontSize="2xl" fontWeight={"bold"}>{props.screenSize=="sm" ? "PER 100 G": "PER 100 GRAMS"}</Text></HStack>}
+
+        <HStack>
+        {props.totalMacro === reciboConstNames.grasas && <FatsName fontSize="2xl" />}
+        {props.totalMacro === reciboConstNames.prote && <ProteinsName fontSize="2xl" />}
+        {props.totalMacro === reciboConstNames.carbs && <CarbsName fontSize="2xl" />}
+
+        {(props.miPerfil==null || props.miPerfil ==undefined) && (
+            <Text mb="5px" fontSize="2xl" fontWeight="bold">
+            {props.screenSize === "sm" ? "PER 100 G" : "PER 100 GRAMS"}
+            </Text>
+        )}
+        </HStack>
+        
         <Box w="100%" borderBottom="2px solid black" my="20px" />
             {props.screenSize!= "" && (props.screenSize == "md" || props.screenSize == "xl") && 
             <Flex direction="column" w="100%" gap="5px">
@@ -140,7 +151,7 @@ export default function MacroNutrCardEdit(props: {recibo:reciboSkeleton, setreci
                     >
                         ........................................................................................................................................................
                     </Text>
-                    <Input
+                    {(!props.miPerfil || props.miPerfil == 0)&& <><Input
                         border="1px solid gray"
                         borderRadius={"10px"}
                         fontWeight='500'
@@ -153,9 +164,13 @@ export default function MacroNutrCardEdit(props: {recibo:reciboSkeleton, setreci
                         h='44px'
                         maxH='44px'
                     />
-                     <Text flexShrink={0}>
-                            {" grams"} 
-                        </Text>
+                    <Text flexShrink={0}>
+                        {" grams"} 
+                    </Text></>}
+                    {props.miPerfil==1 &&
+                    <Text flexShrink={0}>
+                        {devuelveValor(item)+" grams"} 
+                    </Text>}
                 </Flex>
             ))}
             </Flex>}
@@ -176,7 +191,7 @@ export default function MacroNutrCardEdit(props: {recibo:reciboSkeleton, setreci
                         <Text flexShrink={0}>
                             {item + ": "} 
                         </Text>
-                        <Input
+                        {(!props.miPerfil || props.miPerfil == 0)&& <><Input
                             textAlign={"center"}
                             border="1px solid gray"
                             borderRadius={"10px"}
@@ -190,7 +205,11 @@ export default function MacroNutrCardEdit(props: {recibo:reciboSkeleton, setreci
                         />
                         <Text flexShrink={0}>
                             {" grams"} 
-                        </Text>
+                        </Text></>}
+                        {props.miPerfil==1 &&
+                        <Text flexShrink={0}>
+                            {devuelveValor(item)+" grams"} 
+                        </Text>}
                         {/* <MeryTooltip texto={item.tooltip} /> */}
                     </HStack>
                 </VStack>
@@ -205,6 +224,11 @@ export default function MacroNutrCardEdit(props: {recibo:reciboSkeleton, setreci
                 {props.totalMacro == "CARBS" && <Text> {props.recibo.carbs=="" ? 0 : props.recibo.carbs + "    "} grams</Text>}
                 {props.totalMacro == "FATS" && <Text> {props.recibo.grasas=="" ? 0 : props.recibo.grasas+"    "} grams</Text>}
             </Flex> 
+
+            <Box w="100%" borderBottom="2px solid black" my="20px" />
+            <Box display="flex" alignItems="center" justifyContent="center" >
+                <NutriComent text={'Please, remember to prioritaze protein rather than carbs. '} />
+            </Box>
         </div>
     </Flex>
 
