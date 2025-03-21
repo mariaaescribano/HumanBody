@@ -11,7 +11,6 @@ export default function AvatarPart(props: {function:any, subiendo:number, setEmp
 {
   const [photo, setPhoto] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [loading, setLoading] = useState<boolean>(false);
 
 
   useEffect(() => 

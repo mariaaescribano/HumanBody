@@ -84,11 +84,11 @@ export default function NutritionistLogin()
       );
   
       setbtnPulsado(false);
-  
-      if (response.data?.exists) {
+      if (response.data?.exists!= null) {
         sessionStorage.clear();
         sessionStorage.setItem("nutriNom", nom);
-        location.href = "./myPatients"
+        sessionStorage.setItem("nutriId", response.data?.exists[0].id);
+        location.href = "./myPatients/main"
       } else {
         errorText.current = "nutritionist doesn't exist";
         sethayError(true);

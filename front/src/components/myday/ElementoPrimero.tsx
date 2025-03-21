@@ -10,6 +10,7 @@ import { AddIcon } from '@chakra-ui/icons';
 import { macroPorcentajes } from '../../../../backend/src/dto/recibos.dto';
 import { useRouter } from 'next/navigation';
 import NutriComent from '../nutritionistPatient/NutriComent';
+import { userNutriId } from '@/GlobalHelper';
 
 export default function ElementoPrimero(props: {macroPorcentaje: macroPorcentajes }) 
 {
@@ -79,11 +80,15 @@ export default function ElementoPrimero(props: {macroPorcentaje: macroPorcentaje
             </svg>
         </Button>
 
-        <NutriComent mt="20px" text={'Add more proteins to your next meal ;) '} />
+        {/* si tiene nutricionista o es el nutricionista, entra */}
+        {/* {(sessionStorage.getItem("userNutri") || sessionStorage.getItem("nutriNom")) &&  
+        <>
+        <Box display="flex" alignItems="center" justifyContent="center" >
+            <NutriComent campo={nutriComentarios.datosFicha} />
+        </Box></>} */}
 
-        <Box w="100%" borderBottom="2px solid black" my="20px" />
-        <EBookButton texto={'Fasting'}></EBookButton>
-        {/* lista de botones dependiendo del estado  */}
+
+        {/* xxx lista de botones dependiendo del estado  */}
     </>}
     </>
 

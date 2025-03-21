@@ -225,7 +225,7 @@ export default function login()
 
             <Link href="../../nutritionist/login" w="150px" ml="50px">
               <Text color={colorNutricionist} as="span" cursor="pointer">
-                I'm nutricionist
+                I'm nutritionist
               </Text>
             </Link>
             </VStack>

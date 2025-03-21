@@ -27,18 +27,12 @@ import axios from 'axios';
 // Custom components
 import React, { useEffect, useState, useRef } from 'react';
 import SelectSignIn from '@/components/signin/SelectSignIn';
-import PopUpMessage from '@/components/global/message/PopUpMessage';
-import PopUpErrorMessage from '@/components/global/message/PopUpErrorMessage';
 import PurpleSpinner from '@/components/global/random/PurpleSpinner';
 import CustomCard from '@/components/global/cards/CustomCard';
-import { API_URL, crearRecibo, dameDatosDelRecibo, formatDateToISOFriendly, getFecha, getInternetDateParts, getTamanyoPantalla, redirigirSiNoHayUserNom, StringIsNull, crearYGuardarTxt, ObjectIsNull } from '../../GlobalHelper';
-import ElementoPrimero from '@/components/myday/ElementoPrimero';
-import MacroNutrCard from '@/components/signin/MacroNutrCard';
-import { macroPorcentajes, reciboConstNames, reciboSkeleton, showMacroNutrSignUp } from '../../../../backend/src/dto/recibos.dto';
-import { fidelidadSkeleton } from '../../../../backend/src/dto/fidelidad.dto';
+import { API_URL, dameDatosDelRecibo, formatDateToISOFriendly, getFecha, getInternetDateParts, getTamanyoPantalla, redirigirSiNoHayUserNom, StringIsNull } from '../../GlobalHelper';
+import {  reciboConstNames, reciboSkeleton, showMacroNutrSignUp } from '../../../../backend/src/dto/recibos.dto';
 import { showEbook } from '../../../../backend/src/dto/ebook.dto';
 import FiberCard from '@/components/global/cards/FiberCard';
-import FidelidadCard from '@/components/fidelity/FidelidadCard';
 import BarraMenu from '@/components/global/BarraMenu';
 import { useRouter } from 'next/navigation';
 import AvatarPart from '@/components/miPerfil/AvatarPart';
@@ -231,13 +225,13 @@ export default function MyDay()
             }
         }
         catch (error) {
+            console.log('Error fetching data:', error);
             setsubiendoDatos(3)
             const timer = setTimeout(() => 
                 {
                     setsubiendoDatos(0)
                 }, 2000);
                 return () => clearTimeout(timer);
-        console.log('Error fetching data:', error);
         }
     } ;
 
@@ -527,7 +521,7 @@ export default function MyDay()
         editando={editarAvatarNombre} nom={newUserNom} setnewUserNom={setnewUserNom}
         perfilPic={perfilPicVer.current} setperfilPic={setperfilPic} function={salvaAvatarNombre} ></AvatarPart>
 
-        <NutritionistClientCard userNom={undefined}></NutritionistClientCard>
+        <NutritionistClientCard></NutritionistClientCard>
 
         {/* datos personales vista */}
         <Box  w="100%"  display="flex" justifyContent="center">
@@ -617,15 +611,6 @@ export default function MyDay()
                 editando={editarFiber} function={updateFiber} />
             </Box>
         </Box>
-
-
-
-
-
-
-
-
-
     </Flex>}
 
     { loaded==false && !reciboObjetivo && <PurpleSpinner></PurpleSpinner>} 

@@ -44,6 +44,27 @@ export class UsuariosService {
     return parseInt(result[0].ficha_id, 10);
   }
 
+  async userTieneNutriFunction(nombre: string) {
+    const sql = 'SELECT nutritionist FROM usuarios WHERE nombre = ?';
+    const result = await this.databaseService.query(sql, [nombre]);
+    return result[0].nutritionist;
+  }
+
+  async despedirNutriFunction(userNom: string) {
+    try 
+    {
+      const sql = 'UPDATE usuarios SET nutritionist  = NULL WHERE nombre = ?;';
+      const result = await this.databaseService.query(sql, [userNom]);
+      return "ok";
+    } 
+    catch (error) {
+      console.log("Error al borrar nutri de user:", error);
+      return "no ok";
+    }
+  }
+
+  
+
   async editAvatarNombreFunction(userNom: string, name:string) {
     try 
     {
@@ -127,6 +148,40 @@ export class UsuariosService {
   {
     const sql = `UPDATE usuarios SET dias_ids = CONCAT(dias_ids, ',', ?) WHERE nombre = ?`;
     await this.databaseService.query(sql, [ idDia, userNom]);
+  }
+
+
+  async dameAllPacientesdeNutri(idNutri:number ) 
+  {
+    if(idNutri)
+    {
+      const sql = 'SELECT u.*, f.* FROM usuarios u INNER JOIN ficha f ON u.ficha_id = f.id WHERE u.nutritionist = ?;';
+      const params = [idNutri];
+      const result = await this.databaseService.query(sql, params);
+      return result;
+    }  
+    else
+      throw new Error("En usuarios.service no llega el user nom");
+    
+  }
+
+  async dameAllUserDeSolicitudDeNutri(userNom:string) 
+  {
+    if(userNom)
+    {
+      const sql = 'SELECT u.*, f.* FROM usuarios u INNER JOIN ficha f ON u.ficha_id = f.id WHERE u.nombre = ?;';
+      const params = [userNom];
+      const result = await this.databaseService.query(sql, params);
+      return result;
+    }  
+    else
+      throw new Error("En usuarios.service no llega el user nom");
+  }
+
+  async userAddNutri(nutriId:number, userNom:string ) 
+  {
+    const sql = `UPDATE usuarios SET nutritionist  = ? WHERE nombre = ?`;
+    await this.databaseService.query(sql, [ nutriId, userNom]);
   }
   
 }

@@ -1,7 +1,7 @@
 'use client';
 import { Flex, Box, Icon, Text, HStack, Image, VStack, Input } from '@chakra-ui/react';
 import { reciboSkeleton } from '../../../../../backend/src/dto/recibos.dto';
-import { esSoloNumeros } from '../../../GlobalHelper';
+import { esSoloNumeros, userNutriId } from '../../../GlobalHelper';
 import InputField from '../random/InputField';
 import EBookButton from '../random/EBookButton';
 import { showEbook } from '../../../../../backend/src/dto/ebook.dto';
@@ -72,7 +72,8 @@ export default function FiberCard(props: { edit:boolean, stillNeed?:boolean, rec
               
         {(props.edit == false  || props.miPerfil == 1) &&
           <Flex justify="space-between" w="100%" fontSize="xl" fontWeight={"bold"} gap="10px"> 
-            <Text>TOTAL </Text>
+            {!props.stillNeed &&  <Text>TOTAL </Text>}
+            {props.stillNeed && props.stillNeed== true &&  <Text>TOTAL PER NOW </Text>}
             {/* <MeryTooltip texto={"Fiber is a carb but it isn't summed with the carbohydrates."} /> */}
 
           <HStack>
@@ -88,10 +89,12 @@ export default function FiberCard(props: { edit:boolean, stillNeed?:boolean, rec
             </Flex></>} 
 
 
-        <Box w="100%" borderBottom="2px solid black" my="20px" />
-        <Box display="flex" alignItems="center" justifyContent="center" >
-            <NutriComent text={'Add more proteins to your next meal ;) '} />
-        </Box>
+         {/* si tiene nutricionista o es el nutricionista, entra */}
+            {/* {(sessionStorage.getItem("userNutri") || sessionStorage.getItem("nutriNom")) &&  
+            <><Box w="100%" borderBottom="2px solid black" my="20px" />
+            <Box display="flex" alignItems="center" justifyContent="center" >
+                <NutriComent campo={nutriComentarios.datosFicha} />
+            </Box></>} */}
    
     </Flex>
 

@@ -5,9 +5,10 @@ import { ProteinsName } from '@/components/Names/ProteinName';
 import { Flex, Box, Icon, Text, HStack, Image, VStack, Input } from '@chakra-ui/react';
 import { reciboConstNames, reciboSkeleton } from '../../../../../backend/src/dto/recibos.dto';
 import { useEffect, useRef } from 'react';
-import { esSoloNumeros, StringIsNull } from '../../../GlobalHelper';
+import { esSoloNumeros, StringIsNull, userNutriId } from '../../../GlobalHelper';
 import { text } from 'stream/consumers';
 import NutriComent from '@/components/nutritionistPatient/NutriComent';
+import { nutriComentarios } from '../../../../../backend/src/dto/nutri.dto';
 
 
 
@@ -225,10 +226,13 @@ export default function MacroNutrCardEdit(props: {recibo:reciboSkeleton, setreci
                 {props.totalMacro == "FATS" && <Text> {props.recibo.grasas=="" ? 0 : props.recibo.grasas+"    "} grams</Text>}
             </Flex> 
 
-            <Box w="100%" borderBottom="2px solid black" my="20px" />
+            {/* si tiene nutricionista o es el nutricionista, entra */}
+            {/* {(sessionStorage.getItem("userNutri") || sessionStorage.getItem("nutriNom")) &&  
+            <><Box w="100%" borderBottom="2px solid black" my="20px" />
             <Box display="flex" alignItems="center" justifyContent="center" >
-                <NutriComent text={'Please, remember to prioritaze protein rather than carbs. '} />
-            </Box>
+                <NutriComent campo={nutriComentarios.datosFicha} />
+            </Box></>} */}
+            
         </div>
     </Flex>
 

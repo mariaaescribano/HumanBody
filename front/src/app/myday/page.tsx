@@ -29,7 +29,7 @@ import PopUpMessage from '@/components/global/message/PopUpMessage';
 import PopUpErrorMessage from '@/components/global/message/PopUpErrorMessage';
 import PurpleSpinner from '@/components/global/random/PurpleSpinner';
 import CustomCard from '@/components/global/cards/CustomCard';
-import { API_URL, crearRecibo, dameDatosDelRecibo, formatDateToISOFriendly, getFecha, getInternetDateParts, getTamanyoPantalla, redirigirSiNoHayUserNom } from '../../GlobalHelper';
+import { API_URL, crearRecibo, dameDatosDelRecibo, formatDateToISOFriendly, getFecha, getInternetDateParts, getTamanyoPantalla, redirigirSiNoHayUserNom, userNutriId } from '../../GlobalHelper';
 import ElementoPrimero from '@/components/myday/ElementoPrimero';
 import MacroNutrCard from '@/components/signin/MacroNutrCard';
 import { macroPorcentajes, reciboSkeleton, showMacroNutrSignUp } from '../../../../backend/src/dto/recibos.dto';
@@ -110,6 +110,8 @@ export default function MyDay()
   // recupera id de reciboDeHoy y de Objetivo 
   const recuperaDatosSiSSNoVacia = async (id:string, idReciboObjetivoo: string) =>
   {
+    await userTieneNutriComprueba(sessionStorage.getItem("userNom"));
+
     let fechaDeDia = await getFecha();
     setfecha(fechaDeDia)
 
@@ -119,6 +121,27 @@ export default function MyDay()
     idReciboObjetivo.current = parseInt(idReciboObjetivoo, 10);
   };
 
+  const userTieneNutriComprueba = async (userNom:string|null) =>
+  {
+    if(userNom)
+    {
+      try{
+        const response = await axios.get(
+          `${API_URL}/usuarios/userTieneNutri/${userNom}`,
+          {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+          }
+        );
+        if(response.data)
+          sessionStorage.setItem("userNutri", response.data)
+      }
+      catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    }  
+  };
 
   const creaRecibo = async () =>
   {
@@ -133,6 +156,7 @@ export default function MyDay()
     if(nombreuser)
     {
       let datos = await dameUsuarioReciboObjetivo(nombreuser);
+      await userTieneNutriComprueba(nombreuser);
     
       sessionStorage.setItem("reciboObjetivo", datos.recibo_id)
       sessionStorage.setItem("caloriasObjetivo", datos.calorias_objetivo)
@@ -403,7 +427,7 @@ export default function MyDay()
        {/* calorias y macronutrients overall view */}
         <CustomCard mt="20px" hijo={<ElementoPrimero macroPorcentaje={macroPorcentaje}></ElementoPrimero>}></CustomCard>
 
-       <NutritionistClientCard userNom={undefined}></NutritionistClientCard>
+        {userNutriId() != null && <NutritionistClientCard/>}
 
        <CustomCard mt="10px" hijo={ 
         <>
@@ -442,11 +466,11 @@ export default function MyDay()
         </CustomCard>
 
         {/* fidelidad card */}
-        <CustomCard mt="10px" hijo={<FidelidadCard diaId={null}/>}></CustomCard>
+        <CustomCard mt="10px" p="30px" hijo={<FidelidadCard diaId={null}/>}></CustomCard>
                  
 
         { reciboObjetivo!= null && <>
-        <CustomCard mt="10px" hijo={ 
+        <CustomCard mt="10px" p="15px" hijo={ 
             <>
             <Text color={"black"} fontSize="xl" w="100%"  fontWeight="700" textAlign="center">
                 TODAY'S MACRONUTRIENTS

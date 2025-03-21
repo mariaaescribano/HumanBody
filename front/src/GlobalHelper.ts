@@ -34,6 +34,15 @@ export function ArrayIsNull(array:any[])
     return false;
 };
 
+
+export const userNutriId = () => {
+  const id = sessionStorage.getItem("userNutri");
+  if(id == "null")
+    return null;
+  else
+    return id;
+};
+
 export const redirigirSiNoHayUserNom = () => {
   const nom = sessionStorage.getItem("userNom");
   if (!nom) {
@@ -48,10 +57,41 @@ export const redirigirSiNoHayNutriNom = () => {
   }
 };
 
+export const dameNutriNom = () => {
+  const nom = sessionStorage.getItem("nutriNom");
+  if (nom) {
+    return nom;
+  }
+};
+
 export const toRoman = (num: number) => {
   const romans = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"];
   return romans[num] || num.toString();
 };
+
+export const fileToBase64 = async (fileNom:string) => 
+{
+  try{
+    const response = await axios.get(
+        `${API_URL}/usuarios/recuperarFoto/${fileNom}`,
+        {
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        }
+    );
+    if(response.data != null)
+    {
+      let foto = (response.data.imageBase64)
+      let fotobase64 = (`data:image/jpeg;base64,${foto}`);
+      return fotobase64;
+    }
+  }
+  catch (error) {
+      console.error('Error fetching data:', error);
+  }
+};
+
 
 
 //////////// LISTAS  para pagina de registro //////////// 

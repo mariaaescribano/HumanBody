@@ -8,14 +8,26 @@ import MeryTooltip from '../global/random/MeryToolTip';
 import { CaloryIcon } from '../icons/CaloryIcon';
 import SelectSignIn from '../signin/SelectSignIn';
 import NutriComent from '../nutritionistPatient/NutriComent';
+import { nutriComentarios } from '../../../../backend/src/dto/nutri.dto';
 
 export default function UserPersonalData(props: { user : createUserSkeleton, editando:boolean,
     activityLevelIndex:number , objectiveIndex:number, TMB?:string, caloriesWithLifeStyle?:string, caloriesWithObjective:string,
-    screenSize:string}) {
+    screenSize:string, 
+
+    // nutricionista things
+    soyNutricionista?:boolean, //se le pasa una funcion para salvar los comentarios q haga el nutri a su cliente
+    nombrePatient?:string
+  }) {
+
+    const frase1 = "The basal calories are"
+    const frase2 = "With your lifestyle, it would change to"
+    const frase3 = "With the objective, it would change to"
+
+
 
   return (
     <CustomCard mt="15px" hijo={ 
-        <>
+      props.user && <>
           <Box w="100%" borderBottom="2px solid black" my="20px" />
           <Flex direction="column" w="100%" >
               {[
@@ -47,15 +59,15 @@ export default function UserPersonalData(props: { user : createUserSkeleton, edi
             {props.screenSize!= "" && (props.screenSize == "md" || props.screenSize == "xl") && 
             <Flex direction="column" w="100%">
             {[
-              { label: "Your basal calories are", price: `${props.TMB} kcal`, tooltip: "These are the calories that you need to exist :)" },
+              { label: frase1, price: `${props.TMB} kcal`, tooltip: "These are the calories that you need to exist :)" },
           
               // Second item
               props.editando === false
-                ? { label: "With your lifestyle, it would change to", price: `${props.caloriesWithLifeStyle} kcal`, tooltip: "These are the calories that you need to have with your lifestyle." }
+                ? { label: frase2, price: `${props.caloriesWithLifeStyle} kcal`, tooltip: "These are the calories that you need to have with your lifestyle." }
                 : null,
           
               // Third item (always shown)
-              { label: "With your objective, it would change to", price: `${props.caloriesWithObjective} kcal`, tooltip: "These are the calories that you need to obtain your goal." }
+              { label: frase3, price: `${props.caloriesWithObjective} kcal`, tooltip: "These are the calories that you need to obtain your goal." }
             ]
               .filter(item => item !== null) // Remove null values from the array
               .map((item, index) => (
@@ -99,15 +111,15 @@ export default function UserPersonalData(props: { user : createUserSkeleton, edi
             {props.screenSize!= "" && props.screenSize == "sm" && 
            <Flex direction="column" w="100%" mb="10px">
            {[
-            { label: "Your basal calories are", price: `${props.TMB} kcal`, tooltip: "These are the calories that you need to exist :)" },
+            { label: frase1, price: `${props.TMB} kcal`, tooltip: "These are the calories that you need to exist :)" },
          
              // Second item
              props.editando === false
-               ? { label: "With your lifestyle, it would change to", price: `${props.caloriesWithLifeStyle} kcal`, tooltip: "These are the calories that you need to have with your lifestyle." }
+               ? { label: frase2, price: `${props.caloriesWithLifeStyle} kcal`, tooltip: "These are the calories that you need to have with your lifestyle." }
                : null,
          
              // Third item (always shown)
-             { label: "With your objective, it would change to", price: `${props.caloriesWithObjective} kcal`, tooltip: "These are the calories that you need to obtain your goal." }
+             { label: frase3, price: `${props.caloriesWithObjective} kcal`, tooltip: "These are the calories that you need to obtain your goal." }
            ]
              .filter(item => item !== null) // Remove null values from the array
              .map((item, index) => (
@@ -143,11 +155,13 @@ export default function UserPersonalData(props: { user : createUserSkeleton, edi
                 <Text>{props.caloriesWithObjective} kcal</Text>
             </Flex>
 
-            <Box w="100%" borderBottom="2px solid black" my="20px" />
+            {/* si tiene nutricionista o es el nutricionista, entra */}
+            {(sessionStorage.getItem("userNutri") || sessionStorage.getItem("patientTratando")) &&  
+            <><Box w="100%" borderBottom="2px solid black" my="20px" />
             <Box display="flex" alignItems="center" justifyContent="center" >
-                <NutriComent text={'Remember to focus on muscle weight. '} />
-            </Box>
-          
+                <NutriComent campo={nutriComentarios.datosFicha} />
+            </Box></>}
+            
           </Flex>
         </>} >
     </CustomCard>

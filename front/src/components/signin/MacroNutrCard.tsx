@@ -9,6 +9,7 @@ import { FatsName } from '../Names/FatsName';
 import { ProteinsName } from '../Names/ProteinName';
 import { CarbsName } from '../Names/CarbName';
 import NutriComent from '../nutritionistPatient/NutriComent';
+import { userNutriId } from '@/GlobalHelper';
 
 export default function MacroNutrCard(props: {title:string, total:string, stillNeed?:boolean,
     reciboObjetivo?: number, edit?:boolean,
@@ -110,11 +111,12 @@ export default function MacroNutrCard(props: {title:string, total:string, stillN
                 <Text>{props.reciboObjetivo} grams</Text>
             </Flex> </>}
             
-
-        <Box w="100%" borderBottom="2px solid black" my="20px" />
-        <Box display="flex" alignItems="center" justifyContent="center" >
-            <NutriComent text={'Add more proteins to your next meal ;) '} />
-        </Box>
+            {/* si tiene nutricionista o es el nutricionista, entra */}
+            {/* {(sessionStorage.getItem("userNutri") || sessionStorage.getItem("nutriNom")) &&  
+            <><Box w="100%" borderBottom="2px solid black" my="20px" />
+            <Box display="flex" alignItems="center" justifyContent="center" >
+                <NutriComent campo={nutriComentarios.datosFicha} />
+            </Box></>} */}
         </div>
     </Flex>
   );

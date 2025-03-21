@@ -1,11 +1,9 @@
-import { Controller, Get, Post, Body, Param, Res, HttpException, HttpStatus, Put, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Res, HttpException, HttpStatus, Put, UploadedFile, UseInterceptors, Delete } from '@nestjs/common';
 import { UsuariosService } from './usuarios.service';
 import { FichasService } from 'src/fichas/fichas.service';
-import * as fs from 'fs';
 import { FileInterceptor } from '@nestjs/platform-express';
-import * as path from 'path';
 import { Response } from 'express';
-import { convertFileToBase64, crearYGuardarTxt } from '../GlobalHelperBack';
+import { cambiarNombreArchivo, convertFileToBase64, crearYGuardarTxt, descodeReturnFoto, pathACarpetaDeFotos } from '../GlobalHelperBack';
 
 @Controller('usuarios')
 export class UsuariosController {
@@ -49,18 +47,25 @@ export class UsuariosController {
 
   @Get('recuperarFoto/:nomFile')
   async recuperarFoto(@Param('nomFile') nomFile: string, @Res() res: Response) {
-    const rutaArchivoBase64 = path.join(__dirname, '../../../../../usuariosFotos', nomFile);
-
-    try {
-      const base64Data = fs.readFileSync(rutaArchivoBase64, 'utf8'); // Lee el archivo en base64
+    let base64Data =  await descodeReturnFoto(nomFile);
+    if(base64Data) {
       res.setHeader('Content-Type', 'application/json');
       res.send({ imageBase64: base64Data }); // Enviar base64 como respuesta
-    } catch (error) {
-      console.error('Error al leer el archivo Base64:', error);
-      res.status(500).send('Error al recuperar la imagen');
-    }
+    } 
   }
 
+
+  @Get('userTieneNutri/:userNom')
+  async userTieneNutri(@Param('userNom') userNom: string) {
+    const userTieneNutriResult = await this.usuariosService.userTieneNutriFunction(userNom);
+    return userTieneNutriResult;
+  }
+
+  @Put('despedirNutri/:userNom')
+  async despedirNutri(@Param('userNom') userNom: string) {
+    const userTieneNutriResult = await this.usuariosService.despedirNutriFunction(userNom);
+    return userTieneNutriResult;
+  }
 
 
   // region update Foto
@@ -80,6 +85,11 @@ export class UsuariosController {
       }
       const base64String = await convertFileToBase64(file);
       const result = await crearYGuardarTxt(newuserNom, base64String);
+
+      // cambia el nom del file
+      
+      cambiarNombreArchivo(pathACarpetaDeFotos,  userNom, newuserNom);
+
       if (result) 
       {
         await this.fichasService.updatePerfilPic(newuserNom+".txt", fichaObjId);
