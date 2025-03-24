@@ -220,8 +220,8 @@ export default function SignUp3()
                     }
                 }
             );
-    
-            if (response.data) {
+            console.log(response.data)
+            if (response.data!= null) {
                 return response.data;  // Devuelve la data si existe
             } else {
                 throw new Error('Ficha vacía en la respuesta');

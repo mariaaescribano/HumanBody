@@ -44,5 +44,11 @@ export class NutricomentariosService {
     }
   }
 
+  async borrarColumna(userNom: string) 
+  {
+    const sql = 'DELETE FROM nutricomentarios WHERE patientNom = ?';
+    const result = await this.databaseService.query(sql, [userNom]);
+    return result;
+  }
 
 }

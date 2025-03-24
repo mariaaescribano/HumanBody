@@ -12,7 +12,8 @@ import { nutriComentarios } from '../../../../../backend/src/dto/nutri.dto';
 
 
 
-export default function MacroNutrCardEdit(props: {recibo:reciboSkeleton, setrecibo:any, 
+export default function MacroNutrCardEdit(props: {recibo:reciboSkeleton, setrecibo:any,
+    verMensajesNutri?:boolean, 
     totalMacro:string, screenSize:string, infoLista:string[], miPerfil?:number }) 
 {
     // para "dejar" q el recibo se actualice
@@ -227,12 +228,16 @@ export default function MacroNutrCardEdit(props: {recibo:reciboSkeleton, setreci
             </Flex> 
 
             {/* si tiene nutricionista o es el nutricionista, entra */}
-            {/* {(sessionStorage.getItem("userNutri") || sessionStorage.getItem("nutriNom")) &&  
+            {props.verMensajesNutri && (sessionStorage.getItem("userNutri") || sessionStorage.getItem("patientTratando")) &&  
             <><Box w="100%" borderBottom="2px solid black" my="20px" />
             <Box display="flex" alignItems="center" justifyContent="center" >
-                <NutriComent campo={nutriComentarios.datosFicha} />
-            </Box></>} */}
-            
+                <NutriComent 
+                    campo={{
+                        PROTEINS: nutriComentarios.prote,
+                        FATS: nutriComentarios.fats,
+                        CARBS: nutriComentarios.carbs
+                    }[props.totalMacro]} />
+            </Box></>}
         </div>
     </Flex>
 

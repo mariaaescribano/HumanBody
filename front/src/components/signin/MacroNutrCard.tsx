@@ -10,12 +10,12 @@ import { ProteinsName } from '../Names/ProteinName';
 import { CarbsName } from '../Names/CarbName';
 import NutriComent from '../nutritionistPatient/NutriComent';
 import { userNutriId } from '@/GlobalHelper';
+import { nutriComentarios } from '../../../../backend/src/dto/nutri.dto';
 
 export default function MacroNutrCard(props: {title:string, total:string, stillNeed?:boolean,
-    reciboObjetivo?: number, edit?:boolean,
-    infoLista:showMacroNutrSignUp[], screenSize:string, ebooklista:showEbook[]}) 
+    reciboObjetivo?: number, verMensajesNutri?:boolean,  
+    infoLista?:showMacroNutrSignUp[], screenSize:string, ebooklista?:showEbook[]}) 
 {
-   const textColor = useColorModeValue('secondaryGray.900', 'white');
 
   return (
     <Flex direction="column" w="100%">
@@ -26,7 +26,7 @@ export default function MacroNutrCard(props: {title:string, total:string, stillN
         <Box w="100%" borderBottom="2px solid black" my="20px" />
         {/* Total large screen */}
         <Flex justify="center" gap="20px" mb="30px" w="100%" fontSize="xl" fontWeight="bold" wrap="wrap">
-            {props.ebooklista.map((item, index) => (
+            {props.ebooklista?.map((item, index) => (
                 <EBookButton key={index} texto={item.title} />
             ))}
         </Flex>
@@ -37,7 +37,7 @@ export default function MacroNutrCard(props: {title:string, total:string, stillN
     
             <Flex direction="column" w="100%" gap="5px">
             {
-                props.infoLista.map((item, index) => (
+                props.infoLista?.map((item, index) => (
                 <Flex
                     key={index}
                     align="center"
@@ -73,7 +73,7 @@ export default function MacroNutrCard(props: {title:string, total:string, stillN
             {props.screenSize!= "" && props.screenSize == "sm" && 
             <Flex direction="column" w="100%" mb="10px">
             {
-                props.infoLista.map((item, index) => (
+                props.infoLista?.map((item, index) => (
                 <VStack
                     key={index}
                     align="center"
@@ -107,16 +107,35 @@ export default function MacroNutrCard(props: {title:string, total:string, stillN
 
             <Box w="100%" borderBottom="2px solid black" my="20px" />
             <Flex justify="space-between" w="100%" fontSize="lg" fontWeight={"bold"}>
-                <Text>{"I STILL NEED"} </Text>
+                <Text>{"STILL NEED"} </Text>
                 <Text>{props.reciboObjetivo} grams</Text>
             </Flex> </>}
             
             {/* si tiene nutricionista o es el nutricionista, entra */}
-            {/* {(sessionStorage.getItem("userNutri") || sessionStorage.getItem("nutriNom")) &&  
+            {/* para el dia de hoy */}
+            {props.verMensajesNutri && props.stillNeed == true && (sessionStorage.getItem("userNutri") || sessionStorage.getItem("patientTratando")) &&  
             <><Box w="100%" borderBottom="2px solid black" my="20px" />
             <Box display="flex" alignItems="center" justifyContent="center" >
-                <NutriComent campo={nutriComentarios.datosFicha} />
-            </Box></>} */}
+                <NutriComent 
+                    campo={{
+                        PROTEINS: nutriComentarios.proteMyDay,
+                        FATS: nutriComentarios.fatsMyDay,
+                        CARBS: nutriComentarios.carbsMyDay
+                    }[props.title]} />
+            </Box></>}
+            {/* para objetivos */}
+            {props.verMensajesNutri && !props.stillNeed && (sessionStorage.getItem("userNutri") || sessionStorage.getItem("patientTratando")) &&  
+            <><Box w="100%" borderBottom="2px solid black" my="20px" />
+            <Box display="flex" alignItems="center" justifyContent="center" >
+                <NutriComent 
+                    campo={{
+                        PROTEINS: nutriComentarios.prote,
+                        FATS: nutriComentarios.fats,
+                        CARBS: nutriComentarios.carbs
+                    }[props.title]} />
+            </Box></>}
+
+
         </div>
     </Flex>
   );

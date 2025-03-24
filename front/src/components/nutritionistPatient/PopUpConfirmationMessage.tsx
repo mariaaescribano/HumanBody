@@ -24,7 +24,6 @@ const PopUpConfirmationMessage = (props: {selectedNutri:nutriPerfil, setselected
             if(response.data.result == true)
             {
                 settext("Notification sent successfully")
-                
             }
         }
         catch (error) {

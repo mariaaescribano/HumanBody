@@ -18,5 +18,14 @@ export interface nutriPerfil
 export enum nutriComentarios 
 {
     datosFicha	= "datosFicha",	
-	prote 		= "prote",	
+	prote 		= "prote",
+	fats 		= "fats",		
+	carbs 		= "carbs",	
+	fibra 		= "fibra",	
+	proteMyDay 	= "proteMyDay",
+	fatsMyDay 	= "fatsMyDay",		
+	carbsMyDay 	= "carbsMyDay",	
+	fibraMyDay	= "fibraMyDay",
+	myday 		= "myday",
+	permanente 	= "permanente"
 };

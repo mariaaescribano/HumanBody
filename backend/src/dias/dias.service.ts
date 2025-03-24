@@ -3,6 +3,7 @@ import { DatabaseService } from '../Database/database.service';
 import { diasSkeleton } from 'src/dto/dias.dto';
 import { UsuariosService } from 'src/usuarios/usuarios.service';
 import { FidelidadService } from 'src/fidelidad/fidelidad.service';
+import { convertirCadenaANumeros } from 'src/GlobalHelperBack';
 
 
 @Injectable()
@@ -29,46 +30,6 @@ export class DiasService {
     return true;
   }
 
-
-  async convertirCadenaANumeros(cadena: any): Promise<number[]> 
-  {
-    if(cadena)
-    { 
-      let numeros: number[] = [];
-      let num = "";
-    
-      for (let i = 0; i < cadena[0].dias_ids.length; i++) {
-        const caracter = cadena[0].dias_ids[i];
-    
-        // Si el carácter es una coma, significa que hemos llegado al final de un número
-        if (caracter === ',') {
-          // Convertimos el número temporal a un entero y lo agregamos al array
-          if (num.trim() !== '') {  // Comprobamos que el número temporal no esté vacío
-            const numero = parseInt(num, 10);
-            if (!isNaN(numero)) {
-              numeros.push(numero); // Solo agregamos si es un número válido
-            } 
-          }
-          num = ""; // Reiniciamos el número temporal
-        } else {
-          // Si no es una coma, agregamos el carácter al número temporal
-          num += caracter;
-        }
-      }
-    
-      // Después del ciclo, puede quedar un número pendiente al final
-      if (num.trim() !== '') {
-        const numero = parseInt(num, 10);
-        if (!isNaN(numero)) {
-          numeros.push(numero);
-        }
-      }
-      return numeros;
-    }  
-    else
-      throw new Error("Cadena de dias no llega a la función de conversión")
-   
-  };
   
   async getDiaDeUser(userNom: string) 
   {
@@ -79,7 +40,7 @@ export class DiasService {
         let dameDiasIdsDeUser = await this.usuariosService.dameDiasDeUserNom(userNom);
         if(dameDiasIdsDeUser)
         {
-          let idEnNumberArray = await this.convertirCadenaANumeros(dameDiasIdsDeUser);
+          let idEnNumberArray = await convertirCadenaANumeros(dameDiasIdsDeUser[0].dias_ids);
           return idEnNumberArray;
         }
       } 
@@ -97,6 +58,22 @@ export class DiasService {
 
 
   async diaPorId (idDia: number) {
+    const sql = 'SELECT * FROM dias WHERE id = ?';
+    const params = [idDia];
+    const result = await this.databaseService.query(sql, params);
+    return result;
+  }
+
+  async getAllDiasDeUnaFecha (fecha: string) 
+  {
+    const sql = 'SELECT id FROM dias WHERE fecha = ?';
+    const params = [fecha];
+    const result = await this.databaseService.query(sql, params);
+    return result;
+  }
+
+  async getDiaConcreto (idDia: number) 
+  {
     const sql = 'SELECT * FROM dias WHERE id = ?';
     const params = [idDia];
     const result = await this.databaseService.query(sql, params);

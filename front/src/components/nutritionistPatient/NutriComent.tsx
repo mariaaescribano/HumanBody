@@ -4,6 +4,7 @@ import { API_URL, colorNutricionist, colorNutricionistBg} from '@/GlobalHelper';
 import axios from 'axios';
 import { nutriComentarios } from '../../../../backend/src/dto/nutri.dto';
 import { useEffect, useState } from 'react';
+import { NutritionistIcon } from '../icons/NutritionistIcon';
 
 export default function NutriComent({ 
     campo,
@@ -107,7 +108,8 @@ export default function NutriComent({
     return (
         <>
         {/* solo si el comentario no es null, se muestra */}
-            {comentario && <Flex
+            {comentario!= null && 
+            <Flex
                 direction="column"
                 mt={mt ? mt : "0px" }
                 bg={colorNutricionist}
@@ -124,19 +126,23 @@ export default function NutriComent({
             >
                 {/* es el paciente viendo el comentario */}
                 {sessionStorage.getItem("userNutri") && 
-                <Text
-                    textAlign="center" 
-                    fontSize="sm"
-                    wordBreak="break-word"
-                    overflowWrap="break-word"
-                    whiteSpace="normal"
-                >
-                    { comentario }
-                </Text>}
+                <HStack>
+                    <NutritionistIcon></NutritionistIcon>
+                    <Text
+                        textAlign="center" 
+                        fontSize="sm"
+                        wordBreak="break-word"
+                        overflowWrap="break-word"
+                        whiteSpace="normal"
+                    >
+                        { comentario }
+                    </Text>
+                </HStack>}
 
                 {/* es el nutricionista escribiendo el comentario */}
                 {sessionStorage.getItem("nutriNom") &&
                 <HStack w="100%">
+                    <NutritionistIcon></NutritionistIcon>
                     <Input
                         onChange={(e)=> setcomentario(e.target.value)}
                         defaultValue={comentario!= "" ? comentario:undefined}

@@ -26,7 +26,7 @@ export default function UserPersonalData(props: { user : createUserSkeleton, edi
 
 
   return (
-    <CustomCard mt="15px" hijo={ 
+    <CustomCard mt="10px" hijo={ 
       props.user && <>
           <Box w="100%" borderBottom="2px solid black" my="20px" />
           <Flex direction="column" w="100%" >

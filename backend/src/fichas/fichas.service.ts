@@ -30,6 +30,12 @@ export class FichasService {
     return result;
   }
 
+  async actualizarFotoPerfilRuta(fichaObjId:number, newUserNom:string) 
+  {
+    const sql = 'UPDATE ficha SET perfilPic  = ? WHERE id = ?;';
+    const result = await this.databaseService.query(sql, [fichaObjId, newUserNom+".txt"]);
+  }
+
   async getFichaFunction(idFicha: number) 
   {
     const sql = 'SELECT perfilPic, peso, altura, actividad , calorias_objetivo, objetivo, recibo_id, genero, edad FROM ficha WHERE id = ?';

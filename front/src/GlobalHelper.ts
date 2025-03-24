@@ -175,6 +175,35 @@ export const crearRecibo = async (recibo: reciboSkeleton) => {
 
 
 
+
+  // coge datos ficha
+  export const cogeFichaDeUserNom = async (userNom:string) =>
+  {
+    if(!StringIsNull(userNom))
+    {
+        try{
+        const response = await axios.get(
+        `${API_URL}/fichas/datosFicha/${userNom}`,
+        {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        }
+        );
+          if(response.data[0] != null)
+          {
+              return response.data[0];
+          }
+        }
+        catch (error) {
+            console.log('Error fetching data:', error);
+        }
+    }
+  } ;
+
+
+
+
   // coger datos del recibo
 
   export const dameDatosDelRecibo = async (idRecibo:number, setactualiza?:any): Promise<reciboSkeleton | void> =>

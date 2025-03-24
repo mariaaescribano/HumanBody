@@ -35,17 +35,42 @@ export default function NutritionistClientCard(props:{  })
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const prepara = () =>
+    const prepara = async () =>
     {
-        let userNutri = userNutriId();
-        if(userNutri)
+        let userTieneNutri = await miraSiUserTieneNutri();
+        if(userTieneNutri !== null && userTieneNutri !== undefined && userTieneNutri !== false)
         {
             setcardType(0)
-            cogeDatosNutri(userNutri)
+            cogeDatosNutri(userTieneNutri)
         }
         else
         {
             clienteEsperaConfirmacionNutri();
+        }
+    };
+
+    const miraSiUserTieneNutri = async () =>
+    {
+        try{
+                const response = await axios.get(
+                `${API_URL}/usuarios/userTieneNutri/${sessionStorage.getItem("userNom")}`,
+                {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                }
+                );
+            if(response.data != null && response.data!=0)
+            {
+                sessionStorage.setItem("userNutri", response.data)
+                return response.data;
+            }
+            else
+                return false;
+        }
+        catch (error) {
+            return false;
+            console.log('Error fetching data:', error);
         }
     };
 
@@ -131,7 +156,7 @@ export default function NutritionistClientCard(props:{  })
                 },
             }
             );
-            if(response.data)
+            if(response.data.nutri[0])
             {
                 if(response.data.nutri[0].perfilPic!= null)
                 {
@@ -139,7 +164,10 @@ export default function NutritionistClientCard(props:{  })
                     response.data.nutri[0].perfilPic= foto;
                 }
                 setmyNutri(response.data.nutri[0])
+                return true;
             }
+            else
+                return false;
         }
         catch (error) {
             console.log('Error fetching data:', error);
@@ -176,7 +204,7 @@ export default function NutritionistClientCard(props:{  })
         <CustomCard mt="10px" bgColor ={colorNutricionistBg} p ={cardType == 1 ? "10px" : "20px"} hijo={
         <>
             {cardType == 0 && 
-            <SimpleGrid columns={{ base: 1, md:2 }} spacing="20px">
+            <SimpleGrid columns={{ base: 1 }}>
                 {/* datos del nutricionista */}
                 <Flex
                     direction="column"
@@ -189,14 +217,11 @@ export default function NutritionistClientCard(props:{  })
                         <Text fontStyle="italic" mb={2}>Nutritionist</Text>
                     </HStack>
                     
-                    <Avatar mb={2} />
+                    <Avatar mb={2} src={myNutri?.perfilPic} />
                     <Text fontWeight="bold">{myNutri?.nom}</Text>
                 </Flex>
 
                 <Flex direction="column" align="center" w="100%" ml= "0px">
-                    {/* comentario "permanente" que te ha hecho */}
-                    {userNutriId() != null && <NutriComent campo={nutriComentarios.datosFicha} />}
-                    
                     {/* contact button */}
                     <HStack>
                         <CuteBoxIcon icono={<svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 -960 960 960" fill="#000000">

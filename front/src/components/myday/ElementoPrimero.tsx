@@ -11,29 +11,37 @@ import { macroPorcentajes } from '../../../../backend/src/dto/recibos.dto';
 import { useRouter } from 'next/navigation';
 import NutriComent from '../nutritionistPatient/NutriComent';
 import { userNutriId } from '@/GlobalHelper';
+import { nutriComentarios } from '../../../../backend/src/dto/nutri.dto';
 
-export default function ElementoPrimero(props: {macroPorcentaje: macroPorcentajes }) 
-{
+export default function ElementoPrimero(props: { 
+    macroPorcentaje: macroPorcentajes, 
+    caloriasObj?: string, 
+    caloriasHoy?: string 
+}) {
     const router = useRouter();
-    const [caloriasObj, setcaloriasObj] = useState<number>(0);
-    const [caloriasHoy, setcaloriasHoy] = useState<number>(0);
+    const [caloriasObj, setCaloriasObj] = useState<number>(0);
+    const [caloriasHoy, setCaloriasHoy] = useState<number>(0);
 
     const manejarNavegacion = () => {
         router.push("/addfood/buscarAlimento");
     };
 
-    useEffect(() => 
-    {
-        let caloriasHoy = sessionStorage.getItem("caloriasDeHoy");
-        let caloriasObjetivo = sessionStorage.getItem("caloriasObjetivo");
-        if(caloriasHoy && caloriasObjetivo)
-        {
-            setcaloriasObj(parseInt(caloriasObjetivo, 10))
-            setcaloriasHoy(parseInt(caloriasHoy, 10))
+    useEffect(() => {
+        if (props.caloriasHoy && props.caloriasObj) {
+            setCaloriasHoy(parseInt(props.caloriasHoy, 10));
+            setCaloriasObj(parseInt(props.caloriasObj, 10));
+        } else {
+            let caloriasHoySS = sessionStorage.getItem("caloriasDeHoy");
+            let caloriasObjSS = sessionStorage.getItem("caloriasObjetivo");
+
+            if (caloriasHoySS) {
+                setCaloriasHoy(parseInt(caloriasHoySS, 10));
+            }
+            if (caloriasObjSS) {
+                setCaloriasObj(parseInt(caloriasObjSS, 10));
+            }
         }
-        
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [props.caloriasHoy, props.caloriasObj]);
  
   return (
     <>
@@ -49,14 +57,14 @@ export default function ElementoPrimero(props: {macroPorcentaje: macroPorcentaje
                     spacing={{ base: "30px", md: "50px" }}  // Espacio entre los elementos
                 >
                     <Box w={{ sd: "auto", md: "200px" }} mt={{ base: "0px", md: "25px", xl: "25px" }}>
-                        <CircProgressMini caloriesPorAhora={caloriasHoy} caloriesObjetivo={caloriasObj} percentage={(caloriasHoy/caloriasObj)*100} />
+                        <CircProgressMini nutriPantalla={props.caloriasHoy ? true: null}  caloriesPorAhora={caloriasHoy} caloriesObjetivo={caloriasObj} percentage={(caloriasHoy/caloriasObj)*100} />
                     </Box>
                     <MacroCalView macroPorcentaje={props.macroPorcentaje}/>
                 </SimpleGrid>
             </Flex>
         </Box>
         
-        <Button
+        {!props.caloriasObj && <Button
             fontSize="sm"
             borderRadius="16px"
             bg="purple.100"
@@ -78,14 +86,14 @@ export default function ElementoPrimero(props: {macroPorcentaje: macroPorcentaje
             >
                 <path d="M417-417H166v-126h251v-251h126v251h251v126H543v251H417v-251Z" />
             </svg>
-        </Button>
+        </Button>}
 
         {/* si tiene nutricionista o es el nutricionista, entra */}
-        {/* {(sessionStorage.getItem("userNutri") || sessionStorage.getItem("nutriNom")) &&  
-        <>
-        <Box display="flex" alignItems="center" justifyContent="center" >
-            <NutriComent campo={nutriComentarios.datosFicha} />
-        </Box></>} */}
+        {(sessionStorage.getItem("userNutri") || sessionStorage.getItem("patientTratando")) &&  
+        <><Box w="100%" borderBottom="2px solid black" my="20px" />
+        <Box  w="100%" display="flex" alignItems="center" justifyContent="center" >
+            <NutriComent campo={nutriComentarios.myday} />
+        </Box></>}
 
 
         {/* xxx lista de botones dependiendo del estado  */}

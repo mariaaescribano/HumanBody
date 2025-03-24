@@ -50,10 +50,11 @@ import BarraMenuNutri from '@/components/nutritionist/BarraMenuNutri';
 import { fichaSkeleton } from '../../../../../../backend/src/dto/fichas.dto';
 import { createUserSkeleton } from '../../../../../../backend/src/dto/usuarios.dto';
 import GreenSpinner from '@/components/global/random/GreenSpinner';
+import { showEbook } from '../../../../../../backend/src/dto/ebook.dto';
 
 
 
-export default function MyDay() 
+export default function MyPatientPerfil() 
 {
     const [screenSize, setscreenSize ] = useState<string>("");
     // datos patient
@@ -109,6 +110,127 @@ export default function MyDay()
         }
     };
 
+
+
+    // #region EBOOKS 
+       const proteinEbooks: showEbook[] = [
+          {
+              title: "What are amino acids?",
+              onclick: undefined
+          },
+          {
+              title: "How proteins repair my cells?",
+              onclick: undefined
+          }
+          ];
+      
+          let proteinButtons: showMacroNutrSignUp[] = [];
+      
+          if (patientRecibo != null) 
+          {
+              proteinButtons = [
+                  { 
+                  label: "Complete proteins", 
+                  price: `${patientRecibo.completo == "" ? 0 : patientRecibo.completo} grams`, 
+                  tooltip: "Contain all essential amino acids your body needs for regeneration." 
+                  },
+                  { 
+                  label: "Incomplete proteins", 
+                  price: `${patientRecibo.incompleto} grams`, 
+                  tooltip: "Lack one or more essential amino acids needed for regeneration." 
+                  }
+              ];
+          }
+      
+          const fatEbooks: showEbook[] = [
+              {
+                title: "How monounsaturated fats help me?",
+                onclick: undefined
+              },
+              {
+                title: "How polyunsaturated fats help me?",
+                onclick: undefined
+              },
+              {
+                title: "Why saturated fats can hurt me?",
+                onclick: undefined
+              }
+          ];
+          
+          let fatButtons: showMacroNutrSignUp[] = [];
+          
+          if (patientRecibo != null) {
+              fatButtons = [
+                  {
+                  label: "Monounsaturated",
+                  price: `${patientRecibo.monoinsaturadas} grams`,
+                  tooltip: "Heart-friendly fats that support cholesterol balance and overall health."
+                  },
+                  {
+                  label: "Polyunsaturated",
+                  price: `${patientRecibo.poliinsaturadas} grams`,
+                  tooltip: "Essential fats, including omega-3 and omega-6, crucial for brain and cell function."
+                  },
+                  {
+                  label: "Saturated",
+                  price: `${patientRecibo.saturadas} grams`,
+                  tooltip: "Stable fats that provide energy but should be consumed in moderation."
+                  }
+              ];
+          }
+            
+          const carbEbooks: showEbook[] = [
+          {
+              title: "Why I need complex carbs?",
+              onclick: undefined
+          },
+          {
+              title: "Do I need simple carbs?",
+              onclick: undefined
+          }
+          ];
+      
+          const fiberEbooks: showEbook[] = [
+          {
+              title: "Fiber and microbiota",
+              onclick: undefined
+          },
+          {
+              title: "Fiber and neurogenesis",
+              onclick: undefined
+          },
+          {
+              title: "Fiber and neurotransmissors",
+              onclick: undefined
+          }
+          ];
+          
+          let carbButtons: showMacroNutrSignUp[] = [];
+          
+          if (patientRecibo != null) {
+          carbButtons = [
+              // {
+              // label: "Fiber",
+              // price: `${recibo.fibra} grams`,
+              // tooltip: "Fiber promotes healthy digestion, supports heart health, helps regulate blood sugar levels and supports neuron and brain activity."
+              // },
+              {
+              label: "Complex",
+              price: `${ Math.round(parseInt(patientRecibo.complejos, 10)) } grams`,
+              tooltip: "Provide long-lasting energy and fiber, digesting slowly."
+              },
+              {
+              label: "Simples",
+              price: `${patientRecibo.simples} grams`,
+              tooltip: "Digest quickly, giving a fast but short energy boost."
+              }
+          ];
+          }
+    
+    
+    // #endregion EBOOKS 
+      
+
   return (<>
     {patientRecibo && user &&
     <Flex
@@ -139,60 +261,44 @@ export default function MyDay()
 
 
         {/* MACRONUTRIENTS */}
-        {/* <Box w="100%" display="flex" justifyContent="center">
-            {screenSize != "" && <CustomCard mt="10px" hijo={ 
-            <MacroNutrCardEdit recibo={reciboObjetivo} setrecibo={setreciboObjetivo} 
-            totalMacro={reciboConstNames.prote} 
-            screenSize={screenSize} miPerfil={editarProtes == true ? 0 : 1} // si es 0: editando, 1:viendo
-            infoLista={[reciboConstNames.completo, reciboConstNames.incompleto]}>
-            </MacroNutrCardEdit>}></CustomCard>}
-            <Box mt={"0px"}>  
-                <PencilIconOnTop subiendo={subiendoProtes} setEmpezarAEditar={seteditarProtes} 
-                editando={editarProtes} function={updateProteins} />
-            </Box>
-        </Box>
+       { patientRecibo!= null && screenSize && <>
+        <CustomCard mt="10px" p="15px" hijo={ 
+            <Text color={"black"} fontSize="xl" w="100%" fontWeight="700" textAlign="center">
+                MACRONUTRIENTS OBJECTIVE
+            </Text>
+        }>
+        </CustomCard>
 
-        <Box w="100%" display="flex" justifyContent="center">
-            {screenSize != "" && <CustomCard mt="10px" hijo={ 
-            <MacroNutrCardEdit recibo={reciboObjetivo} setrecibo={setreciboObjetivo} 
-            totalMacro={reciboConstNames.grasas} 
-            screenSize={screenSize} miPerfil={editarFats == true ? 0 : 1} // si es 0: editando, 1:viendo
-            infoLista={[reciboConstNames.monoinsaturadas,reciboConstNames.poliinsaturadas, reciboConstNames.saturadas]}>
-            </MacroNutrCardEdit>}></CustomCard>}
-            <Box mt={"0px"}>  
-                <PencilIconOnTop subiendo={subiendoFats} setEmpezarAEditar={seteditarFats} 
-                editando={editarFats} function={updateFats} />
-            </Box>
-        </Box>
+        <CustomCard mt="10px" hijo={ 
+            <MacroNutrCard title={'PROTEINS'} verMensajesNutri={true}
+            infoLista={proteinButtons} ebooklista={proteinEbooks}
+            reciboObjetivo={Number(patientRecibo.prote)} 
+            total={patientRecibo.prote} screenSize={screenSize} 
+           ></MacroNutrCard>} >
+        </CustomCard>
 
-        <Box w="100%" display="flex" justifyContent="center">
-            {screenSize != "" && <CustomCard mt="10px" hijo={ 
-            <MacroNutrCardEdit recibo={reciboObjetivo} setrecibo={setreciboObjetivo} 
-            totalMacro={reciboConstNames.carbs} 
-            screenSize={screenSize} miPerfil={editarCarbs == true ? 0 : 1} // si es 0: editando, 1:viendo
-            infoLista={[reciboConstNames.complejos, reciboConstNames.simples]}>
-            </MacroNutrCardEdit>}></CustomCard>}
-            <Box mt={"0px"}>  
-                <PencilIconOnTop subiendo={subiendoCarbs} setEmpezarAEditar={seteditarCarbs} 
-                editando={editarCarbs} function={updateCarbs} />
-            </Box>
-        </Box>
+        <CustomCard mt="10px" hijo={ 
+            <MacroNutrCard title={'FATS'} infoLista={fatButtons} verMensajesNutri={true}
+            reciboObjetivo={Number(patientRecibo.grasas)} ebooklista={fatEbooks} 
+            total={patientRecibo.grasas} screenSize={screenSize} 
+           ></MacroNutrCard>} >
+        </CustomCard>
 
-        <Box w="100%" display="flex" justifyContent="center">
-            {screenSize != "" && <CustomCard mt="10px" hijo={ 
-              <FiberCard edit={true} recibo={reciboObjetivo} miPerfil={editarFiber == true ? 0 : 1} // si es 0: editando, 1:viendo
-              setrecibo={setreciboObjetivo} totalFiber={reciboObjetivo.fibra} screenSize={screenSize}></FiberCard>}></CustomCard>}
-            <Box mt={"0px"}>  
-                <PencilIconOnTop subiendo={subiendoFiber} setEmpezarAEditar={seteditarFiber} 
-                editando={editarFiber} function={updateFiber} />
-            </Box>
-        </Box>
+        <CustomCard mt="10px" hijo={ 
+            <MacroNutrCard title={'CARBS'} infoLista={carbButtons} verMensajesNutri={true}
+            reciboObjetivo={Number(patientRecibo.carbs)} ebooklista={carbEbooks} 
+            total={patientRecibo.carbs} screenSize={screenSize} 
+           ></MacroNutrCard>} >
+        </CustomCard>
 
+        <CustomCard mb="50px" mt="10px" hijo={ 
+            <FiberCard edit={false} reciboObjetivo={Number(patientRecibo.fibra) }
+            totalFiber={patientRecibo.fibra} screenSize={screenSize}
+            ebooklista={fiberEbooks} verMensajesNutri={true}
+            ></FiberCard>}>
+        </CustomCard>
 
- */}
-
-
-
+        </>} 
 
 
 

@@ -171,24 +171,38 @@ export default function CrearAlimento()
   }, [btnfinishedPulsado]);
 
 
-  const quePredomina = () =>
-  {
+  const quePredomina = () => {
     let predomina = 0;
-    // console.log(pieChardData)
-    if(pieChardData[0] > pieChardData[1] && pieChardData[0] > pieChardData[2])
-    {
+  
+    if (
+      pieChardData[0] > pieChardData[1] &&
+      pieChardData[0] > pieChardData[2] &&
+      pieChardData[0] > pieChardData[3]
+    ) {
       predomina = 0;
-    } 
-    else if(pieChardData[1] > pieChardData[0] && pieChardData[1] > pieChardData[2])
-      {
-        predomina = 1;
-      } 
-      else if(pieChardData[2] > pieChardData[1] && pieChardData[2] > pieChardData[0])
-        {
-          predomina = 2;
-        }  
-        return predomina;
-  }  
+    } else if (
+      pieChardData[1] > pieChardData[0] &&
+      pieChardData[1] > pieChardData[2] &&
+      pieChardData[1] > pieChardData[3]
+    ) {
+      predomina = 1;
+    } else if (
+      pieChardData[2] > pieChardData[0] &&
+      pieChardData[2] > pieChardData[1] &&
+      pieChardData[2] > pieChardData[3]
+    ) {
+      predomina = 2;
+    } else if (
+      pieChardData[3] > pieChardData[0] &&
+      pieChardData[3] > pieChardData[1] &&
+      pieChardData[3] > pieChardData[2]
+    ) {
+      predomina = 3;
+    }
+  
+    return predomina;
+  };
+  
 
 
 

@@ -38,8 +38,9 @@ export async function descodeReturnFoto(nomFile: string) {
 export async function cambiarNombreArchivo(rutaCarpeta: string, nombreViejo: string, nombreNuevo: string) {
   const ruta = path.join(__dirname, rutaCarpeta);
   try {
-    const rutaVieja = path.join(ruta, nombreViejo);
-    const rutaNueva = path.join(ruta, nombreNuevo);
+    console.log(ruta, nombreViejo, nombreNuevo)
+    const rutaVieja = path.join(ruta, nombreViejo+".txt");
+    const rutaNueva = path.join(ruta, nombreNuevo+".txt");
 
     fs.renameSync(rutaVieja, rutaNueva);
     console.log(`Archivo renombrado de ${nombreViejo} a ${nombreNuevo}`);
@@ -78,5 +79,46 @@ export function removeNameFromConcatenatedList(nombresConcatenados: string, name
 
   return nombresArray;
 }
+
+
+export function convertirCadenaANumeros(cadena: any)
+{
+  if(cadena)
+  { 
+    let numeros: number[] = [];
+    let num = "";
+  
+    for (let i = 0; i < cadena.length; i++) {
+      const caracter = cadena[i];
+  
+      // Si el carácter es una coma, significa que hemos llegado al final de un número
+      if (caracter === ',') {
+        // Convertimos el número temporal a un entero y lo agregamos al array
+        if (num.trim() !== '') {  // Comprobamos que el número temporal no esté vacío
+          const numero = parseInt(num, 10);
+          if (!isNaN(numero)) {
+            numeros.push(numero); // Solo agregamos si es un número válido
+          } 
+        }
+        num = ""; // Reiniciamos el número temporal
+      } else {
+        // Si no es una coma, agregamos el carácter al número temporal
+        num += caracter;
+      }
+    }
+  
+    // Después del ciclo, puede quedar un número pendiente al final
+    if (num.trim() !== '') {
+      const numero = parseInt(num, 10);
+      if (!isNaN(numero)) {
+        numeros.push(numero);
+      }
+    }
+    return numeros;
+  }  
+  else
+    throw new Error("Cadena de dias no llega a la función de conversión")
+ 
+};
 
 

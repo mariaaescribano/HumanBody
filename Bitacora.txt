@@ -92,16 +92,13 @@ ORDEN: prote: "#610C04" -fats:"#abdefa" -carbs:"#EDC9AF"
 PARA LA SEMANA Q VIENE :D
 
 USER/PATIENT
---> cambiar mecanismo de colgar perfilPic y de cambiar nombre en usuario
 --> q user pueda comunicarse con nutri
 --> q user le pueda mandar sus diseños de dias a su nutri
 
 NUTRI
 --> hacer perfil para nutri
 --> q nutri pueda crear y ver las comidas q existen (básicamente la misma página q en users)
---> acabar de poner nutriComents en todos lados y sus llamadas al back con sus columnas en la bd
 --> q Nutri pueda ver y responder mensajes de su paciente
---> q Nutri pueda ver el Dia de su paciente y ponerle notas
 
 
 

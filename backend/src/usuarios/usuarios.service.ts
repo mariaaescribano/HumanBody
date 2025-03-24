@@ -63,13 +63,19 @@ export class UsuariosService {
     }
   }
 
+
+  async getDias_idsDeUser(userNom: string) {
+    const sql = 'SELECT dias_ids FROM usuarios WHERE nombre = ?';
+    const result = await this.databaseService.query(sql, [userNom]);
+    return result[0].dias_ids;
+  }
   
 
-  async editAvatarNombreFunction(userNom: string, name:string) {
+  async editNombreFunction(oldUserNom:string, newUserNom:string) {
     try 
     {
       const sql = `UPDATE usuarios SET nombre = ? WHERE nombre = ?`;
-      await this.databaseService.query(sql, [ name, userNom]);
+      await this.databaseService.query(sql, [ newUserNom, oldUserNom]);
       return true;
     } 
     catch (error) {

@@ -29,7 +29,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import SelectSignIn from '@/components/signin/SelectSignIn';
 import PurpleSpinner from '@/components/global/random/PurpleSpinner';
 import CustomCard from '@/components/global/cards/CustomCard';
-import { API_URL, dameDatosDelRecibo, formatDateToISOFriendly, getFecha, getInternetDateParts, getTamanyoPantalla, redirigirSiNoHayUserNom, StringIsNull } from '../../GlobalHelper';
+import { API_URL, cogeFichaDeUserNom, dameDatosDelRecibo, formatDateToISOFriendly, getFecha, getInternetDateParts, getTamanyoPantalla, redirigirSiNoHayUserNom, StringIsNull } from '../../GlobalHelper';
 import {  reciboConstNames, reciboSkeleton, showMacroNutrSignUp } from '../../../../backend/src/dto/recibos.dto';
 import { showEbook } from '../../../../backend/src/dto/ebook.dto';
 import FiberCard from '@/components/global/cards/FiberCard';
@@ -49,7 +49,7 @@ import NutritionistClientCard from '@/components/nutritionistPatient/Nutritionis
 
 
 
-export default function MyDay() 
+export default function MiPerfil() 
 {
     // EXTRA
     const [screenSize, setscreenSize ] = useState<string>("");
@@ -111,56 +111,43 @@ export default function MyDay()
             userNom.current = nombre;
             setnewUserNom(nombre);
             cogeFichaDeUser()
-                }
+        }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     // IMP
     const cogeFichaDeUser = async () =>
     {
-        if(!StringIsNull(userNom.current))
+        let ficha = await cogeFichaDeUserNom(userNom.current);
+        if(ficha)
         {
-            try{
-            const response = await axios.get(
-            `${API_URL}/fichas/datosFicha/${userNom.current}`,
-            {
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-            }
-            );
-                if(response.data[0] != null)
-                {
-                    let user: createUserSkeleton = response.data[0]
-                    setAltura(user.altura)
-                    setgenero(user.genero)
-                    setObjetivo(user.objetivo)
-                    setedad(user.edad)
-                    setexerciseFrequency(response.data[0].actividad)
-                    setPeso(user.peso)
-                    settargetCalories(user.calorias_objetivo)
-                    setuser(user)
-                    reciboId.current = response.data[0].recibo_id;
+            let user: createUserSkeleton = ficha
+            setAltura(user.altura)
+            setgenero(user.genero)
+            setObjetivo(user.objetivo)
+            setedad(user.edad)
+            setexerciseFrequency(ficha.actividad)
+            setPeso(user.peso)
+            settargetCalories(user.calorias_objetivo)
+            setuser(user)
+            reciboId.current = ficha.recibo_id;
 
-                    if(response.data[0].perfilPic!= null)
-                        cogeFotoPerfil(response.data[0].perfilPic)
-                    else
-                        setloaded(true)
+            if(ficha.perfilPic!= null)
+                cogeFotoPerfil(ficha.perfilPic)
+            else
+                setloaded(true)
 
-                    const TMBtotal = user.genero === 'Woman'
-                    ? (10 * Number(user.peso)) + (6.25 * Number(user.altura)) - (5 * Number(user.edad)) - 161
-                    : (10 * Number(user.peso)) + (6.25 * Number(user.altura)) - (5 * Number(user.edad)) + 5;
-                    setTMB(TMBtotal.toString())
+            const TMBtotal = user.genero === 'Woman'
+            ? (10 * Number(user.peso)) + (6.25 * Number(user.altura)) - (5 * Number(user.edad)) - 161
+            : (10 * Number(user.peso)) + (6.25 * Number(user.altura)) - (5 * Number(user.edad)) + 5;
+            setTMB(TMBtotal.toString())
 
-                    // only we take the receipt when is the firt time
-                    if(reciboObjetivo == null)
-                        dameDatosDelRecibo(response.data[0].recibo_id, setreciboObjetivo)   
-                }
-            }
-            catch (error) {
-                console.log('Error fetching data:', error);
-            }
+            // only we take the receipt when is the firt time
+            if(reciboObjetivo == null)
+                dameDatosDelRecibo(ficha.recibo_id, setreciboObjetivo)   
         }
+            
+
     } ;
 
     const cantidadExercise = (activityLevelIndex: number) => [1.2, 1.375, 1.55, 1.725, 1.9][activityLevelIndex] || 1.2;
@@ -228,28 +215,63 @@ export default function MyDay()
             console.log('Error fetching data:', error);
             setsubiendoDatos(3)
             const timer = setTimeout(() => 
-                {
-                    setsubiendoDatos(0)
-                }, 2000);
-                return () => clearTimeout(timer);
+            {
+                setsubiendoDatos(0)
+            }, 2000);
+            return () => clearTimeout(timer);
         }
     } ;
 
 
-    // 2: se suben a BD
-    const salvaAvatarNombre = async () =>
+    // 2: Avatar y Nombre, por separado, suben a BD
+    const salvaNombre = async () =>
+    {
+
+        setsubiendoAvatarNombre(1)
+        
+        try {
+            const response = await axios.put(
+                `${API_URL}/usuarios/editNombre/${newUserNom}/${userNom.current}`,
+                {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                }
+            );
+            if(response.data != null)
+            {
+                sessionStorage.removeItem("userNom")
+                sessionStorage.setItem("userNom", newUserNom)
+                setsubiendoAvatarNombre(2)
+                const timer = setTimeout(() => 
+                {
+                    setsubiendoAvatarNombre(0)
+                }, 2000);
+                return () => clearTimeout(timer);
+            }
+        }
+        catch (error) {
+            setsubiendoAvatarNombre(3)
+            console.log('Error fetching data:', error);
+            const timer = setTimeout(() => 
+            {
+                setsubiendoAvatarNombre(0)
+            }, 2000);
+            return () => clearTimeout(timer);
+        }
+
+    } ;
+
+    const salvaAvatar = async () =>
     {
         if(perfilPic)
         {
-            setsubiendoAvatarNombre(1)
-            
             try {
                 const formData = new FormData();
-                formData.append("newuserNom", newUserNom); 
                 formData.append("perfilPic", perfilPic); 
             
                 const response = await axios.put(
-                    `${API_URL}/usuarios/editAvatarNombre/${userNom.current}`,
+                    `${API_URL}/usuarios/editAvatar/${userNom.current}`,
                     formData, 
                     {
                         headers: {
@@ -259,29 +281,19 @@ export default function MyDay()
                 );
                 if(response.data != null)
                 {
-                    sessionStorage.removeItem("userNom")
-                    sessionStorage.setItem("userNom", newUserNom)
-                    setsubiendoAvatarNombre(2)
-                    const timer = setTimeout(() => 
-                    {
-                        setsubiendoAvatarNombre(0)
-                    }, 2000);
-                    return () => clearTimeout(timer);
                 }
             }
             catch (error) {
-                setsubiendoAvatarNombre(3)
                 console.log('Error fetching data:', error);
-                const timer = setTimeout(() => 
-                {
-                    setsubiendoAvatarNombre(0)
-                }, 2000);
-                return () => clearTimeout(timer);
             }
         } 
-        else
-            setsubiendoAvatarNombre(0)
     } ;
+
+    useEffect(() => 
+    {
+        salvaAvatar();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [perfilPic]);
 
 
 
@@ -519,7 +531,7 @@ export default function MyDay()
         {/* foto + name */}
         <AvatarPart subiendo={subiendoAvatarNombre} setEmpezarAEditar={seteditarAvatarNombre} 
         editando={editarAvatarNombre} nom={newUserNom} setnewUserNom={setnewUserNom}
-        perfilPic={perfilPicVer.current} setperfilPic={setperfilPic} function={salvaAvatarNombre} ></AvatarPart>
+        perfilPic={perfilPicVer.current} setperfilPic={setperfilPic} function={salvaNombre} ></AvatarPart>
 
         <NutritionistClientCard></NutritionistClientCard>
 
@@ -565,7 +577,7 @@ export default function MyDay()
         {/* MACRONUTRIENTS */}
         <Box w="100%" display="flex" justifyContent="center">
             {screenSize != "" && <CustomCard mt="10px" hijo={ 
-            <MacroNutrCardEdit recibo={reciboObjetivo} setrecibo={setreciboObjetivo} 
+            <MacroNutrCardEdit verMensajesNutri={true} recibo={reciboObjetivo} setrecibo={setreciboObjetivo} 
             totalMacro={reciboConstNames.prote} 
             screenSize={screenSize} miPerfil={editarProtes == true ? 0 : 1} // si es 0: editando, 1:viendo
             infoLista={[reciboConstNames.completo, reciboConstNames.incompleto]}>
@@ -578,7 +590,7 @@ export default function MyDay()
 
         <Box w="100%" display="flex" justifyContent="center">
             {screenSize != "" && <CustomCard mt="10px" hijo={ 
-            <MacroNutrCardEdit recibo={reciboObjetivo} setrecibo={setreciboObjetivo} 
+            <MacroNutrCardEdit recibo={reciboObjetivo} verMensajesNutri={true} setrecibo={setreciboObjetivo} 
             totalMacro={reciboConstNames.grasas} 
             screenSize={screenSize} miPerfil={editarFats == true ? 0 : 1} // si es 0: editando, 1:viendo
             infoLista={[reciboConstNames.monoinsaturadas,reciboConstNames.poliinsaturadas, reciboConstNames.saturadas]}>
@@ -591,7 +603,7 @@ export default function MyDay()
 
         <Box w="100%" display="flex" justifyContent="center">
             {screenSize != "" && <CustomCard mt="10px" hijo={ 
-            <MacroNutrCardEdit recibo={reciboObjetivo} setrecibo={setreciboObjetivo} 
+            <MacroNutrCardEdit verMensajesNutri={true} recibo={reciboObjetivo} setrecibo={setreciboObjetivo} 
             totalMacro={reciboConstNames.carbs} 
             screenSize={screenSize} miPerfil={editarCarbs == true ? 0 : 1} // si es 0: editando, 1:viendo
             infoLista={[reciboConstNames.complejos, reciboConstNames.simples]}>
@@ -604,7 +616,7 @@ export default function MyDay()
 
         <Box w="100%" display="flex" justifyContent="center">
             {screenSize != "" && <CustomCard mt="10px" hijo={ 
-              <FiberCard edit={true} recibo={reciboObjetivo} miPerfil={editarFiber == true ? 0 : 1} // si es 0: editando, 1:viendo
+              <FiberCard verMensajesNutri={true} edit={true} recibo={reciboObjetivo} miPerfil={editarFiber == true ? 0 : 1} // si es 0: editando, 1:viendo
               setrecibo={setreciboObjetivo} totalFiber={reciboObjetivo.fibra} screenSize={screenSize}></FiberCard>}></CustomCard>}
             <Box mt={"0px"}>  
                 <PencilIconOnTop subiendo={subiendoFiber} setEmpezarAEditar={seteditarFiber} 

@@ -6,6 +6,7 @@ import {
   } from 'react-circular-progressbar';
   import 'react-circular-progressbar/dist/styles.css'; // ¡No olvides importar los estilos!
 import { CaloryIcon } from '../icons/CaloryIcon';
+import { colorNutricionist } from '@/GlobalHelper';
   
 
 // export default function CircProgress(props: {
@@ -57,30 +58,37 @@ import { CaloryIcon } from '../icons/CaloryIcon';
 //   );
 // }
 
-export function CircProgressMini(props: {  caloriesPorAhora:number; caloriesObjetivo:number; percentage:number }) {
-    let textColor = useColorModeValue('secondaryGray.900', 'white');
-  
-    // Usando valores hexadecimales directamente para pathColor
-    const stylesColorMode = useColorModeValue(
+export function CircProgressMini(props: {  
+  nutriPantalla?: boolean; 
+  caloriesPorAhora: number; 
+  caloriesObjetivo: number; 
+  percentage: number 
+}) {
+  let textColor = useColorModeValue('secondaryGray.900', 'white');
+
+  // Determinar colores según nutriPantalla
+  const isNutriPantalla = props.nutriPantalla !== null && props.nutriPantalla !== undefined;
+
+  const stylesColorMode = useColorModeValue(
       {
-        rotation: 0.25,
-        textSize: '0px',
-        textColor: 'transparent',
-        pathTransitionDuration: 0.5,
-        pathColor: '#E6D1F2',
-        trailColor: '#efe5e5', // Color de fondo claro
-        backgroundColor: 'transparent',
+          rotation: 0.25,
+          textSize: '0px',
+          textColor: 'transparent',
+          pathTransitionDuration: 0.5,
+          pathColor: isNutriPantalla ? colorNutricionist : '#E6D1F2', // Verde claro si nutriPantalla está presente
+          trailColor: '#efe5e5', // Fondo verde claro si nutriPantalla está presente
+          backgroundColor: 'transparent',
       },
       {
-        rotation: 0.25,
-        textSize: '0px',
-        pathTransitionDuration: 0.5,
-        pathColor: '#E6D1F2', // También morado para el modo oscuro
-        textColor: 'transparent',
-        trailColor: '#efe5e5', // Fondo más oscuro para modo oscuro
+          rotation: 0.25,
+          textSize: '0px',
+          textColor: 'transparent',
+          pathTransitionDuration: 0.5,
+          pathColor: isNutriPantalla ? colorNutricionist : '#E6D1F2', // Verde claro si nutriPantalla está presente
+          trailColor: '#efe5e5',  
       }
-    );
-  
+  );
+
     return (
       <CircularProgressbarWithChildren
         value={props.percentage}
