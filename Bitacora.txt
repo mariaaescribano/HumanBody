@@ -87,6 +87,9 @@ IMPORTANTE: ESTRUCTURACIÓN
 ORDEN: prote: "#610C04" -fats:"#abdefa" -carbs:"#EDC9AF"
 
 
+PARA HOY
+--> q nutri pueda crear y ver las comidas q existen (básicamente la misma página q en users)
+--> q nutri pueda recomendar comidas a patients
 
 
 PARA LA SEMANA Q VIENE :D
@@ -96,8 +99,6 @@ USER/PATIENT
 --> q user le pueda mandar sus diseños de dias a su nutri
 
 NUTRI
---> hacer perfil para nutri
---> q nutri pueda crear y ver las comidas q existen (básicamente la misma página q en users)
 --> q Nutri pueda ver y responder mensajes de su paciente
 
 

@@ -12,7 +12,7 @@ export interface nutriPerfil
 	nom: string;
 	perfilPic: string; 	
 	description: string; 
-	telf: string; 
+	email: string; 
 };
 
 export enum nutriComentarios 

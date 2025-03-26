@@ -4,6 +4,7 @@ import {
   Flex,
   FormLabel,
   HStack,
+  Input,
   Select,
   SimpleGrid,
   Spinner,
@@ -162,16 +163,35 @@ export default function DesignMealStart()
                 textAlign={"center"}
                 />
 
-                <InputField
-                mb="20px"
-                onChange= {(e:any) => editaCalorias(e.target.value)}
-                id="second"
-                bg={(datoFaltan ==2 || datoFaltan == 3) ? "red.200" : ""}
-                value={calories+" kcal"}
-                label="Calories I will need to healthily fulfill the activity:"
-                textAlign={"center"}
-                />
-                
+                <Flex direction='column' mb="20px">
+                    <FormLabel
+                        display='flex'
+                        ms='10px'
+                        fontSize='sm'
+                        fontWeight='bold'
+                        _hover={{ cursor: 'pointer' }}>
+                        {"Calories I will need to healthily fulfill the activity:"}
+                    </FormLabel>
+                    <HStack justify="center" align="center">
+                        <Input
+                        onChange={(e: any) => editaCalorias(e.target.value)}
+                        id="second"
+                        w="40%"
+                        textAlign={"center"}
+                        justifyItems={"center"}
+                        border="1px solid gray"
+                        borderRadius={"10px"}
+                        fontWeight='500'
+                        value={calories}
+                        bg={(datoFaltan == 2 || datoFaltan == 3) ? "red.200" : ""}
+                        variant='main'
+                        _placeholder={{ fontWeight: '400', color: 'secondaryGray.600' }}
+                        h='44px'
+                        maxH='44px'
+                        />
+                        <Text textAlign="center"> kcal</Text>
+                    </HStack>
+                </Flex>
             </Flex>
         }/>
   

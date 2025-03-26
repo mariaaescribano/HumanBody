@@ -35,7 +35,7 @@ export class NutritionistService {
 
   async allNutrisFunction() 
   {
-    const sql = 'SELECT * FROM nutritionist';
+    const sql = 'SELECT * FROM nutritionist ';
     const result = await this.databaseService.query(sql);
     return result;
   }
@@ -103,6 +103,14 @@ export class NutritionistService {
     return result;
   }
 
+  async dameNutriFunction(nutriNom: string) 
+  {
+    const sql = `SELECT * FROM nutritionist WHERE nom=?`;
+    const result = await this.databaseService.query(sql, [nutriNom]);
+    return result;
+  }
+
+
   async nutriFunction(nutriId: number) 
   {
     const sql = `SELECT * FROM nutritionist WHERE id=?`;
@@ -126,5 +134,27 @@ export class NutritionistService {
     const sql2 = `UPDATE nutritionist SET solicitudesDeContrato = ? WHERE id = ?;`;
     const result2 = await this.databaseService.query(sql2, [updateSolicitudes, nutriId]);
   }
- 
+
+
+  async updatePerfilPic(nutriNom: string) 
+  {
+    const sql = `UPDATE nutritionist SET perfilPic = ? WHERE nom = ?;`;
+    const result = await this.databaseService.query(sql, [nutriNom+".txt", nutriNom]);
+    return result;
+  }
+
+  async editNombreFunction(oldUserNom: string, newUserNom: string) 
+  {
+    const sql = `UPDATE nutritionist SET nom = ? , perfilPic=? WHERE nom = ?;`;
+    const result = await this.databaseService.query(sql, [newUserNom, newUserNom+".txt", oldUserNom]);
+    return result;
+  }
+
+  async editEmailDescripFunction(nutriNom: string, body:{ descrip: string, email:string }) 
+  {
+    const sql = `UPDATE nutritionist SET description = ?, email = ? WHERE nom = ?;`;
+    const result = await this.databaseService.query(sql, [body.descrip, body.email, nutriNom]);
+    return result;
+  }
+
 }

@@ -102,7 +102,4 @@ export class AlimentosService {
   }
   /// end conseguir alimentos fav de un macronutriente ///
   
-  
-
-
 }

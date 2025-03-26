@@ -24,19 +24,11 @@ import {
 import axios from 'axios';
 // Custom components
 import React, { useEffect, useState, useRef } from 'react';
-import SelectSignIn from '@/components/signin/SelectSignIn';
-import PopUpMessage from '@/components/global/message/PopUpMessage';
-import PopUpErrorMessage from '@/components/global/message/PopUpErrorMessage';
-import PurpleSpinner from '@/components/global/random/PurpleSpinner';
 import CustomCard from '@/components/global/cards/CustomCard';
-import { API_URL, cogeFichaDeUserNom, crearRecibo, dameDatosDelRecibo, formatDateToISOFriendly, getFecha, getInternetDateParts, getTamanyoPantalla, redirigirSiNoHayUserNom, userNutriId } from '../../../../GlobalHelper';
+import { API_URL, cogeFichaDeUserNom, crearRecibo, dameDatosDelRecibo, formatDateToISOFriendly, getFecha, getInternetDateParts, getTamanyoPantalla, redirigirSiNoHayNutriNom, redirigirSiNoHayUserNom, userNutriId } from '../../../../GlobalHelper';
 import ElementoPrimero from '@/components/myday/ElementoPrimero';
 import MacroNutrCard from '@/components/signin/MacroNutrCard';
 import FiberCard from '@/components/global/cards/FiberCard';
-import FidelidadCard from '@/components/fidelity/FidelidadCard';
-import BarraMenu from '@/components/global/BarraMenu';
-import { useRouter } from 'next/navigation';
-import NutritionistClientCard from '@/components/nutritionistPatient/NutritionistClientCard';
 import { macroPorcentajes, reciboSkeleton, showMacroNutrSignUp } from '../../../../../../backend/src/dto/recibos.dto';
 import { showEbook } from '../../../../../../backend/src/dto/ebook.dto';
 import { colorNutricionist } from '@/GlobalHelper';
@@ -49,6 +41,7 @@ export default function MyPatientDay()
 {
   const patientNomSeleccionado = useRef<string>("");
   const [screenSize, setscreenSize ] = useState<string>("");
+  const [diaExiste, setdiaExiste ] = useState<boolean | undefined>(undefined);
 
   // lo q el usuario consume en 1 dia se guarda aqui
   const [reciboDeHoy, setreciboDeHoy  ] = useState< reciboSkeleton | null >(null);
@@ -69,6 +62,7 @@ export default function MyPatientDay()
   // 0: mira si ya hay recibo y calorias para el dia de hoy, si no lo hay lo crea
   useEffect(() => 
   {
+    redirigirSiNoHayNutriNom()
     getTamanyoPantalla(setscreenSize)
     let patient = sessionStorage.getItem("patientTratando");
     if(patient)
@@ -93,15 +87,19 @@ export default function MyPatientDay()
     // busca si hay dia q se corresponde con dia de hoy
     // si es asi, lo muestra (cogiendo TODO, calorias y recibo)
     let diaHoyDePatient = await buscaidDiaHoyDePatient(fechaFunc);
-    console.log(diaHoyDePatient)
-    caloriasHoy.current = diaHoyDePatient.calorias_total;
+    if(diaHoyDePatient!= undefined)
+    {
+      setdiaExiste(true)
+      caloriasHoy.current = diaHoyDePatient.calorias_total;
 
-    let ficha = await cogeFichaDeUserNom(patientNom);
-    console.log(ficha)
-    caloriasObj.current = ficha.calorias_objetivo;
+      let ficha = await cogeFichaDeUserNom(patientNom);
+      caloriasObj.current = ficha.calorias_objetivo;
 
-    await dameDatosDelRecibo(diaHoyDePatient.recibo_id , setreciboDeHoy);
-    await dameDatosDelRecibo(ficha.recibo_id , setreciboObjetivo);
+      await dameDatosDelRecibo(diaHoyDePatient.recibo_id , setreciboDeHoy);
+      await dameDatosDelRecibo(ficha.recibo_id , setreciboObjetivo);
+    }
+    else
+      setdiaExiste(false)
   };
 
   const buscaidDiaHoyDePatient = async (fecha:string) =>
@@ -265,7 +263,24 @@ export default function MyPatientDay()
 
   return (
     <>
-    {macroPorcentaje!= null && reciboDeHoy &&
+    {diaExiste==false &&
+    <Flex
+        direction="column"
+        align="center"
+        bg={colorNutricionist}
+        w="100%"
+        h="100%"
+        justify="center"
+        p="30px"
+        minH="100vh"
+        position={"relative"}
+    >
+      <CustomCard mt="0px" p="20px" hijo={ 
+        <Text color="red">Your patient doesn't have "Today" created</Text>
+      }></CustomCard>
+
+    </Flex>}
+    {macroPorcentaje!= null && reciboDeHoy && diaExiste==true &&
       <Flex
         direction="column"
         align="center"

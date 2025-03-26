@@ -85,14 +85,15 @@ export default function NutritionistClientCard(props:{  })
     {
         try{
                 const response = await axios.get(
-                `${API_URL}/nutritionist/allNutris`,
+                `${API_URL}/nutritionist`,
                 {
                     headers: {
                         'Content-Type': 'application/json'
                     },
                 }
                 );
-            if(response.data != null)
+                console.log(response.data)
+            if(response.data.nutris != null)
             {
                 setnutris(response.data.nutris)
                 let guarda = [];
@@ -265,38 +266,45 @@ export default function NutritionistClientCard(props:{  })
 
             {cardType == 2 && selectedNutri != undefined && <PopUpConfirmationMessage prepara={prepara} selectedNutri={selectedNutri} setselectedNutri={setselectedNutri} />}
             {cardType == 2 && nutris && nutris.length >0 && fotosNutris && fotosNutris.length >0 &&
-            <VStack w="100%">
+            <VStack w="100%"  align="center">
                 <HStack mb="10px">
                     <Box><NutritionistIcon /></Box>
                     <Text fontWeight={"bold"}>Nutritionists:</Text>
                 </HStack>
             
-                <Box display="flex" justifyContent="center" alignItems="center" width="100%" mb="10px">
+                <VStack 
+                w="100%" 
+                maxH="150px"   
+                overflowY="auto"  
+                spacing={1}  
+                >
                     {nutris.map((nutri: nutriPerfil, index: number) => (
-                            <Flex key={index} w="100%" justifyContent="space-between" alignItems="center">
-                                <Box display="flex" justifyContent="space-between" alignItems="center" width="100%">
-                                    <HStack spacing="10px" ml="5%">
-                                        <Avatar src={fotosNutris[index]} alt={nutri.nom.charAt(0)} size="md"/>
-                                        <Flex direction="column">
-                                            <Text fontSize="sm" fontWeight="700">
-                                                {nutri.nom}
-                                            </Text>
-                                            <Text color="gray.500" fontSize="10px" >
-                                                {nutri.description}
-                                            </Text>
-                                        </Flex>
-                                    </HStack>
-                                    <HStack mr="30px">
-                                        <Tooltip label="Hire as your nutritionist">
-                                            {selectedNutri == undefined && <svg cursor="pointer" onClick={()=> {setselectedNutri(nutri); }} xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M720-400v-120H600v-80h120v-120h80v120h120v80H800v120h-80Zm-360-80q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM40-160v-112q0-34 17.5-62.5T104-378q62-31 126-46.5T360-440q66 0 130 15.5T616-378q29 15 46.5 43.5T680-272v112H40Zm80-80h480v-32q0-11-5.5-20T580-306q-54-27-109-40.5T360-360q-56 0-111 13.5T140-306q-9 5-14.5 14t-5.5 20v32Zm240-320q33 0 56.5-23.5T440-640q0-33-23.5-56.5T360-720q-33 0-56.5 23.5T280-640q0 33 23.5 56.5T360-560Zm0-80Zm0 400Z"/></svg>}
-                                            {selectedNutri != undefined && <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M720-400v-120H600v-80h120v-120h80v120h120v80H800v120h-80Zm-360-80q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM40-160v-112q0-34 17.5-62.5T104-378q62-31 126-46.5T360-440q66 0 130 15.5T616-378q29 15 46.5 43.5T680-272v112H40Z"/></svg>}
-                                        </Tooltip>
-                                    </HStack>
+                        <HStack 
+                            key={index} 
+                            w="90%"
+                            justifyContent="space-between" 
+                            p={4} 
+                        >
+                            <HStack >
+                                <Avatar src={fotosNutris[index]} alt={nutri.nom.charAt(0)} size="md"/>
+                                <VStack align="start">
+                                    <Text fontSize="sm" fontWeight="700">{nutri.nom}</Text>
+                                    <Text color="gray.500" fontSize="10px">{nutri.description}</Text>
+                                </VStack>
+                            </HStack>
+            
+                            <Tooltip label="Hire as your nutritionist">
+                                <Box cursor="pointer" onClick={() => setselectedNutri(nutri)}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000">
+                                        <path d="M720-400v-120H600v-80h120v-120h80v120h120v80H800v120h-80Zm-360-80q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM40-160v-112q0-34 17.5-62.5T104-378q62-31 126-46.5T360-440q66 0 130 15.5T616-378q29 15 46.5 43.5T680-272v112H40Z"/>
+                                    </svg>
                                 </Box>
-                            </Flex>
-                        ))}
-                </Box>
+                            </Tooltip>
+                        </HStack>
+                    ))}
+                </VStack>
             </VStack>}
+        
 
             {cardType == 3 && nutriAsked &&
             <HStack>

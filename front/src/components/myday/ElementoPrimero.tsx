@@ -64,29 +64,52 @@ export default function ElementoPrimero(props: {
             </Flex>
         </Box>
         
-        {!props.caloriasObj && <Button
-            fontSize="sm"
-            borderRadius="16px"
-            bg="purple.100"
-            w={{ base: "50%", md: "20%" }}
-            h="auto"
-            p="10px"
-            _hover={{ bg: "gray.100" }}
-            onClick={manejarNavegacion}
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-            >
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                height="24px"
-                viewBox="0 -960 960 960"
-                fill="white"
-                style={{ filter: "drop-shadow(2px 5px 5px rgba(0, 0, 0, 0.1))" }}
-            >
-                <path d="M417-417H166v-126h251v-251h126v251h251v126H543v251H417v-251Z" />
-            </svg>
-        </Button>}
+        {!props.caloriasObj && 
+        <HStack>
+            <Button
+                fontSize="sm"
+                borderRadius="16px"
+                bg="purple.100"
+                w={"100px"}
+                h="40px"
+                p="10px"
+                _hover={{ bg: "gray.100" }}
+                onClick={manejarNavegacion}
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    height="24px"
+                    viewBox="0 -960 960 960"
+                    fill="black"
+                    style={{ filter: "drop-shadow(2px 5px 5px rgba(0, 0, 0, 0.1))" }}
+                >
+                    <path d="M417-417H166v-126h251v-251h126v251h251v126H543v251H417v-251Z" />
+                </svg>
+            </Button>
+            
+            <Button
+                fontSize="sm"
+                borderRadius="16px"
+                bg="purple.100"
+                w={"100px"}
+                h="40px"
+                p="10px"
+                color="black"
+                _hover={{ bg: "gray.100" }}
+                onClick={() => location.href = "../foodList"}
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                >
+                    FOOD LIST
+            </Button>
+        </HStack>}
+
+        <Box w="100%" borderBottom="2px solid black" my="20px" />
+        <EBookButton texto={'Fasting'}></EBookButton>
 
         {/* si tiene nutricionista o es el nutricionista, entra */}
         {(sessionStorage.getItem("userNutri") || sessionStorage.getItem("patientTratando")) &&  

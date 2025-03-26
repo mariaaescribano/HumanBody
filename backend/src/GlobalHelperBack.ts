@@ -38,12 +38,10 @@ export async function descodeReturnFoto(nomFile: string) {
 export async function cambiarNombreArchivo(rutaCarpeta: string, nombreViejo: string, nombreNuevo: string) {
   const ruta = path.join(__dirname, rutaCarpeta);
   try {
-    console.log(ruta, nombreViejo, nombreNuevo)
     const rutaVieja = path.join(ruta, nombreViejo+".txt");
     const rutaNueva = path.join(ruta, nombreNuevo+".txt");
 
     fs.renameSync(rutaVieja, rutaNueva);
-    console.log(`Archivo renombrado de ${nombreViejo} a ${nombreNuevo}`);
   } catch (error) {
     console.error('Error al renombrar el archivo:', error);
   }
@@ -81,10 +79,14 @@ export function removeNameFromConcatenatedList(nombresConcatenados: string, name
 }
 
 
-export function convertirCadenaANumeros(cadena: any)
+export function convertirCadenaANumeros(cadena: any, caracter?:string)
 {
   if(cadena)
   { 
+    let caracterSimbolo = ",";
+    if(caracter)
+      caracterSimbolo= caracter;
+
     let numeros: number[] = [];
     let num = "";
   
@@ -92,7 +94,7 @@ export function convertirCadenaANumeros(cadena: any)
       const caracter = cadena[i];
   
       // Si el carácter es una coma, significa que hemos llegado al final de un número
-      if (caracter === ',') {
+      if (caracter === caracterSimbolo) {
         // Convertimos el número temporal a un entero y lo agregamos al array
         if (num.trim() !== '') {  // Comprobamos que el número temporal no esté vacío
           const numero = parseInt(num, 10);

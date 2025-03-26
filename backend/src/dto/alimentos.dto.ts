@@ -18,3 +18,13 @@ export interface miniCartaAlimento
     calorias_100gr:string;
     es_fav_deUsu?:boolean;
 };
+
+export interface alimentosComidosSkeleton 
+{
+    id?:number;
+    idAlimento:number;
+    nom:string;
+    gramosTotales:string;
+    calorias:string;
+    predomina:number;
+};

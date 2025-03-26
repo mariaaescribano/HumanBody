@@ -524,7 +524,7 @@ export default function MiPerfil()
             borderRadius={"20px"}
             >
             <Text color={"black"} fontSize="2xl" fontWeight="700">
-                MY PERFIL
+                MY PROFILE
             </Text>
         </Card>
 
@@ -616,7 +616,7 @@ export default function MiPerfil()
 
         <Box w="100%" display="flex" justifyContent="center">
             {screenSize != "" && <CustomCard mt="10px" hijo={ 
-              <FiberCard verMensajesNutri={true} edit={true} recibo={reciboObjetivo} miPerfil={editarFiber == true ? 0 : 1} // si es 0: editando, 1:viendo
+              <FiberCard verMensajesNutri={true} edit={editarFiber} recibo={reciboObjetivo} miPerfil={editarFiber == true ? 0 : 1} // si es 0: editando, 1:viendo
               setrecibo={setreciboObjetivo} totalFiber={reciboObjetivo.fibra} screenSize={screenSize}></FiberCard>}></CustomCard>}
             <Box mt={"0px"}>  
                 <PencilIconOnTop subiendo={subiendoFiber} setEmpezarAEditar={seteditarFiber} 

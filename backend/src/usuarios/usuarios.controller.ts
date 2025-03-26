@@ -150,7 +150,6 @@ export class UsuariosController {
       const fichaObjId = await this.usuariosService.findFichaIdByName(oldUserNom);
       await this.fichasService.actualizarFotoPerfilRuta(fichaObjId, newUserNom);
       await this.usuariosService.editNombreFunction(oldUserNom, newUserNom);
-      return { message: 'Avatar actualizado correctamente' };
      } catch (error) {
        throw new Error('Hubo un error al actualizar el usuario');
      }

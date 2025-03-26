@@ -89,9 +89,10 @@ export default function VerAlimento()
     }
   );
 
-  const [calories, setcalories ] = useState<string>("");
+  const predomina = useRef<string>("0");
 
   // what user ate
+  const [calories, setcalories ] = useState<string>("");
   const [grams, setgrams ] = useState<string>("100");
 
   // se actualiza solo una vez, con los valores originales (no sentido q cambie)
@@ -125,6 +126,7 @@ export default function VerAlimento()
     );
       if(response.data != null)
       {
+        predomina.current = response.data.alimento[0].predomina;
         setalimento(response.data.alimento[0])
         setcalories(response.data.alimento[0].calorias_100gr)
         dameReciboDeAlimento(response.data.alimento[0].recibo_id);
@@ -254,19 +256,51 @@ export default function VerAlimento()
 
   // 3: si todo ha ido bien 
   // se actualiza de la bd los datos antiguos de hoy por la suma con el nuevo alimento 
-  // se añade al dia de hoy el id del alimento en alimentos
+  // idAlimentoComido = se crea un AlimentoComido con los datos
+  // idAlimentoComido se concatenara en dias alimentos_id
   const update = async (reciboSuma: any, idreciboDeHoy:string) => 
   {
     let idDia = sessionStorage.getItem("diaId");
     if(idDia)
     {
-      let todobn = await updateDiaAlimentos(idDia);
-      if(todobn)
-        await updateRecibo(reciboSuma, idreciboDeHoy);
+      let idAlimentoComido = await guardaAlimentoComido(alimento?.id);
+      if(idAlimentoComido)
+      { 
+        let todobn = await updateDiaAlimentos(idDia, idAlimentoComido);
+        if(todobn)
+          await updateRecibo(reciboSuma, idreciboDeHoy);
+      } 
     }
   };
 
-  const updateDiaAlimentos = async (idDia:string) => 
+  const guardaAlimentoComido = async (alimentoId: string) => 
+  {
+    try
+    {
+      const response = await axios.post(
+          `${API_URL}/alimentosComidos/create`,
+          {
+            idAlimento:alimentoId,
+            gramosTotales:grams,
+            calorias:calories,
+            predomina:predomina.current,
+            nom: alimento?.nombre
+          },
+          {
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          }
+      );
+      if(response.data != null)
+        return response.data;
+    }
+    catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  const updateDiaAlimentos = async (idDia:string, idAlimentoComido:string) => 
   {
     let caloriasAnteriores = sessionStorage.getItem("caloriasDeHoy")
     if(caloriasAnteriores && !StringIsNull(calories) && alimento?.id)
@@ -278,7 +312,7 @@ export default function VerAlimento()
       {
         const response = await axios.put(
             `${API_URL}/dias/diaAlimCalor/${parseInt(idDia, 10)}`,
-            { alimentoId: alimento.id, calorias: sumaCalorias },
+            { alimentoId: idAlimentoComido, calorias: sumaCalorias },
               {
               headers: {
                   'Content-Type': 'application/json'
@@ -476,7 +510,7 @@ export default function VerAlimento()
       <BarraMenu></BarraMenu>
       
       {/* titulo */}
-      {mensajeError == true &&<PopUpErrorMessage title={'Error'} texto={tryAgain}></PopUpErrorMessage>}
+      {mensajeError == true && <PopUpErrorMessage title={'Error'} texto={tryAgain}></PopUpErrorMessage>}
         <CustomCard mt="0px" hijo={ 
           <>
           <Flex justify="start" gap="5px" align="center" mb="10px">

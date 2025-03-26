@@ -93,6 +93,20 @@ export class DiasService {
       throw new NotFoundException();
   }
 
+  async diaAlimentosFunction (idDia: number) {
+    if(idDia)
+    {
+      const sql = 'SELECT alimentos_id FROM dias WHERE id = ?';
+      const params = [idDia];
+      const result = await this.databaseService.query(sql, params);
+      return result[0].alimentos_id;
+    }
+    else
+      throw new NotFoundException();
+  }
+
+  
+
 
   
 

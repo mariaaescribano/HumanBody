@@ -1,11 +1,15 @@
-import { Controller, Get, Post, Body, Param, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, NotFoundException } from '@nestjs/common';
 import { DiasService } from './dias.service';
 import { diasSkeleton } from 'src/dto/dias.dto';
+import { convertirCadenaANumeros } from 'src/GlobalHelperBack';
+import { AlimentosComidosService } from 'src/alimentosComidos/alimentosComidos.service';
 
 
 @Controller('dias')  // Ruta base para este controlador
 export class DiasController {
-  constructor(private readonly diasService: DiasService) {}
+  constructor(private readonly diasService: DiasService,
+    private readonly alimentosComidosService: AlimentosComidosService
+  ) {}
   @Post('createDia')
   async create(@Body() body: { reciboDeHoy: number, fecha:string, userNom:string }) 
   {
@@ -29,6 +33,30 @@ export class DiasController {
   async diaPorId(@Param('idDia') idDia: number) {
     const dia = await this.diasService.diaPorId(idDia);
     return {dia};
+  }
+
+  @Get("diaAlimentos/:idDia")
+  async diaAlimentos(@Param('idDia') idDia: number) {
+    if(idDia)
+    {
+      const alimentos = await this.diasService.diaAlimentosFunction(idDia);
+      // one by one take the alimentos from the bd
+      if(alimentos)
+      {
+        let idsAlimentos = convertirCadenaANumeros(alimentos, "-")
+        let guarda:any = [];
+        for(let i=0; i< idsAlimentos.length; i++)
+        {
+          let alimento = await this.alimentosComidosService.returnAlimentoComido(idsAlimentos[i])
+          guarda.push(alimento)
+        }
+        return guarda;
+      }
+      else
+        throw new NotFoundException()
+    }
+    else
+      throw new NotFoundException()
   }
   
 }

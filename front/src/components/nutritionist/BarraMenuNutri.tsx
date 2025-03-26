@@ -47,7 +47,7 @@ function BarraMenuNutri(props:{rellena?:string} )
         <Flex
         flex="1"   
         justifyContent="center"
-        onClick={()=> router.push("/miPerfil")} 
+        onClick={()=> router.push("/nutritionist/miPerfil")} 
         alignItems="center"
         borderLeft={ "2px solid white"}
         >

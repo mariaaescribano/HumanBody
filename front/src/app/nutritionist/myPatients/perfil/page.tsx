@@ -1,53 +1,19 @@
 'use client';
 // Chakra imports
 import {
-    Avatar,
-  Box,
-  Button,
-  Card,
   Flex,
-  HStack,
-  Icon,
-  IconButton,
-  Select,
-  SimpleGrid,
-  Spinner,
-  Stack,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
   Text,
-  useBreakpointValue,
-  useColorModeValue,
-  VStack,
 } from '@chakra-ui/react';
 import axios from 'axios';
 // Custom components
 import React, { useEffect, useState, useRef } from 'react';
-import SelectSignIn from '@/components/signin/SelectSignIn';
-import PopUpMessage from '@/components/global/message/PopUpMessage';
-import PopUpErrorMessage from '@/components/global/message/PopUpErrorMessage';
-import PurpleSpinner from '@/components/global/random/PurpleSpinner';
 import CustomCard from '@/components/global/cards/CustomCard';
-import { API_URL, colorNutricionist, crearRecibo, dameDatosDelRecibo, formatDateToISOFriendly, getFecha, getInternetDateParts, getTamanyoPantalla } from '../../../../GlobalHelper';
-import ElementoPrimero from '@/components/myday/ElementoPrimero';
+import { API_URL, colorNutricionist, dameDatosDelRecibo, getTamanyoPantalla, redirigirSiNoHayNutriNom } from '../../../../GlobalHelper';
 import MacroNutrCard from '@/components/signin/MacroNutrCard';
 import FiberCard from '@/components/global/cards/FiberCard';
-import FidelidadCard from '@/components/fidelity/FidelidadCard';
-import BarraMenu from '@/components/global/BarraMenu';
-import { useRouter } from 'next/navigation';
-import AvatarPart from '@/components/miPerfil/AvatarPart';
 import UserPersonalData from '@/components/miPerfil/UserPersonalData';
-import PencilIconOnTop from '@/components/icons/PencilIconOnTop';
-import InputField from '@/components/global/random/InputField';
-import MacroNutrCardEdit from '@/components/addfood/crearAlimento/MacroNutrCardEdit';
-import TitleCard from '@/components/global/cards/TitleCard';
-import NutritionistClientCard from '@/components/nutritionistPatient/NutritionistClientCard';
 import { reciboSkeleton, showMacroNutrSignUp } from '../../../../../../backend/src/dto/recibos.dto';
 import BarraMenuNutri from '@/components/nutritionist/BarraMenuNutri';
-import { fichaSkeleton } from '../../../../../../backend/src/dto/fichas.dto';
 import { createUserSkeleton } from '../../../../../../backend/src/dto/usuarios.dto';
 import GreenSpinner from '@/components/global/random/GreenSpinner';
 import { showEbook } from '../../../../../../backend/src/dto/ebook.dto';
@@ -67,6 +33,7 @@ export default function MyPatientPerfil()
     // 0: coge datos de usuario seleccionado
     useEffect(() => 
     {
+        redirigirSiNoHayNutriNom()
         getTamanyoPantalla(setscreenSize)
         let patient = sessionStorage.getItem("patientTratando");
         if(patient)
@@ -78,7 +45,6 @@ export default function MyPatientPerfil()
         {
             location.href = "./main"
         }
-        
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 

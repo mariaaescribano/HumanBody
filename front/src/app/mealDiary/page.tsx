@@ -490,14 +490,33 @@ export default function mealDiary()
                     columns={{ base: 1, md: 2 }} 
                     spacing={{ base: "20px", md: "120px" }} 
                   >
-                    <Box w={{ base: "150px", md: "400px" }} justifyContent={{ base: "center", md: "space-between" }}  mt={{ base: "0px", md: "25px", xl: "25px" }} mb={{ sd: "30px", md: "0px" }} ml={{ base: "20px", md: "-70px" }}>
-                        <PieChardMacroNutr2 pieChartData={pieChardData} calories={calorias} />
+                    <Box w={{ base: "200px", md: "280px" }} justifyContent={{ base: "center", md: "space-between" }}  mt={{ base: "0px", md: "25px", xl: "25px" }} mb={{ sd: "30px", md: "0px" }} ml={{ base: "20px", md: "-70px" }}>
+                      <PieChardMacroNutr2 pieChartData={pieChardData} calories={calorias} />
                     </Box>
-                    <MacroCalView macroPorcentaje={macroPorcentaje}/>
+
+                    <VStack w={{ base: "220px", md: "250px" }}  justifyContent={{ base: "center" }} alignItems={{ base: "center"}} >
+                      <MacroCalView macroPorcentaje={macroPorcentaje} />
+                      <Button
+                        fontSize="sm"
+                        borderRadius="16px"
+                        bg="purple.100"
+                        w="70%"  // Set to 100% width to stretch across the container
+                        h="40px"
+                        p="10px"
+                        color="black"
+                        _hover={{ bg: "gray.100" }}
+                        onClick={() => location.href = `../foodList?diaId=${idFecha}`}
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                      >
+                        FOOD LIST
+                      </Button>
+                    </VStack>
                   </SimpleGrid>
               </Flex>
             </Box>
-    
+           
             <Box w="100%" borderBottom="2px solid black" my="20px" />
             <EBookButton texto={'What happens if...?'}></EBookButton>
           </>
@@ -511,10 +530,10 @@ export default function mealDiary()
         </CustomCard>
        
    
-        <CustomCard mt="10px" hijo={ 
+        <CustomCard mt="10px" p="20px" hijo={ 
             <>
             <Text color={"black"} fontSize="xl" w="100%"  fontWeight="700" textAlign="center">
-                TODAY'S MACRONUTRIENTS
+                MACRONUTRIENTS
             </Text>
             </>
         }>
@@ -548,7 +567,7 @@ export default function mealDiary()
         } 
         />    
 
-        {screenSize != "" && <CustomCard mb="50px" hijo={ 
+        {screenSize != "" && <CustomCard mb="50px" mt="10px" hijo={ 
         <FiberCard edit={false} stillNeed={false} ebooklista={fiberEbooks} totalFiber={reciboDeHoy.fibra} screenSize={screenSize}></FiberCard>}></CustomCard>}
       </Flex>}  
 
