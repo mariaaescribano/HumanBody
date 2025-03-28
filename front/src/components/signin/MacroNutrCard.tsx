@@ -114,7 +114,7 @@ export default function MacroNutrCard(props: {title:string, total:string, stillN
             {/* si tiene nutricionista o es el nutricionista, entra */}
             {/* para el dia de hoy */}
             {props.verMensajesNutri && props.stillNeed == true && (sessionStorage.getItem("userNutri") || sessionStorage.getItem("patientTratando")) &&  
-            <><Box w="100%" borderBottom="2px solid black" my="20px" />
+            <>
             <Box display="flex" alignItems="center" justifyContent="center" >
                 <NutriComent 
                     campo={{
@@ -125,7 +125,7 @@ export default function MacroNutrCard(props: {title:string, total:string, stillN
             </Box></>}
             {/* para objetivos */}
             {props.verMensajesNutri && !props.stillNeed && (sessionStorage.getItem("userNutri") || sessionStorage.getItem("patientTratando")) &&  
-            <><Box w="100%" borderBottom="2px solid black" my="20px" />
+            <>
             <Box display="flex" alignItems="center" justifyContent="center" >
                 <NutriComent 
                     campo={{

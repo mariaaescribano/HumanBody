@@ -19,7 +19,6 @@ export class NutricomentariosService {
     nutriId: string,
     body: any
   ) {
-    console.log(body, nutriId, userNom)
     const sql = `UPDATE nutricomentarios SET ${campo} = ? WHERE idNutri = ? AND patientNom = ?`;
     const params = [body?.comentario, nutriId, userNom];
   
@@ -28,6 +27,65 @@ export class NutricomentariosService {
     } catch (error) {
     }
   }
+
+  async nutriRecomiendaFunction(
+    userNom: string,
+    nutriId: string,
+    idAlimento: string
+  ) {
+    if (!nutriId || !userNom || !idAlimento) {
+      throw new NotFoundException();
+    }
+
+    // Ensure the parameters are passed in the correct order:
+    const sql = `
+      UPDATE nutricomentarios 
+      SET nutriRecomienda = TRIM(BOTH ',' FROM CONCAT(
+        COALESCE(nutriRecomienda, ''), ',', ?
+      )) 
+      WHERE idNutri = ? AND patientNom = ?
+      AND FIND_IN_SET(?, nutriRecomienda) = 0;
+    `;
+
+    const params = [idAlimento, nutriId, userNom, idAlimento]; // Ensure correct parameter order
+    await this.databaseService.query(sql, params);
+  }
+
+  
+  async patientRejectNutriRecomiendaFunction(
+    userNom: string,
+    nutriId: string,
+    idAlimento: string
+  ) {
+    if (!nutriId || !userNom || !idAlimento) {
+      throw new NotFoundException();
+    }
+  
+    // Remove a specific alimento id from nutriRecomienda
+    const sql = `
+      UPDATE nutricomentarios 
+      SET nutriRecomienda = TRIM(BOTH ',' FROM REPLACE(
+        CONCAT(',', COALESCE(nutriRecomienda, ''), ','), 
+        CONCAT(',', ?, ','), 
+        ','
+      )) 
+      WHERE idNutri = ? AND patientNom = ?
+      AND FIND_IN_SET(?, nutriRecomienda) > 0;
+    `;
+  
+    const params = [idAlimento, nutriId, userNom, idAlimento]; 
+    try {
+      const result = await this.databaseService.query(sql, params);
+      if(result)
+        return ("ok");
+    } catch (error) {
+      console.error("Error executing query:", error);
+      throw error;
+    }
+  }
+  
+  
+
 
   async nutriGetCommentFunction(
     campo: nutriComentarios, 
@@ -50,5 +108,15 @@ export class NutricomentariosService {
     const result = await this.databaseService.query(sql, [userNom]);
     return result;
   }
+
+
+  async nutriRecomiendaGetAlimentosFunction(userNom: string, nutriId:string) 
+  {
+    const sql = 'SELECT nutriRecomienda FROM nutricomentarios WHERE patientNom = ? and idNutri =?';
+    const result = await this.databaseService.query(sql, [userNom, nutriId]);
+    return result;
+  }
+
+  
 
 }

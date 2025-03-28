@@ -7,7 +7,7 @@ import { CarbIcono, colorFibra, FiberIcono, ProteIcono } from '../../../GlobalHe
 import { FatIcono } from '@/components/icons/FatIcon';
 
 // Componente de búsqueda
-function Barra(props: {setquienPulsado:React.Dispatch<React.SetStateAction<number>>, quienPulsado:number}) 
+function Barra(props: {setquienPulsado:React.Dispatch<React.SetStateAction<number>>, quienPulsado:number, setcomidabuscada:any}) 
 {
   return (
     <Box
@@ -27,7 +27,7 @@ function Barra(props: {setquienPulsado:React.Dispatch<React.SetStateAction<numbe
       // _hover={{ p: "15px" }}
       bg="#610C04"   
       justifyContent="center"
-      onClick={()=> props.setquienPulsado(0)} 
+      onClick={()=> { props.setquienPulsado(0); props.setcomidabuscada("")} } 
       alignItems="center"
       p={props.quienPulsado==0 ? "15px": "10px"}
     >
@@ -49,7 +49,7 @@ function Barra(props: {setquienPulsado:React.Dispatch<React.SetStateAction<numbe
       bg= "#abdefa"
       justifyContent="center"
       alignItems="center"
-      onClick={()=> props.setquienPulsado(1)} 
+      onClick={()=> { props.setquienPulsado(1); props.setcomidabuscada("")} } 
       p={props.quienPulsado==1 ? "15px": "8px"}
       borderLeft={ "2px solid white"} 
     >
@@ -70,7 +70,7 @@ function Barra(props: {setquienPulsado:React.Dispatch<React.SetStateAction<numbe
       bg= "#EDC9AF"  
       justifyContent="center"
       alignItems="center"
-      onClick={()=> props.setquienPulsado(2)} 
+      onClick={()=> { props.setquienPulsado(2); props.setcomidabuscada("")} } 
       p={props.quienPulsado==2 ? "15px": "10px"}
       borderLeft= { "2px solid white"} 
     >
@@ -91,7 +91,7 @@ function Barra(props: {setquienPulsado:React.Dispatch<React.SetStateAction<numbe
       bg={colorFibra} 
       justifyContent="center"
       alignItems="center"
-      onClick={()=> props.setquienPulsado(3)} 
+      onClick={()=> { props.setquienPulsado(3); props.setcomidabuscada("")} } 
       p={props.quienPulsado==3 ? "15px": "10px"}
       borderLeft= { "2px solid white"} 
     >

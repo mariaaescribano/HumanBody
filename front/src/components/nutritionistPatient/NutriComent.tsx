@@ -1,5 +1,5 @@
 'use client';
-import { Flex, HStack, Input, Spinner, Text } from '@chakra-ui/react';
+import { Box, Flex, HStack, Input, Spinner, Text, VStack } from '@chakra-ui/react';
 import { API_URL, colorNutricionist, colorNutricionistBg} from '@/GlobalHelper';
 import axios from 'axios';
 import { nutriComentarios } from '../../../../backend/src/dto/nutri.dto';
@@ -108,7 +108,9 @@ export default function NutriComent({
     return (
         <>
         {/* solo si el comentario no es null, se muestra */}
-            {comentario!= null && 
+            {comentario!= null && !(comentario === "" && sessionStorage.getItem("userNutri")) &&
+            <VStack w="100%"> 
+            <Box w="100%" borderBottom="2px solid black" my="20px" />
             <Flex
                 direction="column"
                 mt={mt ? mt : "0px" }
@@ -158,7 +160,8 @@ export default function NutriComent({
                         />}
                     {pulsado == 2 && <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg>}
                 </HStack>}
-            </Flex>}
+            </Flex> 
+            </VStack>}
         </>
     );
 }

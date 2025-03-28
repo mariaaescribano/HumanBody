@@ -92,6 +92,149 @@ export const fileToBase64 = async (fileNom:string) =>
   }
 };
 
+export const dameDatosDeAlimentoConcreto = async (idAlimento:number) =>
+{
+  try{
+  const response = await axios.get(
+    `${API_URL}/alimentos/alimento/${idAlimento}`,
+    {
+      headers: {
+          'Content-Type': 'application/json'
+      },
+    }
+  );
+    if(response.data != null)
+    {
+      return response.data.alimento[0];
+    }
+  }
+  catch (error) {
+  console.error('Error fetching data:', error);
+  }
+};
+
+export const guardaAlimentoComido = async (alimento: alimentosComidosSkeleton) => 
+{
+  try
+  {
+    const response = await axios.post(
+        `${API_URL}/alimentosComidos/create`,
+        alimento,
+        {
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        }
+    );
+    if(response.data != null)
+      return response.data;
+  }
+  catch (error) {
+    console.error('Error fetching data:', error);
+  }
+};
+
+
+export const dameReciboDeAlimentoConcreto = async (idRecibo:number) =>
+{
+  try{
+  const response = await axios.get(
+    `${API_URL}/recibos/recibo/${idRecibo}`,
+    {
+      headers: {
+          'Content-Type': 'application/json'
+      },
+    }
+  );
+    if(response.data != null)
+    {
+      let recibo = response.data.recibo[0];
+      return recibo;
+    }
+  }
+  catch (error) {
+  console.error('Error fetching data:', error);
+  }
+};
+
+//////////// REGLAS DE TRES ////////////
+function reglaDeTres(valorA:number, valorB:number, valorC:number) {
+  return (valorB * valorC) / valorA;
+}
+export const reglasDeTresParaAlimentoGramosPersonalizados = (reciboOriginal:reciboSkeleton, grams:string, alimento:alimentosSkeleton, setcalories?:any) =>
+{
+  // actualiza calorias
+  let caloriasPorGramos = reglaDeTres(100, parseInt(alimento?.calorias_100gr, 10), parseInt(grams, 10));
+  if(setcalories)
+    setcalories(Math.round(isNaN(caloriasPorGramos) ? 0 : caloriasPorGramos).toString());
+
+  // actualiza macros
+  let proteNuevos = reglaDeTres(100, parseInt(reciboOriginal?.prote, 10), parseInt(grams, 10));
+  let completoNuevos = reglaDeTres(100, parseInt(reciboOriginal?.completo, 10), parseInt(grams, 10));
+  let incompletoNuevos = reglaDeTres(100, parseInt(reciboOriginal?.incompleto, 10), parseInt(grams, 10));
+  let monoNuevos = reglaDeTres(100, parseInt(reciboOriginal?.monoinsaturadas, 10), parseInt(grams, 10));
+  let poliinsaturadasNuevos = reglaDeTres(100, parseInt(reciboOriginal?.poliinsaturadas, 10), parseInt(grams, 10));
+  let saturadasNuevos = reglaDeTres(100, parseInt(reciboOriginal?.saturadas, 10), parseInt(grams, 10));
+  let carbsNuevos = reglaDeTres(100, parseInt(reciboOriginal?.carbs, 10), parseInt(grams, 10));
+  let grasasNuevos = reglaDeTres(100, parseInt(reciboOriginal?.grasas, 10), parseInt(grams, 10));
+  let simplesNuevos = reglaDeTres(100, parseInt(reciboOriginal?.simples, 10), parseInt(grams, 10));
+  let complejosNuevos = reglaDeTres(100, parseInt(reciboOriginal?.complejos, 10), parseInt(grams, 10));
+  let fibraNuevos = reglaDeTres(100, parseInt(reciboOriginal?.fibra, 10), parseInt(grams, 10));
+
+  const nuevoReciboPersonalizado : reciboSkeleton =
+  {
+    grasas: Math.round(grasasNuevos).toString(),
+    monoinsaturadas: Math.round(monoNuevos).toString(),
+    poliinsaturadas: Math.round(poliinsaturadasNuevos).toString(),
+    saturadas:Math.round(saturadasNuevos).toString(),
+    prote: Math.round(proteNuevos).toString(),
+    incompleto: Math.round(incompletoNuevos).toString(),
+    completo: Math.round(completoNuevos).toString(),
+    carbs: Math.round(carbsNuevos).toString(),
+    complejos: Math.round(complejosNuevos).toString(),
+    simples: Math.round(simplesNuevos).toString(),
+    fibra: Math.round(fibraNuevos).toString()
+  };
+  return nuevoReciboPersonalizado;
+};
+//////////// END REGLAS DE TRES ////////////
+
+export const cogePacientesDeNutri = async (nutriNom:string) =>
+{
+    try{
+    const response = await axios.get(
+        `${API_URL}/nutritionist/pacients/${nutriNom}`,
+        {
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        }
+    );
+        if(response.data != null)
+        {
+          let guarda = [];
+          for(let i=0; i< response.data.pacientes.length; i++)
+          {
+            let paciente = response.data.pacientes[i]
+            if(paciente.perfilPic != null)
+            {
+                let foto = await fileToBase64(paciente.perfilPic);
+                paciente.perfilPic = foto
+                guarda.push(paciente)
+            }
+            else
+                guarda.push("")
+          } 
+          return (guarda)
+        }
+        else
+            return ([])   
+    }
+    catch (error) {
+    console.error('Error fetching data:', error);
+    }
+};
+
 
 
 //////////// LISTAS  para pagina de registro //////////// 
@@ -135,6 +278,7 @@ import { FaAppleAlt, FaFish , FaSeedling } from 'react-icons/fa';
 import { MdOilBarrel } from 'react-icons/md';
 import { reciboSkeleton } from '../../backend/src/dto/recibos.dto';
 import axios from 'axios';
+import { alimentosComidosSkeleton, alimentosSkeleton } from '../../backend/src/dto/alimentos.dto';
 export const ProteIcono = FaFish;
 export const CarbIcono = FaAppleAlt;
 export const FiberIcono = FaSeedling;

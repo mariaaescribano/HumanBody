@@ -90,7 +90,7 @@ export default function NutritionistLogin()
         sessionStorage.setItem("nutriId", response.data?.exists[0].id);
         location.href = "./myPatients/main"
       } else {
-        errorText.current = "nutritionist doesn't exist";
+        errorText.current = "Nutritionist doesn't exist";
         sethayError(true);
         setdatosMal(3);
       }
@@ -100,16 +100,14 @@ export default function NutritionistLogin()
       setbtnPulsado(false);
       sethayError(true);
   
-      if (!error.response) {
-        errorText.current = "Network error, please check your connection";
-      } else if (error.response.status === 404) {
+      if (error.status === 404) {
         setdatosMal(3);
         errorText.current = "Wrong password or nutritionist name";
-      } else if (error.response.status === 500) {
+      } else if (error.status === 500) {
         errorText.current = tryAgain;
       } else {
         setdatosMal(3);
-        errorText.current = "nutritionist doesn't exist";
+        errorText.current = "Nutritionist doesn't exist";
       }
     }
   };

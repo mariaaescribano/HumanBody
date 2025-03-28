@@ -29,7 +29,7 @@ import PopUpMessage from '@/components/global/message/PopUpMessage';
 import PopUpErrorMessage from '@/components/global/message/PopUpErrorMessage';
 import PurpleSpinner from '@/components/global/random/PurpleSpinner';
 import CustomCard from '@/components/global/cards/CustomCard';
-import { API_URL, getInternetDateParts, redirigirSiNoHayUserNom, tryAgain } from '../../GlobalHelper';
+import { API_URL, colorNutricionist, getInternetDateParts, redirigirSiNoHayNutriNom, redirigirSiNoHayUserNom, tryAgain } from '../../../GlobalHelper';
 import { CircProgressMini } from '@/components/myday/CircProgressMini';
 import MacroCalView from '@/components/myday/MacroCalView';
 import ElementoPrimero from '@/components/myday/ElementoPrimero';
@@ -37,18 +37,30 @@ import { AddIcon, ArrowLeftIcon, ArrowRightIcon } from "@chakra-ui/icons";
 import MacroNutrCard from '@/components/signin/MacroNutrCard';
 import Buscador from '@/components/addfood/buscarAlimento/Buscador';
 import Barra from '@/components/addfood/buscarAlimento/Barra';
-import AlimentoMiniCard from '@/components/addfood/buscarAlimento/AlimentoMiniCard';
-import { miniCartaAlimento } from '../../../../backend/src/dto/alimentos.dto';
+import AlimentoMiniCard from '@/components/addfood/AlimentosCard/AlimentoMiniCard';
+import { miniCartaAlimento } from '../../../../../backend/src/dto/alimentos.dto';
 import BarraMenu from '@/components/global/BarraMenu';
 import { useRouter } from 'next/navigation';
+import BarraMenuNutri from '../../nutritionist/BarraMenuNutri';
+import GreenSpinner from '../../global/random/GreenSpinner';
+import AceptarFoodRecomendadaPorNutri from './AceptarFoodRecomendadaPorNutri';
 
 // COMO FALLA?
 // falla llamada al back --> devolver mensaje de intentalo más tarde
 
+// ESTRATEGIA: si es nutri 
+// NO buscar favs de usuarios, solo devolver alimentos
+// cambiar AlimentosMiniCard
 
-export default function ShowBuscarFoodPage(props:{verMisCreaciones:boolean}) 
-{
-  const [cargado, setcargado] = useState<boolean>(false); // cargar todo el componente 
+export default function ShowBuscarFoodPage(props: { 
+  verMisCreaciones: boolean; 
+  cargado: boolean; 
+  setcargado: any;
+}) {
+  const { cargado, setcargado } = props;
+
+  const [alimentosLista, setalimentosLista] = useState<miniCartaAlimento[]>([]);
+  const [nutri, setnutri ] = useState<boolean>();
   const [listaLoaded, setlistaLoaded] = useState<boolean>(false); // mostrar lista de alimentos
   const userName = useRef<string>("");
 
@@ -58,17 +70,29 @@ export default function ShowBuscarFoodPage(props:{verMisCreaciones:boolean})
   // mostrar alimentos con predominancia de un macronutriente
   const [quienPulsado, setquienPulsado] = useState<number>(0); 
 
-  const [alimentosLista, setalimentosLista] = useState<miniCartaAlimento[]>([]);
-
   const [comidabuscada, setcomidabuscada] = useState<string>(""); // si se busca una comida...
 
 
   useEffect(() => 
   {
-    redirigirSiNoHayUserNom();
-    let nom = sessionStorage.getItem("userNom")
-    if(nom)
-      userName.current = nom;
+    const queryParams = new URLSearchParams(location.search);
+    const soyNutri = queryParams.get('soyNutri');
+    if(soyNutri)
+    {
+      setnutri(true)
+      redirigirSiNoHayNutriNom();
+      let nom = sessionStorage.getItem("nutriNom")
+      if(nom)
+        userName.current = nom; 
+    }
+    else
+    {
+      setnutri(false)
+      redirigirSiNoHayUserNom();
+      let nom = sessionStorage.getItem("userNom")
+      if(nom)
+        userName.current = nom; 
+    } 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -100,18 +124,22 @@ export default function ShowBuscarFoodPage(props:{verMisCreaciones:boolean})
             },
         }
       );
-      if(response.data.foods)
+      if(response.data)
       {
+        let foods = response.data;
+        if(response.data.foods)
+          foods = response.data.foods;
+        
         const recoge = [];
-        for(let i=0; i< response.data.foods.length; i++)
+        for(let i=0; i< foods.length; i++)
         {
           let objeto: miniCartaAlimento = 
           {
-            id:response.data.foods[i].id,
-            nombre: response.data.foods[i].nombre,
-            predomina:response.data.foods[i].predomina,
-            calorias_100gr: response.data.foods[i].calorias_100gr,
-            es_fav_deUsu: response.data.foods[i].es_fav_deUsu
+            id:foods[i].id,
+            nombre: foods[i].nombre,
+            predomina:foods[i].predomina,
+            calorias_100gr: foods[i].calorias_100gr,
+            es_fav_deUsu: foods[i].es_fav_deUsu
           }
           recoge.push(objeto)
         }
@@ -138,13 +166,18 @@ export default function ShowBuscarFoodPage(props:{verMisCreaciones:boolean})
 
   useEffect(() => 
   {
-    if(quienPulsado!= 4)
-      getMacroNutrientsFoods();
+    if(quienPulsado!= 4 && nutri != undefined)
+    {
+      if(nutri == false)
+        getMacroNutrientsFavsFoods();
+      else
+        getMacroNutrientsFoods();
+    }  
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [quienPulsado]);
+  }, [quienPulsado, nutri]);
 
-
-  const getMacroNutrientsFoods = async () =>
+  // can: return the fav foods of the user // return the created foods of an user
+  const getMacroNutrientsFavsFoods = async () =>
   {
     if(userName.current!= undefined)
     {
@@ -198,6 +231,62 @@ export default function ShowBuscarFoodPage(props:{verMisCreaciones:boolean})
     }
   };
 
+  const getMacroNutrientsFoods = async () =>
+  {
+    if(userName.current!= undefined)
+    {
+      setlistaLoaded(false)
+      setalimentosLista([])
+      try
+      {
+        let url="";
+        if(props.verMisCreaciones == true)
+          url =  `${API_URL}/alimentos/userFoodMacro/${quienPulsado}/${userName.current}`
+        else
+          url =  `${API_URL}/alimentos/macroPredomina/${quienPulsado}`
+
+        const response = await axios.get(
+          `${url}`,
+          {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+          }
+        );
+        if(response.data != null)
+        {
+          const recoge = [];
+          for(let i=0; i< response.data.length; i++)
+          {
+            let objeto: miniCartaAlimento = 
+            {
+              id:response.data[i].id,
+              nombre: response.data[i].nombre,
+              predomina:response.data[i].predomina,
+              calorias_100gr: response.data[i].calorias_100gr,
+              es_fav_deUsu: response.data[i].es_fav_deUsu
+            }
+            recoge.push(objeto)
+          }
+          setalimentosLista(recoge)
+          if(!cargado)
+            setcargado(true)
+        }
+        else
+          setalimentosLista([])
+      }
+      catch (error:any) 
+      {
+        if(error.status== 400)
+          console.log("Solicitud al back mal formada. Lo que se envió:", quienPulsado, userName.current)
+        else
+        {
+          setmensajeError(true)
+        }
+      }
+    }
+  };
+
   useEffect(() => 
   {
     const timer = setTimeout(() => 
@@ -208,12 +297,20 @@ export default function ShowBuscarFoodPage(props:{verMisCreaciones:boolean})
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [alimentosLista]);
 
+  const gotocreatedfoods = () =>
+  {
+    if(nutri==true)
+      location.href =  "./myCreatedFoods?soyNutri=true"
+    else
+      location.href =  "./myCreatedFoods"
+  };
+
 
   return (
     <Flex
         direction="column"
         align="center"
-        bg="purple.100"
+        bg={nutri == undefined ? "white" : nutri == true ? colorNutricionist : "purple.100"}
         w="100%"
         h="100%"
         justify="center"
@@ -221,7 +318,8 @@ export default function ShowBuscarFoodPage(props:{verMisCreaciones:boolean})
         minH="100vh"
         position={"relative"}
     >
-        <BarraMenu></BarraMenu>
+        {nutri==false && <BarraMenu></BarraMenu>}
+        {nutri==true && <BarraMenuNutri></BarraMenuNutri>}
 
         {/* title */}
         {props.verMisCreaciones == true && cargado ==true &&
@@ -231,7 +329,7 @@ export default function ShowBuscarFoodPage(props:{verMisCreaciones:boolean})
             </Text>
         }></CustomCard>}
 
-        {cargado ==true &&
+        {cargado ==true && nutri!=undefined &&
         <CustomCard mt={props.verMisCreaciones == true ? "10px" : "0px"} hijo={
         <>
         <Buscador setcomidabuscada={setcomidabuscada} comidabuscada={comidabuscada}></Buscador>
@@ -240,12 +338,11 @@ export default function ShowBuscarFoodPage(props:{verMisCreaciones:boolean})
             <Button
             fontSize="sm"
             borderRadius="16px"
-            bg="purple.100"
+            bg={nutri == true ? colorNutricionist : "purple.100"}
             w={{sd:"70%", md: "70%"}}
             mt="20px"
             h="90%"
-            as="a"
-            href = "./myCreatedFoods"
+            onClick = {gotocreatedfoods}
             p="10px"
             _hover={{bg:"gray.100"}}
             leftIcon={<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M240-360h280l80-80H240v80Zm0-160h240v-80H240v80Zm-80-160v400h280l-80 80H80v-560h800v120h-80v-40H160Zm756 212q5 5 5 11t-5 11l-36 36-70-70 36-36q5-5 11-5t11 5l48 48ZM520-120v-70l266-266 70 70-266 266h-70ZM160-680v400-400Z"/></svg>}
@@ -255,7 +352,7 @@ export default function ShowBuscarFoodPage(props:{verMisCreaciones:boolean})
             <Button
             fontSize="sm"
             borderRadius="16px"
-            bg="purple.100"
+            bg={nutri == true ? colorNutricionist : "purple.100"}
             w={{sd:"70%", md: "70%"}}
             mt="20px"
             h="90%"
@@ -269,7 +366,13 @@ export default function ShowBuscarFoodPage(props:{verMisCreaciones:boolean})
 
         </SimpleGrid>} 
 
-        <Barra setquienPulsado={setquienPulsado} quienPulsado={quienPulsado}></Barra>
+
+
+        {/* food recomendada por nutri */}
+        {nutri==false && <AceptarFoodRecomendadaPorNutri></AceptarFoodRecomendadaPorNutri> }
+
+
+        <Barra setquienPulsado={setquienPulsado} quienPulsado={quienPulsado} setcomidabuscada={setcomidabuscada}></Barra>
         {/* pone los alimentos fav primero */}
         {alimentosLista.length > 0 && listaLoaded &&
             alimentosLista 
@@ -277,6 +380,7 @@ export default function ShowBuscarFoodPage(props:{verMisCreaciones:boolean})
             .map((alimento, index) => (
                 <AlimentoMiniCard 
                 key={alimento.id}
+                nutri={nutri}
                 editando={props.verMisCreaciones}
                 idAlimento={alimento.id} 
                 nameAlimento={alimento.nombre} 
@@ -284,7 +388,7 @@ export default function ShowBuscarFoodPage(props:{verMisCreaciones:boolean})
                 userNom={userName.current} 
                 calorias={alimento.calorias_100gr}
                 favDeUser={alimento.es_fav_deUsu}  
-                getMacroNutrientsFoods={getMacroNutrientsFoods}
+                getMacroNutrientsFoods={getMacroNutrientsFavsFoods}
                 />
             ))
         }
@@ -295,7 +399,7 @@ export default function ShowBuscarFoodPage(props:{verMisCreaciones:boolean})
         mt="50px"
         speed="0.65s"
         emptyColor="gray.200"
-        color="purple.200"
+        color={nutri == true ? colorNutricionist : "purple.100"}
         size="xl"
         /> }
 
@@ -309,9 +413,10 @@ export default function ShowBuscarFoodPage(props:{verMisCreaciones:boolean})
 
 
 
-        {cargado == false && <Box  justifyContent="center">
-        {alimentosLista.length ==0 && comidabuscada== "" && <PurpleSpinner></PurpleSpinner>}
-        </Box>}
- 
+        {cargado == false && <Box justifyContent="center">
+       
+        {alimentosLista.length ==0 && comidabuscada== "" && nutri==true && <GreenSpinner></GreenSpinner>}
+      
+      </Box>}
     </Flex>);
 }

@@ -30,4 +30,11 @@ export class AlimentosComidosService {
     return result;
   }
 
+  async deleteRejectedAlimentoComido(idAlimento: string) 
+  {
+    const sql = 'DELETE FROM alimentoscomidos WHERE id = ?';
+    const result = await this.databaseService.query(sql, [idAlimento]);
+    return result;
+  }
+
 }

@@ -29,7 +29,7 @@ export default function CalorGramsSelectCard(props: { calories:string, grams:str
                     mb="20px"
                     id="first"
                     value={props.grams}
-                    label="Grams you ate:"
+                    label="Total grams:"
                     textAlign="center"
                     onChange={(e:any) => cambiaGrams(e.target.value)}
                 />

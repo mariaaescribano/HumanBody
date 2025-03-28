@@ -25,21 +25,22 @@ import axios from 'axios';
 // Custom components
 
 import React, { useEffect, useRef, useState } from 'react';
-import { API_URL, colorNutricionist, dameNutriNom, fileToBase64, redirigirSiNoHayNutriNom, StringIsNull, tryAgain } from '../../../../GlobalHelper';
+import { API_URL, cogePacientesDeNutri, colorNutricionist, dameNutriNom, fileToBase64, redirigirSiNoHayNutriNom, StringIsNull, tryAgain } from '../../../../GlobalHelper';
 import PopUpErrorMessage from '@/components/global/message/PopUpErrorMessage';
 import InputField from '@/components/global/random/InputField';
 import BarraMenuNutri from '@/components/nutritionist/BarraMenuNutri';
 import CustomCard from '@/components/global/cards/CustomCard';
 import GreenSpinner from '@/components/global/random/GreenSpinner';
 import { CuteBoxIcon } from '@/components/nutritionist/CuteBoxIcon';
+import RecommendCard from '@/components/addfood/verAlimento/RecommendCard';
+import { patientSkeleton } from '../../../../../../backend/src/dto/nutri.dto';
 
 
 export default function MyPatients() 
 {
     const [disable, setdisable] = useState<boolean>(false);
     // es any pero en vd es: fichaSkeleton y usuarioSkeleton
-    const [patients, setpatients] = useState<any | null>(null);
-    const [patientsPics, setpatientsPics] = useState<any>([]);
+    const [patients, setpatients] = useState<patientSkeleton[] | null | []>(null);
     // requests
     const [patientsRequests, setpatientsRequests] = useState<any>(null);
     const [patientsRequestsPics, setpatientsRequestsPics] = useState<any>([]);
@@ -57,37 +58,10 @@ export default function MyPatients()
     const cogePacientes = async () =>
     {
         let nutriNom = dameNutriNom();
-
-        try{
-        const response = await axios.get(
-            `${API_URL}/nutritionist/pacients/${nutriNom}`,
-            {
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            }
-        );
-            if(response.data != null)
-            {
-                setpatients(response.data.pacientes)
-                let guarda = [];
-                for(let i=0; i< response.data.pacientes.length; i++)
-                {
-                    if(response.data.pacientes[i].perfilPic != null)
-                    {
-                        let foto = await fileToBase64(response.data.pacientes[i].perfilPic);
-                        guarda.push(foto)
-                    }
-                    else
-                        guarda.push("")
-                } 
-                setpatientsPics(guarda)
-            }
-            else
-                setpatients([])   
-        }
-        catch (error) {
-        console.error('Error fetching data:', error);
+        let pacientes = await cogePacientesDeNutri(nutriNom)
+        if(pacientes)
+        {
+            setpatients(pacientes)
         }
     };
 
@@ -184,34 +158,7 @@ export default function MyPatients()
         {/* pacientes */} 
         {patients.length > 0 &&<CustomCard mt="10px" p="20px" hijo={
         <>
-            { patients.map((patient: any, index: number) => {
-            return (
-                <Flex key={index} w="100%" justifyContent="space-between" alignItems="center">
-                    <Box display="flex" justifyContent="space-between" alignItems="center" width="100%">
-                        <HStack spacing="10px" ml="5%">
-                            <Avatar src={patientsPics[index]} size="md"/>
-                            <Text ml={2}>{patient.nombre}</Text>
-                        </HStack>
-                        <HStack>
-                            <CuteBoxIcon mt="0px" icono={<svg cursor="pointer" 
-                            onClick={()=> {sessionStorage.setItem("patientTratando",patient.nombre); location.href=`./perfil`;}} 
-                            xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Z"/></svg>}>
-                            </CuteBoxIcon>
-
-                            <CuteBoxIcon mt="0px" icono={<svg cursor="pointer" xmlns="http://www.w3.org/2000/svg" 
-                            onClick={()=> {sessionStorage.setItem("patientTratando",patient.nombre); location.href=`./mypatientday`;}} 
-                            height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Z"/></svg>
-                            }></CuteBoxIcon>
-
-                            <CuteBoxIcon mt="0px" icono={<svg cursor="pointer" xmlns="http://www.w3.org/2000/svg" 
-                            // onClick={()=> {sessionStorage.setItem("patientTratando",patient.nombre); location.href=`./perfil`;}} 
-                            height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm320-280L160-640v400h640v-400L480-440Zm0-80 320-200H160l320 200ZM160-640v-80 480-400Z"/></svg>}>
-                            </CuteBoxIcon>
-                        </HStack>
-                    </Box>
-                </Flex>
-            );
-            })}
+             <RecommendCard patients={patients} recommending={false} />
         </>
         }></CustomCard>}
         {patients.length == 0 &&<CustomCard mt="10px" p="20px" hijo={

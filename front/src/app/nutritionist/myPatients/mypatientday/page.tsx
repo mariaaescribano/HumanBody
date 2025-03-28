@@ -55,6 +55,7 @@ export default function MyPatientDay()
   const [macroPorcentaje, setmacroPorcentajes ] = useState< macroPorcentajes | null >(null);
 
   const fecha = useRef<string>("");
+  const idDia = useRef<string>("");
   ///////////////////// END DECLARATIONS /////////////////////
   
 
@@ -89,6 +90,7 @@ export default function MyPatientDay()
     let diaHoyDePatient = await buscaidDiaHoyDePatient(fechaFunc);
     if(diaHoyDePatient!= undefined)
     {
+      idDia.current = diaHoyDePatient.id;
       setdiaExiste(true)
       caloriasHoy.current = diaHoyDePatient.calorias_total;
 
@@ -302,6 +304,7 @@ export default function MyPatientDay()
             <Text fontSize="3xl" fontWeight="bold" textAlign="center">{patientNomSeleccionado.current}</Text>
         </>
       }></CustomCard>
+      
       <Card
           width={{ base: "40%", md: "50%" }}
           height="auto"
@@ -331,9 +334,10 @@ export default function MyPatientDay()
       </Card>
 
        {/* calorias y macronutrients overall view */}
-        <CustomCard mt="20px" hijo={<ElementoPrimero 
+        <CustomCard mt="20px" hijo={
+        <ElementoPrimero 
         caloriasObj={caloriasObj.current} 
-        caloriasHoy={caloriasHoy.current}
+        caloriasHoy={caloriasHoy.current} idDia={idDia.current}
         macroPorcentaje={macroPorcentaje}></ElementoPrimero>}></CustomCard> 
 
         { reciboObjetivo!= null && <>

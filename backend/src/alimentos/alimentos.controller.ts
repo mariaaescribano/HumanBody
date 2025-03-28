@@ -30,6 +30,18 @@ export class AlimentosController {
     return alimentos;
   };
 
+  @Get("macroPredomina/:idMacro")
+  async macroPredomina(@Param('idMacro') idMacroStr: string) 
+  {
+    const idMacro = Number(idMacroStr); 
+    const foods = await this.alimentosService.findAllByIdMacro(idMacro);
+    if(!foods)
+    {
+      throw new NotFoundException("Alimentos de macro no encontrados");
+    }
+    return foods;
+  };
+
 
 
 
@@ -72,8 +84,15 @@ export class AlimentosController {
       throw new NotFoundException("Alimentos de macro no encontrados");
     }
 
-    let alimentos = await this.getAlimentosOrdenPorFavsDeUser(foods, userNom)
-    return alimentos;
+    let esUser = await this.usuariosService.findByName(userNom)
+    if(esUser==true)
+    {
+      let alimentos = await this.getAlimentosOrdenPorFavsDeUser(foods, userNom)
+      return alimentos;
+    }
+    else 
+      return foods;
+   
   }
 
 
@@ -112,10 +131,13 @@ export class AlimentosController {
    @Param('misCreaciones') misCreaciones: boolean) 
   {
     const foods = await this.alimentosService.findMatchingFood(foodName, misCreaciones, userNom);
+    const userEsNutri = await this.usuariosService.findByName(userNom);
     if(foods)
     {
-      let alimentos = await this.getAlimentosOrdenPorFavsDeUser(foods, userNom);
-      return alimentos ;
+      if(!userEsNutri)
+        return foods ;
+      else
+        return await this.getAlimentosOrdenPorFavsDeUser(foods, userNom);
     }
     else
       return [];

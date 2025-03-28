@@ -3,9 +3,11 @@ import { Flex, Box, Icon, Text, useColorModeValue, Card, Button, HStack, Image, 
 import { MdArrowBack } from 'react-icons/md';
 import MeryTooltip from '../random/MeryToolTip';
 import SuccessErrorMessage from '../message/SuccessErrorMessage';
+import { colorNutricionist } from '@/GlobalHelper';
 
 export default function TitleCard(props: 
 {   title:string, titleIcon?:any, //what you see in the main title
+    soyNutri?:string,
     firstBtnText:string, firstBtnIcon?:any, goback:any, //the left button, for going back or cancel
     secondBtnText:string, secondBtnIcon?:any, letsgo:any, // the right button, to continue or save
     mensajeError?: boolean|undefined, // if mensajeError needs to be shown
@@ -41,7 +43,7 @@ export default function TitleCard(props:
                 variant="darkBrand"
                 fontSize="sm"
                 borderRadius="16px"
-                bg="purple.100"
+                bg={props.soyNutri ? colorNutricionist : "purple.100"}
                 w={{ base: '128px', md: '148px' }}
                 h="46px"
                 _hover={{ bg: "gray.100" }}
@@ -54,7 +56,7 @@ export default function TitleCard(props:
                 variant="darkBrand"
                 fontSize="sm"
                 borderRadius="16px"
-                bg="purple.100"
+                bg={props.soyNutri ? colorNutricionist : "purple.100"}
                 w={{ base: '128px', md: '148px' }}
                 h="46px"
                 disabled={props.btnDisabled || props.btnDesactivado}

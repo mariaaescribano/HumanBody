@@ -64,6 +64,11 @@ catch (error) {
   console.log("Error al actualizar la base de datos:", error);
 }
 
+for (let i = 0; i < nombresConcatenados.length; i++) 
+{
+      
+}
+
 
 
 
@@ -88,8 +93,6 @@ ORDEN: prote: "#610C04" -fats:"#abdefa" -carbs:"#EDC9AF"
 
 
 PARA HOY
---> q nutri pueda crear y ver las comidas q existen (básicamente la misma página q en users)
---> q nutri pueda recomendar comidas a patients
 
 
 PARA LA SEMANA Q VIENE :D

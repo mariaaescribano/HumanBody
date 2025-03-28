@@ -10,12 +10,12 @@ import { AddIcon } from '@chakra-ui/icons';
 import { macroPorcentajes } from '../../../../backend/src/dto/recibos.dto';
 import { useRouter } from 'next/navigation';
 import NutriComent from '../nutritionistPatient/NutriComent';
-import { userNutriId } from '@/GlobalHelper';
+import { colorNutricionist, userNutriId } from '@/GlobalHelper';
 import { nutriComentarios } from '../../../../backend/src/dto/nutri.dto';
 
 export default function ElementoPrimero(props: { 
     macroPorcentaje: macroPorcentajes, 
-    caloriasObj?: string, 
+    caloriasObj?: string, idDia?:string,
     caloriasHoy?: string 
 }) {
     const router = useRouter();
@@ -64,8 +64,9 @@ export default function ElementoPrimero(props: {
             </Flex>
         </Box>
         
-        {!props.caloriasObj && 
+        
         <HStack>
+            {!props.caloriasObj &&  
             <Button
                 fontSize="sm"
                 borderRadius="16px"
@@ -88,32 +89,34 @@ export default function ElementoPrimero(props: {
                 >
                     <path d="M417-417H166v-126h251v-251h126v251h251v126H543v251H417v-251Z" />
                 </svg>
-            </Button>
+            </Button>}
             
             <Button
                 fontSize="sm"
                 borderRadius="16px"
-                bg="purple.100"
+                bg={!props.caloriasObj ? "purple.100" : colorNutricionist}
                 w={"100px"}
                 h="40px"
                 p="10px"
                 color="black"
                 _hover={{ bg: "gray.100" }}
-                onClick={() => location.href = "../foodList"}
+                onClick={!props.caloriasObj ? 
+                () => location.href = "../foodList" : 
+                () => location.href = `../myPatients/foodList?diaId=${props.idDia}&soyNutri=true`}
                 display="flex"
                 alignItems="center"
                 justifyContent="center"
                 >
                     FOOD LIST
             </Button>
-        </HStack>}
+        </HStack>
 
         <Box w="100%" borderBottom="2px solid black" my="20px" />
         <EBookButton texto={'Fasting'}></EBookButton>
 
         {/* si tiene nutricionista o es el nutricionista, entra */}
         {(sessionStorage.getItem("userNutri") || sessionStorage.getItem("patientTratando")) &&  
-        <><Box w="100%" borderBottom="2px solid black" my="20px" />
+        <>
         <Box  w="100%" display="flex" alignItems="center" justifyContent="center" >
             <NutriComent campo={nutriComentarios.myday} />
         </Box></>}

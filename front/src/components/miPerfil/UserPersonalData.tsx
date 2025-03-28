@@ -157,7 +157,7 @@ export default function UserPersonalData(props: { user : createUserSkeleton, edi
 
             {/* si tiene nutricionista o es el nutricionista, entra */}
             {(sessionStorage.getItem("userNutri") || sessionStorage.getItem("patientTratando")) &&  
-            <><Box w="100%" borderBottom="2px solid black" my="20px" />
+            <>
             <Box display="flex" alignItems="center" justifyContent="center" >
                 <NutriComent campo={nutriComentarios.datosFicha} />
             </Box></>}

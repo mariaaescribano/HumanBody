@@ -19,15 +19,15 @@ function Buscador(props: {marginLeft?:string, setcomidabuscada:any, comidabuscad
     >
         <Icon as={MdSearch} width="24px" height="24px" color="gray.500" /> 
         <Input
-            placeholder={"Search a food"}
-            variant="unstyled"
-            border="none"
-            p="2"
-            onChange={(e:any)=> props.setcomidabuscada(e.target.value)}
-            value={props.comidabuscada}
-            fontSize="lg"
-            width="100%"
-            ml="2" // Espaciado entre el icono y el input
+          placeholder={"Search a food"}
+          variant="unstyled"
+          border="none"
+          p="2"
+          onChange={(e:any)=> props.setcomidabuscada(e.target.value)}
+          value={props.comidabuscada}
+          fontSize="lg"
+          width="100%"
+          ml="2" // Espaciado entre el icono y el input
         />
     </Box>
 
