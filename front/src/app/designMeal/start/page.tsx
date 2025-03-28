@@ -45,7 +45,7 @@ export default function DesignMealStart()
     useEffect(() => 
     {
         redirigirSiNoHayUserNom()
-        const datosGuardados = sessionStorage.getItem('arrayMeals');
+        const datosGuardados = sessionStorage.getItem('DesignAMeal');
         if(datosGuardados)
         {
             location.href = "./lastPage"

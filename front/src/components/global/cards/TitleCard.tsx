@@ -52,6 +52,7 @@ export default function TitleCard(props:
             >
                 {props.firstBtnText}
             </Button>
+            
             <Button
                 variant="darkBrand"
                 fontSize="sm"

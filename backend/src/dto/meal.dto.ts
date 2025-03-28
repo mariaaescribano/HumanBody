@@ -60,3 +60,30 @@ export interface finalMealCard
     pieData:number[];
     totalCalories:string;
 };
+
+
+export interface designamealSkeleton 
+{
+    idDia: number;
+    meal:number;
+    nomUser:string;
+    
+    caloriasTotal:string;
+    caloriasSelected:string;
+
+    proteTotal:string;
+    fuenteProte:string;
+    gramosFuenteProte:string;
+
+    carbsTotal:string;
+    fuenteCarbs:string;
+    gramosFuenteCarbs:string;
+
+    fatTotal:string;
+    fuenteFat:string;
+    gramosFuenteFat:string;
+
+    fibraTotal:string;
+    fuenteFibra:string;
+    gramosFuenteFibra:string;
+};

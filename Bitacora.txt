@@ -92,14 +92,26 @@ IMPORTANTE: ESTRUCTURACIÓN
 ORDEN: prote: "#610C04" -fats:"#abdefa" -carbs:"#EDC9AF"
 
 
-PARA HOY
+
+AVENTURAS :D
+
+SUPER MEGA IMPORTANTE
+--> q no haya mas de 1 dia con la misma fecha del mismo user!!!!!!!!!!!!!!!
 
 
-PARA LA SEMANA Q VIENE :D
 
 USER/PATIENT
 --> q user pueda comunicarse con nutri
+
+
+DESIGN A MEAL
 --> q user le pueda mandar sus diseños de dias a su nutri
+--> si user crea un nuevo dia, q se borre el designmeal del dia anterior (q duren el tiempo q duran al dia en q estan asociados)
+--> gestionar deletes de design a meal
+--> si user entra y ya existe en bd dia, q no se cree nuevo, q se le devuelva el q ya existe
+--> cuando esto pase, comprobate if that day has design a meal associated
+
+
 
 NUTRI
 --> q Nutri pueda ver y responder mensajes de su paciente
