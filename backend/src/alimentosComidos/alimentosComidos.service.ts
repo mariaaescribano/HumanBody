@@ -11,6 +11,7 @@ export class AlimentosComidosService {
   {
     if(body)
     {
+      console.log(body)
       const sql = 'INSERT INTO `alimentoscomidos`(`idAlimento`, `nom`, `gramosTotales`, `calorias`, `predomina`) VALUES (?,?,?,?,?)';
       const params = [body.idAlimento, body.nom, body.gramosTotales, body.calorias, body.predomina];
       const result = await this.databaseService.query(sql, params);

@@ -95,21 +95,15 @@ ORDEN: prote: "#610C04" -fats:"#abdefa" -carbs:"#EDC9AF"
 
 AVENTURAS :D
 
-SUPER MEGA IMPORTANTE
---> q no haya mas de 1 dia con la misma fecha del mismo user!!!!!!!!!!!!!!!
-
-
 
 USER/PATIENT
 --> q user pueda comunicarse con nutri
 
 
 DESIGN A MEAL
+--> finish retocating lastPage details
+--> put the card in MyDay page :)
 --> q user le pueda mandar sus diseños de dias a su nutri
---> si user crea un nuevo dia, q se borre el designmeal del dia anterior (q duren el tiempo q duran al dia en q estan asociados)
---> gestionar deletes de design a meal
---> si user entra y ya existe en bd dia, q no se cree nuevo, q se le devuelva el q ya existe
---> cuando esto pase, comprobate if that day has design a meal associated
 
 
 

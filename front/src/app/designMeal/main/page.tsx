@@ -17,10 +17,11 @@ import BarraMenu from '@/components/global/BarraMenu';
 import TitleCard from '@/components/global/cards/TitleCard';
 import MainCards from '@/components/designMeal/MainCards';
 import  { designamealSkeleton, mealSkeleton } from '../../../../../backend/src/dto/meal.dto';
-import { API_URL, dameDatosDelRecibo, ObjectIsNull, redirigirSiNoHayUserNom } from '@/GlobalHelper';
+import { API_URL, dameDatosDeAlimentoConcreto, dameDatosDelRecibo, dameReciboDeAlimentoConcreto, getIdAlimentoPorNombre, getIdReciboConAlimentoName, ObjectIsNull, redirigirSiNoHayUserNom, reglasDeTresParaAlimentoGramosPersonalizados, StringIsNull, sumaDeMacros, update } from '@/GlobalHelper';
 import PurpleSpinner from '@/components/global/random/PurpleSpinner';
 import axios from 'axios';
 import PopUpErrorMessage from '@/components/global/message/PopUpErrorMessage';
+import { reciboSkeleton } from '../../../../../backend/src/dto/recibos.dto';
 
 export default function DesignMealMain() 
 {
@@ -140,10 +141,10 @@ export default function DesignMealMain()
       if(!ObjectIsNull(recibo))
       {
         // se divide cada macro
-        let proteDivision = Math.round(Number(recibo.prote) / mealsNumber).toString();
-        let fatDivision =  Math.round(Number(recibo.grasas) / mealsNumber).toString();
-        let carbsDivision = Math.round(Number(recibo.carbs) / mealsNumber).toString();
-        let fibraDivision = Math.round(Number(recibo.fibra) / mealsNumber).toString();
+        let proteDivision = Math.round(Number(recibo?.prote) / mealsNumber).toString();
+        let fatDivision =  Math.round(Number(recibo?.grasas) / mealsNumber).toString();
+        let carbsDivision = Math.round(Number(recibo?.carbs) / mealsNumber).toString();
+        let fibraDivision = Math.round(Number(recibo?.fibra) / mealsNumber).toString();
         return [proteDivision, fatDivision, carbsDivision, fibraDivision] 
       } 
     }  
@@ -171,6 +172,7 @@ export default function DesignMealMain()
   // si el usuario quiere ir a atras, simplemente se borra lo q habia en ss
   const goBack = () =>
   {
+    sessionStorage.removeItem("DesignAMeal")
     sessionStorage.removeItem("arrayMeals")
     sessionStorage.removeItem("meals")
     location.href = "./start";
@@ -191,30 +193,40 @@ export default function DesignMealMain()
   
     try {
       const arrayRecuperado = JSON.parse(datosGuardados);
+      let guardaMeals:designamealSkeleton[] = [];
   
-      // Prepare all requests
-      const requests = arrayRecuperado.map((meal:any, index:number) => {
+      // take all the meals from the ss and save them in BD
+      const requests = arrayRecuperado.map((meal:any, index:number) => 
+      {
+        //get the dates from ss
         const designamealBody = getDesignAMealBody(meal, index + 1);
-        return axios.post(`${API_URL}/designameal/create`, designamealBody, {
+        guardaMeals.push(designamealBody) // meals are saved
+
+        // save that day in bd
+        return axios.post(`${API_URL}/designameal/create`, designamealBody, 
+        {
           headers: { "Content-Type": "application/json" },
         });
       });
-  
+      // take all the responses (that are the ID from the row saved in bd in designameal)
       const responses = await Promise.all(requests);
-      if(responses)
+      if(responses.length > 0)
       {
+        // post them in ss, for be able to get the data in lastPage
         for(let i=0; i< responses.length; i++)
         {
           sessionStorage.setItem("meal"+(i+1), responses[i].data)
         }
         sessionStorage.setItem("DesignAMeal", "true")
+
         // just in case: delet everything again
         sessionStorage.removeItem("arrayMeals")
-        sessionStorage.removeItem("caloriasNecesitadas")
         sessionStorage.removeItem("meals")
-        sessionStorage.removeItem("actividad")
 
-        // avisar and go
+        // before leaving, sum all the data to MyDay (to keep a better track of it)
+        await sumDataToMyDay(guardaMeals)
+
+        // avisar and go to the last page, to see every meal card
         setbtnSavePulsado(2);  
         const timer = setTimeout(() => {
           setbtnSavePulsado(0);  
@@ -243,6 +255,8 @@ export default function DesignMealMain()
         idDia: Number(sessionStorage.getItem("diaId")),
         meal: numberMeal,
         nomUser:sessionStorage.getItem("userNom"),
+        actividad:objetoArrayMealRecuperado.actividad,
+        caloriesNeeded:objetoArrayMealRecuperado.caloriesNeeded,
         
         caloriasTotal:objetoArrayMealRecuperado.caloriasTotal,
         caloriasSelected:objetoArrayMealRecuperado.caloriasSelected,
@@ -268,14 +282,79 @@ export default function DesignMealMain()
   };
 
 
- 
+
+  // IMPORTANT: all the data from designaday will be sum to MyDay :D
+  const sumDataToMyDay = async (guardaMeals: designamealSkeleton[]) =>
+  {
+    //BIG STRATEGY 
+    // for each fuenteAlimento recuperate their ID (alimento original)
+    try 
+    {
+      for(let i=0; i< guardaMeals.length; i++)
+      {
+        let meal = guardaMeals[i]
+        if(!StringIsNull(meal.fuenteProte))
+        { 
+          await manageAlimento(meal.fuenteProte, meal.gramosFuenteProte, 0)
+        }
+        if(!StringIsNull(meal.fuenteFat))
+          { 
+            await manageAlimento(meal.fuenteFat, meal.gramosFuenteFat, 1)
+          }
+          if(!StringIsNull(meal.fuenteCarbs))
+            { 
+              await manageAlimento(meal.fuenteCarbs, meal.gramosFuenteCarbs, 2)
+            }
+            if(!StringIsNull(meal.fuenteFibra))
+              { 
+                await manageAlimento(meal.fuenteFibra, meal.gramosFuenteFibra, 3)
+              }
+      }
+    } 
+    catch (error) 
+    {
+      throw new Error();
+    }
+  };
 
 
+  const [mensajeErrorError, setmensajeError ] = useState<boolean>(false);
+  const calories = useRef<string>("");
 
+  const manageAlimento = async (alimentoNom:string, gramos:string, predomina:number) =>
+  {
+    try 
+    {
+      // we only have the name, needs the alimento Id
+      let idAlimento = await getIdAlimentoPorNombre(alimentoNom)
+      // new, we can get the object alimento
+      let alimentoConcreto = await dameDatosDeAlimentoConcreto(idAlimento);
+      // get the receipt of the alimento original
+      let reciboOriginal = await dameReciboDeAlimentoConcreto(alimentoConcreto.recibo_id)
+      // lets get reciboDiaUser to sum the new foods
+      let reciboDiaUser = await dameReciboDeAlimentoConcreto(Number(sessionStorage.getItem("reciboDeHoy")))
+      // personalice the receipt following the number of grams user selected
+      let nuevoReciboPersonalizado= reglasDeTresParaAlimentoGramosPersonalizados(reciboOriginal, calories, gramos, alimentoConcreto)
+      // sum it
+      let reciboSuma = sumaDeMacros(nuevoReciboPersonalizado, reciboDiaUser);
+      if(reciboSuma && reciboDiaUser)
+      {
+        // everything gets updated
+        await update(reciboSuma, sessionStorage.getItem("reciboDeHoy"), gramos, predomina, calories.current, setmensajeError, alimentoConcreto);
+      }
+    } 
+    catch (error) 
+    {
+      console.log("Error sumando alimento a dia", error)
+      throw new Error();
+    }
+  };
 
-
-
-
+  useEffect(() => 
+  {
+    if(mensajeErrorError==true)
+      setbtnSavePulsado(3)
+  }, [mensajeErrorError]);
 
 
   return (
@@ -304,7 +383,7 @@ export default function DesignMealMain()
                 <TitleCard title={'DESIGN YOUR MEAL II'} 
                 firstBtnText={'Delete & Go back'} goback={goBack} 
                 secondBtnText={'Save & Next'} letsgo={saveDesignedMeal} 
-                mensajeError={btnSavePulsado == 2? true : false} textMensajeError={'All meals saved!'} statusMensajeError={'success'}
+                mensajeError={btnSavePulsado == 2? true : undefined} textMensajeError={'All meals saved!'} statusMensajeError={'success'}
                 btnDesactivado={nextDisabled} btnDisabled={btnSavePulsado == 1? true : false}/>
             }/>
             

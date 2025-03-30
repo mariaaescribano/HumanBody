@@ -60,6 +60,18 @@ export class AlimentosService {
     return result;
   }
 
+  async getIdReciboSegunNombreAlimento(alimentoNombre: string) {
+    const sql = 'SELECT recibo_id FROM alimento WHERE nombre = ?';
+    const result = await this.databaseService.query(sql, [alimentoNombre]);
+    return result.recibo_id;
+  }
+
+  async getIdSegunNombreAlimento(alimentoNombre: string) {
+    console.log(alimentoNombre)
+    const sql = 'SELECT id FROM alimento WHERE nombre = ?';
+    const result = await this.databaseService.query(sql, [alimentoNombre]);
+    return result[0].id;
+  }
 
   /// conseguir alimentos fav de un macronutriente ///
   async damealimentosFavObjetos(dameIdsAlimentosfav: string, macro: string) {

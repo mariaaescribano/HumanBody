@@ -161,5 +161,17 @@ export class AlimentosController {
     return seHaEliminado ? true : false;
   }
 
+  @Get("alimentoIdRecibo/:alimentoNombre")
+  async alimentoRecibo(@Param('alimentoNombre') alimentoNombre: string) 
+  {
+    return await this.alimentosService.getIdReciboSegunNombreAlimento(alimentoNombre);
+  }
+
+  @Get("alimentoId/:alimentoNombre")
+  async alimentoId(@Param('alimentoNombre') alimentoNombre: string) 
+  {
+    return await this.alimentosService.getIdSegunNombreAlimento(alimentoNombre);
+  }
+
   
 }

@@ -16,8 +16,8 @@ export class DiasService {
   async createDia(reciboId: number, fecha:string, userNom:string) 
   {
     const idFidelidad = await this.fidelidadService.createFidelidad();
-    const sql = 'INSERT INTO `dias`(`fidelidad_id`, `recibo_id`, `calorias_total`, `alimentos_id`, `fecha` ) VALUES (?,?,?,?, ?)';
-    const params = [idFidelidad, reciboId, "0", "", fecha];
+    const sql = 'INSERT INTO `dias`( `userNom`, `fidelidad_id`, `recibo_id`, `calorias_total`, `alimentos_id`, `fecha` ) VALUES (?,?,?,?,?, ?)';
+    const params = [userNom, idFidelidad, reciboId, "0", "", fecha];
     const result = await this.databaseService.query(sql, params);
     const insertId = result.insertId;
     await this.usuariosService.updateDiasUsuario(insertId, userNom);
@@ -105,10 +105,17 @@ export class DiasService {
       throw new NotFoundException();
   }
 
-  
 
-
-  
-
+  async existsDayFunction (fecha: string, userNom: string) {
+    if(fecha && userNom)
+    {
+      const sql = 'SELECT * FROM dias WHERE userNom=? and fecha=?';
+      const params = [userNom, fecha];
+      const result = await this.databaseService.query(sql, params);
+      return result[0];
+    }
+    else
+      throw new NotFoundException();
+  }
 
 }

@@ -3,11 +3,11 @@ import { Flex, Box, Text, Checkbox, Button, HStack, Spinner, Link, SimpleGrid, V
 import { CarbIcono, colorCarbs, colorFats, colorFibra, colorProte, FiberIcono, ProteIcono, toRoman } from '@/GlobalHelper';
 import { FatIcono } from '../icons/FatIcon';
 import { PieChardMacroNutr } from '../global/cards/PieChardMacroNutr';
-import { finalMealCard } from '../../../../backend/src/dto/meal.dto';
+import { designamealSkeleton } from '../../../../backend/src/dto/meal.dto';
 import FinalMiniMacroCard from './FinalMiniMacroCard';
 import { CaloryIcon } from '../icons/CaloryIcon';
 
-export default function FinalMealCard(props:{meal:finalMealCard, index:number}) 
+export default function FinalMealCard(props:{meal:designamealSkeleton, index:number}) 
 {
     return (
         <>
@@ -27,7 +27,7 @@ export default function FinalMealCard(props:{meal:finalMealCard, index:number})
                     <HStack>
                         <CaloryIcon></CaloryIcon>
                         <Text fontSize="sm" color="black" fontWeight={"bold"}>
-                            TOTAL {props.meal.totalCalories} kcal
+                            TOTAL {props.meal.caloriasTotal} kcal
                         </Text>
                     </HStack>
                 </VStack>

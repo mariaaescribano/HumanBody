@@ -51,22 +51,15 @@ export interface selectedAlimentosSkeleton
     fiberGrams:string;
 };
 
-export interface finalMealCard
-{
-    prote:alimentoMacroMealView;
-    fats:alimentoMacroMealView;
-    carbs:alimentoMacroMealView;
-    fiber:alimentoMacroMealView;
-    pieData:number[];
-    totalCalories:string;
-};
-
-
 export interface designamealSkeleton 
 {
     idDia: number;
     meal:number;
     nomUser:string;
+    pieData?:any;
+
+    actividad?:string;
+    caloriesNeeded?:string;
     
     caloriasTotal:string;
     caloriasSelected:string;
@@ -86,4 +79,9 @@ export interface designamealSkeleton
     fibraTotal:string;
     fuenteFibra:string;
     gramosFuenteFibra:string;
+
+    prote?:alimentoMacroMealView;
+    fats?:alimentoMacroMealView;
+    carbs?:alimentoMacroMealView;
+    fiber?:alimentoMacroMealView;
 };

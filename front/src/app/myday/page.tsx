@@ -194,10 +194,39 @@ export default function MyDay()
   {
     let fecha = await getFecha();
     let userNom = sessionStorage.getItem("userNom");
+    let recuperatedDay = await getDayIfExists(fecha);
+    if(recuperatedDay!= null)
+    {
+      sessionStorage.setItem("diaId", recuperatedDay.id)
+      designamealExists(recuperatedDay.id)
+    }
+    else
+    {
+      try{
+        const response = await axios.post(
+          `${API_URL}/dias/createDia`,
+          { reciboDeHoy, fecha, userNom},
+          {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+          }
+        );
+        if(response.data)
+          sessionStorage.setItem("diaId", response.data)
+        }
+        catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    }
+  };
+
+  const getDayIfExists = async (fecha:string) =>
+  {
+    let userNom = sessionStorage.getItem("userNom");
     try{
-      const response = await axios.post(
-        `${API_URL}/dias/createDia`,
-        { reciboDeHoy, fecha, userNom},
+      const response = await axios.get(
+        `${API_URL}/dias/existsDay/${fecha}/${userNom}`,
         {
           headers: {
               'Content-Type': 'application/json'
@@ -205,11 +234,39 @@ export default function MyDay()
         }
       );
       if(response.data)
-        sessionStorage.setItem("diaId", response.data)
+      {
+        return response.data.dia;
+      }
+    }
+    catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  const designamealExists = async (idDia:string) =>
+  {
+    try{
+      const response = await axios.get(
+        `${API_URL}/designameal/mealsOfDay/${idDia}`,
+        {
+          headers: {
+              'Content-Type': 'application/json'
+          },
+        }
+      );
+      if(response.data.length>0)
+      {
+        let ids = response.data;
+        sessionStorage.setItem("DesignAMeal", "true")
+        for (let i = 0; i < ids.length; i++) 
+        {
+          sessionStorage.setItem("meal"+(i+1), ids[i])
+        }
+      }
       }
       catch (error) {
       console.error('Error fetching data:', error);
-      }
+    }
   };
 
   

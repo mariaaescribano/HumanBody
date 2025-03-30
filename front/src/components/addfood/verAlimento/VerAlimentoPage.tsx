@@ -28,7 +28,7 @@ import PopUpMessage from '@/components/global/message/PopUpMessage';
 import PopUpErrorMessage from '@/components/global/message/PopUpErrorMessage';
 import PurpleSpinner from '@/components/global/random/PurpleSpinner';
 import CustomCard from '@/components/global/cards/CustomCard';
-import { API_URL, calcularPorcentajes, cogePacientesDeNutri, colorNutricionist, convierteNumRedondeado, crearRecibo, dameDatosDeAlimentoConcreto, dameDatosDelRecibo, dameNutriNom, dameReciboDeAlimentoConcreto, esSoloNumeros, getTamanyoPantalla, guardaAlimentoComido, redirigirSiNoHayNutriNom, redirigirSiNoHayUserNom, reglasDeTresParaAlimentoGramosPersonalizados, StringIsNull, sumaDeMacros, tryAgain } from '../../../GlobalHelper';
+import { API_URL, calcularPorcentajes, cogePacientesDeNutri, colorNutricionist, convierteNumRedondeado, crearRecibo, dameDatosDeAlimentoConcreto, dameDatosDelRecibo, dameNutriNom, dameReciboDeAlimentoConcreto, esSoloNumeros, getTamanyoPantalla, guardaAlimentoComido, redirigirSiNoHayNutriNom, redirigirSiNoHayUserNom, reglasDeTresParaAlimentoGramosPersonalizados, StringIsNull, sumaDeMacros, tryAgain, update } from '../../../GlobalHelper';
 import { alimentosComidosSkeleton, alimentosSkeleton } from '../../../../../backend/src/dto/alimentos.dto';
 import { reciboSkeleton, showMacroNutrSignUp } from '../../../../../backend/src/dto/recibos.dto';
 import SuccessErrorMessage from '@/components/global/message/SuccessErrorMessage';
@@ -163,7 +163,6 @@ export default function VerAlimentoPage(props:
             },
           }
       );
-      console.log(response.data)
         if(response.data == "")
         {
           setrecommended(true)
@@ -274,7 +273,8 @@ export default function VerAlimentoPage(props:
       let reciboSuma = sumaDeMacros(reciboPersonalizado, reciboHoy);
       if(reciboSuma && idreciboDeHoy)
       {
-        update(reciboSuma, idreciboDeHoy);
+        // 3: si todo ha ido bien 
+        update(reciboSuma, idreciboDeHoy, grams, predomina.current, calories, setmensajeError, alimento);
       }
         
       else
@@ -283,90 +283,6 @@ export default function VerAlimentoPage(props:
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reciboHoy]);
-
-
-  // 3: si todo ha ido bien 
-  // se actualiza de la bd los datos antiguos de hoy por la suma con el nuevo alimento 
-  // idAlimentoComido = se crea un AlimentoComido con los datos
-  // idAlimentoComido se concatenara en dias alimentos_id
-  const update = async (reciboSuma: any, idreciboDeHoy:string) => 
-  {
-    let idDia = sessionStorage.getItem("diaId");
-    if(idDia)
-    {
-      let alimentoComido: alimentosComidosSkeleton =
-      {
-        gramosTotales: grams,
-        calorias: calories,
-        predomina: Number(predomina.current),
-        nom: alimento?.nombre,
-        idAlimento: Number(alimento?.id)
-      };
-
-      let idAlimentoComido = await guardaAlimentoComido(alimentoComido);
-      if(idAlimentoComido)
-      { 
-        let todobn = await updateDiaAlimentos(idDia, idAlimentoComido);
-        if(todobn)
-          await updateRecibo(reciboSuma, idreciboDeHoy);
-      } 
-    }
-  };
-
-
-  const updateDiaAlimentos = async (idDia:string, idAlimentoComido:string) => 
-  {
-    let caloriasAnteriores = sessionStorage.getItem("caloriasDeHoy")
-    if(caloriasAnteriores && !StringIsNull(calories) && alimento?.id)
-    {
-      let sumaCalorias = convierteNumRedondeado(caloriasAnteriores) + convierteNumRedondeado(calories);
-      sessionStorage.setItem("caloriasDeHoy", sumaCalorias.toString());
-
-      try
-      {
-        const response = await axios.put(
-            `${API_URL}/dias/diaAlimCalor/${parseInt(idDia, 10)}`,
-            { alimentoId: idAlimentoComido, calorias: sumaCalorias },
-              {
-              headers: {
-                  'Content-Type': 'application/json'
-              },
-            }
-        );
-        if(response.data != null)
-          return true;
-      }
-      catch (error) 
-      {
-        setmensajeError(true)
-        console.error('Error fetching data:', error);
-        return false;
-      }
-    }
-    else
-      setmensajeError(false)
-  };
-
-  const updateRecibo = async (reciboSuma: any, idreciboDeHoy:string) => 
-  {
-    try
-    {
-      const response = await axios.put(
-          `${API_URL}/recibos/recibo/${parseInt(idreciboDeHoy, 10)}`,
-          reciboSuma,
-          {
-          headers: {
-              'Content-Type': 'application/json'
-          },
-          }
-      );
-      if(response.data != null)
-        setmensajeError(false)
-    }
-      catch (error) {
-      console.error('Error fetching data:', error);
-      }
-  };
 
 
 

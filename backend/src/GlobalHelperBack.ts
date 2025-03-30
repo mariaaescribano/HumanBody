@@ -57,7 +57,6 @@ export function removeNameFromConcatenatedList(nombresConcatenados: string, name
     if (char === ",") {
       if (nombre.trim()) { 
         // Check if the current name is the one to remove
-        console.log("liminando", nombre.trim(), nameToRemove)
         if (nombre.trim() !== nameToRemove) {
           nombresArray.push(nombre.trim());
         }

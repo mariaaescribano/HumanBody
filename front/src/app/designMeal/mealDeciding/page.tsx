@@ -292,6 +292,8 @@ export default function DesignMeal_MealDeciding()
         {
           relleno: true,
           caloriasTotal: meal?.caloriasTotal,
+          actividad: sessionStorage.getItem("actividad"),
+          caloriesNeeded: caloriesNeeded.current,
           proteTotal: selectedAlimentos.proteTotal == "" ? meal?.proteTotal : selectedAlimentos.proteTotal,
           fuenteProte: selectedAlimentos.prote,
           carbsTotal: selectedAlimentos.carbsTotal == "" ? meal?.carbsTotal : selectedAlimentos.proteTotal,

@@ -35,6 +35,12 @@ export class DiasController {
     return {dia};
   }
 
+  @Get("existsDay/:fecha/:userNom")
+  async existsDay(@Param('fecha') fecha: string, @Param('userNom') userNom: string) {
+    const dia = await this.diasService.existsDayFunction(fecha, userNom);
+    return {dia};
+  }
+
   @Get("diaAlimentos/:idDia")
   async diaAlimentos(@Param('idDia') idDia: number) {
     if(idDia)

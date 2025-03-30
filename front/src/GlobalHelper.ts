@@ -50,6 +50,27 @@ export const redirigirSiNoHayUserNom = () => {
   }
 };
 
+export const getIdReciboConAlimentoName = async (nombreAlimento:string) =>
+{
+  try{
+    const response = await axios.get(
+        `${API_URL}/alimentos/alimentoIdRecibo/${nombreAlimento}`,
+        {
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        }
+    );
+    if(response.data != null)
+    {
+      return response.data;
+    }
+  }
+  catch (error) {
+      console.error('Error fetching data:', error);
+  }
+};
+
 export const redirigirSiNoHayNutriNom = () => {
   const nom = sessionStorage.getItem("nutriNom");
   if (!nom) {
@@ -113,6 +134,27 @@ export const dameDatosDeAlimentoConcreto = async (idAlimento:number) =>
   }
 };
 
+export const getIdAlimentoPorNombre = async (alimentoNom:string) =>
+  {
+    try{
+    const response = await axios.get(
+      `${API_URL}/alimentos/alimentoId/${alimentoNom}`,
+      {
+        headers: {
+            'Content-Type': 'application/json'
+        },
+      }
+    );
+      if(response.data != null)
+      {
+        return response.data;
+      }
+    }
+    catch (error) {
+    console.error('Error fetching data:', error);
+    }
+  };
+
 export const guardaAlimentoComido = async (alimento: alimentosComidosSkeleton) => 
 {
   try
@@ -161,13 +203,18 @@ export const dameReciboDeAlimentoConcreto = async (idRecibo:number) =>
 function reglaDeTres(valorA:number, valorB:number, valorC:number) {
   return (valorB * valorC) / valorA;
 }
-export const reglasDeTresParaAlimentoGramosPersonalizados = (reciboOriginal:reciboSkeleton, grams:string, alimento:alimentosSkeleton, setcalories?:any) =>
+export const reglasDeTresParaAlimentoGramosPersonalizados = (reciboOriginal:reciboSkeleton, calories:any, grams:string, alimento?:alimentosSkeleton, setcalories?:any) =>
 {
   // actualiza calorias
-  let caloriasPorGramos = reglaDeTres(100, parseInt(alimento?.calorias_100gr, 10), parseInt(grams, 10));
-  if(setcalories)
-    setcalories(Math.round(isNaN(caloriasPorGramos) ? 0 : caloriasPorGramos).toString());
-
+  if(alimento)
+  {
+    let caloriasPorGramos = reglaDeTres(100, parseInt(alimento?.calorias_100gr, 10), parseInt(grams, 10));
+    if(setcalories)
+      setcalories(Math.round(isNaN(caloriasPorGramos) ? 0 : caloriasPorGramos).toString());
+    if(calories)
+      calories.current = (Math.round(isNaN(caloriasPorGramos) ? 0 : caloriasPorGramos).toString());
+  }
+  
   // actualiza macros
   let proteNuevos = reglaDeTres(100, parseInt(reciboOriginal?.prote, 10), parseInt(grams, 10));
   let completoNuevos = reglaDeTres(100, parseInt(reciboOriginal?.completo, 10), parseInt(grams, 10));
@@ -279,6 +326,7 @@ import { MdOilBarrel } from 'react-icons/md';
 import { reciboSkeleton } from '../../backend/src/dto/recibos.dto';
 import axios from 'axios';
 import { alimentosComidosSkeleton, alimentosSkeleton } from '../../backend/src/dto/alimentos.dto';
+import { designamealSkeleton } from '../../backend/src/dto/meal.dto';
 export const ProteIcono = FaFish;
 export const CarbIcono = FaAppleAlt;
 export const FiberIcono = FaSeedling;
@@ -750,6 +798,93 @@ export function handleMouseEndGlobalHelper(isInteracting:any)
   isInteracting.current = false; // Finaliza el toque
 };
 
+
+
+
+// #region add food
+
+// se actualiza de la bd los datos antiguos de hoy por la suma con el nuevo alimento 
+// idAlimentoComido = se crea un AlimentoComido con los datos
+// idAlimentoComido se concatenara en dias alimentos_id
+
+export const update = async (reciboSuma: any, idreciboDeHoy:string, grams:string, predomina:any, calories:string, setmensajeError:any, alimento?: alimentosSkeleton) => 
+  {
+    let idDia = sessionStorage.getItem("diaId");
+    if(idDia)
+    {
+      let alimentoComido: alimentosComidosSkeleton =
+      {
+        gramosTotales: grams,
+        calorias: calories,
+        predomina: Number(predomina),
+        nom: alimento?.nombre,
+        idAlimento: Number(alimento?.id)
+      };
+
+      let idAlimentoComido = await guardaAlimentoComido(alimentoComido);
+      if(idAlimentoComido)
+      { 
+        let todobn = await updateDiaAlimentos(idDia, idAlimentoComido, calories, alimento, setmensajeError);
+        if(todobn)
+          await updateRecibo(reciboSuma, idreciboDeHoy, setmensajeError);
+      } 
+    }
+  };
+
+
+  const updateDiaAlimentos = async (idDia:string, idAlimentoComido:string, calories:string, alimento: alimentosSkeleton, setmensajeError:any) => 
+  {
+    let caloriasAnteriores = sessionStorage.getItem("caloriasDeHoy")
+    if(caloriasAnteriores && !StringIsNull(calories) && alimento?.id)
+    {
+      let sumaCalorias = convierteNumRedondeado(caloriasAnteriores) + convierteNumRedondeado(calories);
+      sessionStorage.setItem("caloriasDeHoy", sumaCalorias.toString());
+
+      try
+      {
+        const response = await axios.put(
+            `${API_URL}/dias/diaAlimCalor/${parseInt(idDia, 10)}`,
+            { alimentoId: idAlimentoComido, calorias: sumaCalorias },
+              {
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+            }
+        );
+        if(response.data != null)
+          return true;
+      }
+      catch (error) 
+      {
+        setmensajeError(true)
+        console.error('Error fetching data:', error);
+        return false;
+      }
+    }
+    else
+      setmensajeError(false)
+  };
+
+  const updateRecibo = async (reciboSuma: any, idreciboDeHoy:string, setmensajeError:any) => 
+  {
+    try
+    {
+      const response = await axios.put(
+          `${API_URL}/recibos/recibo/${parseInt(idreciboDeHoy, 10)}`,
+          reciboSuma,
+          {
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          }
+      );
+      if(response.data != null)
+        setmensajeError(false)
+    }
+      catch (error) {
+      console.error('Error fetching data:', error);
+      }
+  };
 
 
 
