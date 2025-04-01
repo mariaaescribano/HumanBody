@@ -135,6 +135,7 @@ export const PieChardMacroNutr = (props: { pieChartData: number[] }) => {
       type="pie"
       width="100%"
       height="100%"
+      onClick={(e)=> e.preventDefault()}
       series={ArrayIsNullEmpty(roundedData) ? pieChartDataDefault : roundedData}
       style={{
         display: 'flex',

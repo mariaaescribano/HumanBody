@@ -34,6 +34,7 @@ import { showEbook } from '../../../../../../backend/src/dto/ebook.dto';
 import { colorNutricionist } from '@/GlobalHelper';
 import GreenSpinner from '@/components/global/random/GreenSpinner';
 import BarraMenuNutri from '@/components/nutritionist/BarraMenuNutri';
+import MealDesignedWatch from '@/components/designMeal/MealDesignedWatch';
 
 
 
@@ -332,6 +333,8 @@ export default function MyPatientDay()
               </VStack>
           </HStack>
       </Card>
+
+      <MealDesignedWatch nutri={patientNomSeleccionado.current} idDia={idDia.current}></MealDesignedWatch>
 
        {/* calorias y macronutrients overall view */}
         <CustomCard mt="20px" hijo={

@@ -326,7 +326,7 @@ import { MdOilBarrel } from 'react-icons/md';
 import { reciboSkeleton } from '../../backend/src/dto/recibos.dto';
 import axios from 'axios';
 import { alimentosComidosSkeleton, alimentosSkeleton } from '../../backend/src/dto/alimentos.dto';
-import { designamealSkeleton } from '../../backend/src/dto/meal.dto';
+import { alimentoMacroMealView, designamealSkeleton } from '../../backend/src/dto/meal.dto';
 export const ProteIcono = FaFish;
 export const CarbIcono = FaAppleAlt;
 export const FiberIcono = FaSeedling;
@@ -493,6 +493,38 @@ export const sumaDeMacros =  (reciboPersonalizado:reciboSkeleton, reciboHoy:reci
   let complejosSuma = convierteNumRedondeado(reciboPersonalizado.complejos) + convierteNumRedondeado(reciboHoy.complejos);
   let simplesSuma = convierteNumRedondeado(reciboPersonalizado.simples) + convierteNumRedondeado(reciboHoy.simples);
   let fibraSuma = convierteNumRedondeado(reciboPersonalizado.fibra) + convierteNumRedondeado(reciboHoy.fibra);
+
+  let newRecibo : reciboSkeleton =
+  {
+    grasas:grasasSuma.toString(),
+    monoinsaturadas:monoinsaturadasSuma.toString(),
+    poliinsaturadas:poliinsaturadasSuma.toString(),
+    saturadas:saturadasSuma.toString(),
+    prote:proteSuma.toString(),
+    incompleto:incompletoSuma.toString(),
+    completo:completoSuma.toString(),
+    carbs:carbsSuma.toString(),
+    complejos:complejosSuma.toString(),
+    simples:simplesSuma.toString(),
+    fibra:fibraSuma.toString()
+  };
+
+  return newRecibo;
+};
+
+export const restaDeMacros =  (reciboPersonalizado:reciboSkeleton, reciboHoy:reciboSkeleton) =>
+{
+  let grasasSuma = convierteNumRedondeado(reciboPersonalizado.grasas) - convierteNumRedondeado(reciboHoy.grasas);
+  let monoinsaturadasSuma = convierteNumRedondeado(reciboPersonalizado.monoinsaturadas) - convierteNumRedondeado(reciboHoy.monoinsaturadas);
+  let saturadasSuma = convierteNumRedondeado(reciboPersonalizado.saturadas) - convierteNumRedondeado(reciboHoy.saturadas);
+  let poliinsaturadasSuma = convierteNumRedondeado(reciboPersonalizado.poliinsaturadas) - convierteNumRedondeado(reciboHoy.poliinsaturadas);
+  let proteSuma = convierteNumRedondeado(reciboPersonalizado.prote) - convierteNumRedondeado(reciboHoy.prote);
+  let incompletoSuma = convierteNumRedondeado(reciboPersonalizado.incompleto) - convierteNumRedondeado(reciboHoy.incompleto);
+  let completoSuma = convierteNumRedondeado(reciboPersonalizado.completo) - convierteNumRedondeado(reciboHoy.completo);
+  let carbsSuma = convierteNumRedondeado(reciboPersonalizado.carbs) - convierteNumRedondeado(reciboHoy.carbs);
+  let complejosSuma = convierteNumRedondeado(reciboPersonalizado.complejos) - convierteNumRedondeado(reciboHoy.complejos);
+  let simplesSuma = convierteNumRedondeado(reciboPersonalizado.simples) - convierteNumRedondeado(reciboHoy.simples);
+  let fibraSuma = convierteNumRedondeado(reciboPersonalizado.fibra) - convierteNumRedondeado(reciboHoy.fibra);
 
   let newRecibo : reciboSkeleton =
   {
@@ -865,7 +897,7 @@ export const update = async (reciboSuma: any, idreciboDeHoy:string, grams:string
       setmensajeError(false)
   };
 
-  const updateRecibo = async (reciboSuma: any, idreciboDeHoy:string, setmensajeError:any) => 
+  export const updateRecibo = async (reciboSuma: any, idreciboDeHoy:string, setmensajeError:any) => 
   {
     try
     {
@@ -878,7 +910,7 @@ export const update = async (reciboSuma: any, idreciboDeHoy:string, grams:string
           },
           }
       );
-      if(response.data != null)
+      if(response.data != null && setmensajeError)
         setmensajeError(false)
     }
       catch (error) {
@@ -886,8 +918,260 @@ export const update = async (reciboSuma: any, idreciboDeHoy:string, grams:string
       }
   };
 
+// #endregion add food
 
 
+// #region get meals 
+
+export const designamealExists = async (idDia:string, userNom:string) =>
+  {
+    try{
+      const response = await axios.get(
+        `${API_URL}/designameal/mealsOfDay/${idDia}/${userNom}`,
+        {
+          headers: {
+              'Content-Type': 'application/json'
+          },
+        }
+      );
+      if(response.data.length>0)
+      {
+        return response.data;
+      }
+      }
+      catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+
+
+export function getMealObjectsFromSessionStorage(): any[] {
+  const results: any[] = [];
+
+  for (let i = 0; i < sessionStorage.length; i++) {
+    const key = sessionStorage.key(i);
+    
+    // Check if the key matches the pattern "meal" followed by a number
+    if (key && /^meal\d+$/.test(key)) { 
+      try {
+        const item = JSON.parse(sessionStorage.getItem(key) || "null");
+        if (item) {
+          results.push({ key, value: item });
+        }
+      } catch (error) {
+        console.error(`Error parsing sessionStorage item ${key}:`, error);
+      }
+    }
+  }
+  return results;
+}
+
+export const getMealsObjects = async (idmeals:{ key: string, value: any }[], setmeals:any, idmealsNotFromSS?:number[]) =>
+  {
+    let mealIDS;
+
+    if(idmeals && idmeals.length>0)
+    {
+      mealIDS = idmeals.map(meal => Number(meal.value) || 0);
+    }
+    else if(idmealsNotFromSS && idmealsNotFromSS.length>0)
+    {
+      mealIDS = idmealsNotFromSS;
+    }
+    if(mealIDS && mealIDS.length>0)
+    {
+      let guarda:designamealSkeleton[] = [];
+      for (let i = 0; i < mealIDS.length; i++)
+      {
+        let meal = await getConcretMeal(mealIDS[i].toString());
+        let mealSalva:designamealSkeleton = meal;
+
+        //get objects
+        let dameProte = gestionaMacro(mealSalva.fuenteProte,mealSalva.gramosFuenteProte, mealSalva.proteTotal)
+        let dameFats = gestionaMacro(mealSalva.fuenteFat, mealSalva.gramosFuenteFat, mealSalva.fatTotal)
+        let dameCarbs = gestionaMacro(mealSalva.fuenteCarbs, mealSalva.gramosFuenteCarbs, mealSalva.carbsTotal)
+        let dameFiber = gestionaMacro(mealSalva.fuenteFibra, mealSalva.gramosFuenteFibra, mealSalva.fibraTotal)
+        //save objects
+        mealSalva.prote= dameProte ?? 0;
+        mealSalva.fats=dameFats ?? 0;
+        mealSalva.carbs=dameCarbs ?? 0;
+        mealSalva.fiber=dameFiber ?? 0;
+        //get pie data
+        //mealSalva.pieData = [Number(dameProte.gramosFuente) ?? 0, Number(dameFats.gramosFuente) ?? 0, Number(dameCarbs.gramosFuente) ?? 0, Number(dameFiber.gramosFuente) ?? 0];
+        mealSalva.pieData = [
+          Number(dameProte?.gramosFuente) || 0,
+          Number(dameFats?.gramosFuente) || 0,
+          Number(dameCarbs?.gramosFuente) || 0,
+          Number(dameFiber?.gramosFuente) || 0
+        ];
+       
+        // save activity and caloriesNeeded
+        if (!sessionStorage.getItem("actividad")) {
+          sessionStorage.setItem("actividad", meal.actividad);
+        }
+        if (!sessionStorage.getItem("caloriasNecesitadas")) {
+          sessionStorage.setItem("caloriasNecesitadas", meal.caloriesNeeded);
+        }
+
+        guarda.push(mealSalva)
+      }
+      setmeals(guarda)
+    }
+    else
+      location.href='./start'
+    
+  };
+
+  const getConcretMeal = async (idmeal:string) =>
+  {
+    try{
+      const response = await axios.get(
+          `${API_URL}/designameal/meal/${idmeal}`,
+          {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+          }
+      );
+      if(response.data != null)
+      {
+       return response.data;
+      }
+    }
+    catch (error) 
+    {
+      console.error('Error fetching data:', error);
+    }
+  };
+  
+  const gestionaMacro = (fuenteProte:string, gramosFuenteProte:string, proteTotal:string) =>
+  {
+      let mealObject: alimentoMacroMealView =
+      {
+          nombreFuente:fuenteProte,
+          gramosMacro:proteTotal,
+          gramosFuente:gramosFuenteProte
+      };
+      return mealObject
+  };
+
+
+
+// #region delete food
+
+export const updateCaloriesAlimentosId = async (idmeal:string) =>
+{
+  try{
+    const response = await axios.get(
+        `${API_URL}/designameal/meal/${idmeal}`,
+        {
+          headers: {
+              'Content-Type': 'application/json'
+          },
+        }
+    );
+    if(response.data != null)
+    {
+      return response.data;
+    }
+  }
+  catch (error) 
+  {
+    console.error('Error fetching data:', error);
+  }
+};
+
+export const updateCaloriesDiasComidos = async (calories: string, alimentoIdABorrar:number, idDia:string) => 
+{
+  try
+  {
+    const response = await axios.put(
+      `${API_URL}/dias/updateCaloriesAlimentosId/${calories}/${alimentoIdABorrar}/${idDia}`,
+      {
+        headers: {
+            'Content-Type': 'application/json'
+        },
+      }
+    );  
+  }
+    catch (error) {
+    console.error('Error fetching data:', error);
+    }
+};
+
+export const borrarAlimentoComidoDeBD = async (alimentoIdABorrar:number) => 
+{
+  try
+  {
+    const response = await axios.delete(
+      `${API_URL}/alimentosComidos/delete/${alimentoIdABorrar}`,
+      {
+        headers: {
+            'Content-Type': 'application/json'
+        },
+      }
+    );  
+  }
+    catch (error) {
+    console.error('Error fetching data:', error);
+    }
+};
+
+
+export const dameIdAlimentoComido = async (gramosTotal:string, alimento:string, idDia:string) => 
+{
+  // STRATEGY: get the alimento comido id
+  // get the alimentos comidos from dia
+  let alimentosComidos = await dameAlimentosComidosHoy(idDia)
+  // get the id and name of each one
+  // the one that has the same nom and grams is the alimento comido we are searching
+  for(let i=0; i< alimentosComidos.length; i++)
+  {
+    if(alimentosComidos[i][0].nom == alimento && alimentosComidos[i][0].gramosTotales == gramosTotal)
+    {
+      return alimentosComidos[i][0].id;
+    }
+  } 
+};
+
+
+
+export const dameAlimentosComidosHoy = async (diaId:string, setalimentos?:any) =>
+{
+  // coge el id dia de hoy
+  try {
+      const response = await axios.get(
+          `${API_URL}/dias/diaAlimentos/${diaId}`,
+          {
+              headers: {
+                  'Content-Type': 'application/json'
+              }
+          }
+      );
+      if (response.data) 
+      {
+        if(setalimentos)
+          setalimentos(response.data)
+        return response.data;
+      }
+      else
+      {
+        if(setalimentos)
+          setalimentos([])
+        return [];
+      }
+  } catch (error:any) 
+  {
+    console.log('Error al coger alimentos de hoy:', error);
+    if(setalimentos)
+      setalimentos([])
+    else 
+      return [];
+  }
+  // devuelve alimentos
+  // los muestra
+};
 
 
 

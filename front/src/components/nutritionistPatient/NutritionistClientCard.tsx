@@ -189,6 +189,7 @@ export default function NutritionistClientCard(props:{  })
             );
             if(response.data)
             {
+                sessionStorage.removeItem("userNutri")
                 setmyNutri(undefined)
                 setcardType(1)
             }

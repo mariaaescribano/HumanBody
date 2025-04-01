@@ -1,19 +1,19 @@
 'use client';
 import React, { useEffect, useState, useRef } from 'react';
-import PurpleSpinner from '@/components/global/random/PurpleSpinner';
-import { designamealSkeleton } from '../../../../../backend/src/dto/meal.dto';
+import { designamealSkeleton } from '../../../../../../backend/src/dto/meal.dto';
 import LastPagePage from '@/components/designMeal/LastPagePage';
+import GreenSpinner from '@/components/global/random/GreenSpinner';
 
-export default function LastPageUser() 
+export default function LastPageNutri() 
 {
   // todos los meals pero con sus datos para show off
   const [meals, setmeals] = useState<designamealSkeleton[]>([]);
   return (
     <>
       <div style={{ display: meals.length == 0 ? 'none' : "block" }}>
-        <LastPagePage meals={meals} setmeals={setmeals} soyNutri={"false"} />
+        <LastPagePage meals={meals} setmeals={setmeals} soyNutri={"true"} />
       </div>
-      {meals.length == 0 && <PurpleSpinner />}
+      {meals.length == 0 && <GreenSpinner />}
     </>
   );
 }

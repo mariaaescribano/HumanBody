@@ -29,7 +29,7 @@ import PopUpMessage from '@/components/global/message/PopUpMessage';
 import PopUpErrorMessage from '@/components/global/message/PopUpErrorMessage';
 import PurpleSpinner from '@/components/global/random/PurpleSpinner';
 import CustomCard from '@/components/global/cards/CustomCard';
-import { API_URL, crearRecibo, dameDatosDelRecibo, formatDateToISOFriendly, getFecha, getInternetDateParts, getTamanyoPantalla, redirigirSiNoHayUserNom, userNutriId } from '../../GlobalHelper';
+import { API_URL, ArrayIsNullEmpty, crearRecibo, dameDatosDelRecibo, designamealExists, formatDateToISOFriendly, getFecha, getInternetDateParts, getTamanyoPantalla, redirigirSiNoHayUserNom, userNutriId } from '../../GlobalHelper';
 import ElementoPrimero from '@/components/myday/ElementoPrimero';
 import MacroNutrCard from '@/components/signin/MacroNutrCard';
 import { macroPorcentajes, reciboSkeleton, showMacroNutrSignUp } from '../../../../backend/src/dto/recibos.dto';
@@ -40,6 +40,7 @@ import FidelidadCard from '@/components/fidelity/FidelidadCard';
 import BarraMenu from '@/components/global/BarraMenu';
 import { useRouter } from 'next/navigation';
 import NutritionistClientCard from '@/components/nutritionistPatient/NutritionistClientCard';
+import MealDesignedWatch from '@/components/designMeal/MealDesignedWatch';
 
 
 
@@ -89,13 +90,15 @@ export default function MyDay()
   useEffect(() => 
   {
     redirigirSiNoHayUserNom();
+    getTamanyoPantalla(setscreenSize)
+
     let id = sessionStorage.getItem("reciboDeHoy");
     let idReciboObjetivoo = sessionStorage.getItem("reciboObjetivo");
-    getTamanyoPantalla(setscreenSize)
-      // no hay nada en la BD, lo creo de zero
+
+    // no hay nada en la BD, lo creo de zero
     if(id == null )
     {
-      creaRecibo();
+      createorgetDay();
     }
     // ya hay datos en la BD, los recoge
     else if(id && idReciboObjetivoo)
@@ -143,32 +146,61 @@ export default function MyDay()
     }  
   };
 
-  const creaRecibo = async () =>
+
+  // STRATEGY
+  const createorgetDay = async () =>
   {
-    let fechaDeDia = await getFecha();
-    setfecha(fechaDeDia)
-
-    idReciboDeHoy.current = await crearRecibo(reciboDeHoy);
-    await crearDia(idReciboDeHoy.current);
-
     let nombreuser = sessionStorage.getItem("userNom");
-    // console.log(nombreuser)
     if(nombreuser)
     {
-      let datos = await dameUsuarioReciboObjetivo(nombreuser);
       await userTieneNutriComprueba(nombreuser);
-    
-      sessionStorage.setItem("reciboObjetivo", datos.recibo_id)
-      sessionStorage.setItem("caloriasObjetivo", datos.calorias_objetivo)
-      sessionStorage.setItem("caloriasDeHoy", "0")
 
-      dameDatosDelRecibo(datos.recibo_id, setreciboObjetivo);
-      idReciboObjetivo.current = datos.recibo_id;
+      let fechaDeDia = await getFecha();
+      setfecha(fechaDeDia)
+
+      let recuperatedDay = await getDayIfExists(fechaDeDia);
+      if(recuperatedDay)
+      {
+        sessionStorage.setItem("diaId", recuperatedDay.id)
+
+        let ids = await designamealExists(recuperatedDay.id, nombreuser)
+        if(!ArrayIsNullEmpty(ids))
+        {
+          sessionStorage.setItem("DesignAMeal", "true")
+          for (let i = 0; i < ids.length; i++) 
+          {
+            sessionStorage.setItem("meal"+(i+1), ids[i])
+          }
+        } 
+        let datos = await dameUsuarioReciboObjetivo(nombreuser);
+        sessionStorage.setItem("reciboObjetivo", datos.recibo_id)
+        sessionStorage.setItem("caloriasObjetivo", datos.calorias_objetivo)
+        sessionStorage.setItem("caloriasDeHoy", recuperatedDay.calorias_total)
+
+        // get recibos
+        await dameDatosDelRecibo(datos.recibo_id, setreciboObjetivo);
+        await dameDatosDelRecibo(recuperatedDay.recibo_id, setreciboDeHoy);
+        idReciboObjetivo.current = datos.recibo_id; 
+        idReciboDeHoy.current = recuperatedDay.recibo_id;
+      }  
+      else
+      {
+        idReciboDeHoy.current = await crearRecibo(reciboDeHoy);
+        await crearDia(idReciboDeHoy.current);
+        let datos = await dameUsuarioReciboObjetivo(nombreuser);
+        await userTieneNutriComprueba(nombreuser);
+      
+        sessionStorage.setItem("reciboObjetivo", datos.recibo_id)
+        sessionStorage.setItem("caloriasObjetivo", datos.calorias_objetivo)
+        sessionStorage.setItem("caloriasDeHoy", "0")
+
+        dameDatosDelRecibo(datos.recibo_id, setreciboObjetivo);
+        idReciboObjetivo.current = datos.recibo_id;
+      }
+        sessionStorage.setItem("reciboDeHoy", idReciboDeHoy.current.toString()) 
     }
     else
       location.href = "../login/login";
-
-    sessionStorage.setItem("reciboDeHoy", idReciboDeHoy.current.toString())
   };
 
   const dameUsuarioReciboObjetivo = async (nombre:string) =>
@@ -194,30 +226,21 @@ export default function MyDay()
   {
     let fecha = await getFecha();
     let userNom = sessionStorage.getItem("userNom");
-    let recuperatedDay = await getDayIfExists(fecha);
-    if(recuperatedDay!= null)
-    {
-      sessionStorage.setItem("diaId", recuperatedDay.id)
-      designamealExists(recuperatedDay.id)
-    }
-    else
-    {
-      try{
-        const response = await axios.post(
-          `${API_URL}/dias/createDia`,
-          { reciboDeHoy, fecha, userNom},
-          {
-            headers: {
-                'Content-Type': 'application/json'
-            },
-          }
-        );
-        if(response.data)
-          sessionStorage.setItem("diaId", response.data)
+    try{
+      const response = await axios.post(
+        `${API_URL}/dias/createDia`,
+        { reciboDeHoy, fecha, userNom},
+        {
+          headers: {
+              'Content-Type': 'application/json'
+          },
         }
-        catch (error) {
-        console.error('Error fetching data:', error);
+      );
+      if(response.data)
+        sessionStorage.setItem("diaId", response.data)
       }
+      catch (error) {
+      console.error('Error fetching data:', error);
     }
   };
 
@@ -242,33 +265,6 @@ export default function MyDay()
       console.error('Error fetching data:', error);
     }
   };
-
-  const designamealExists = async (idDia:string) =>
-  {
-    try{
-      const response = await axios.get(
-        `${API_URL}/designameal/mealsOfDay/${idDia}`,
-        {
-          headers: {
-              'Content-Type': 'application/json'
-          },
-        }
-      );
-      if(response.data.length>0)
-      {
-        let ids = response.data;
-        sessionStorage.setItem("DesignAMeal", "true")
-        for (let i = 0; i < ids.length; i++) 
-        {
-          sessionStorage.setItem("meal"+(i+1), ids[i])
-        }
-      }
-      }
-      catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  };
-
   
   // cada vez q el recibo cambia se actualiza el porcentaje
   useEffect(() => 
@@ -480,6 +476,9 @@ export default function MyDay()
                 /> */}
             </HStack>
         </Card>
+
+
+        <MealDesignedWatch></MealDesignedWatch>
 
        {/* calorias y macronutrients overall view */}
         <CustomCard mt="20px" hijo={<ElementoPrimero macroPorcentaje={macroPorcentaje}></ElementoPrimero>}></CustomCard>

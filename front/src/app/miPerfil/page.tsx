@@ -333,7 +333,7 @@ export default function MiPerfil()
     
     const updateFats = () =>
         updateNutrient("fats", {
-            grasas: reciboObjetivo?.prote,
+            grasas: reciboObjetivo?.grasas,
             monoinsaturadas: reciboObjetivo?.monoinsaturadas,
             poliinsaturadas: reciboObjetivo?.poliinsaturadas,
             saturadas: reciboObjetivo?.saturadas,

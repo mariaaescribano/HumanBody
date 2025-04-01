@@ -30,7 +30,7 @@ import PopUpMessage from '@/components/global/message/PopUpMessage';
 import PopUpErrorMessage from '@/components/global/message/PopUpErrorMessage';
 import PurpleSpinner from '@/components/global/random/PurpleSpinner';
 import CustomCard from '@/components/global/cards/CustomCard';
-import { API_URL, calcularPorcentajes, colorNutricionist, crearRecibo, esSoloNumeros, getTamanyoPantalla, redirigirSiNoHayNutriNom, redirigirSiNoHayUserNom, StringIsNull } from '../../GlobalHelper';
+import { API_URL, calcularPorcentajes, colorNutricionist, crearRecibo, dameAlimentosComidosHoy, esSoloNumeros, getTamanyoPantalla, redirigirSiNoHayNutriNom, redirigirSiNoHayUserNom, StringIsNull } from '../../GlobalHelper';
 import SuccessErrorMessage from '@/components/global/message/SuccessErrorMessage';
 import InputField from '@/components/global/random/InputField';
 import { PieChardMacroNutr } from '@/components/global/cards/PieChardMacroNutr';
@@ -47,62 +47,65 @@ import BarraMenuNutri from '@/components/nutritionist/BarraMenuNutri';
 
 export default function FoodListContent(props:{alimentos:alimentosComidosSkeleton[], setalimentos:any}) 
 {
-    const [nutri, setnutri ] = useState<boolean>();
+  const [nutri, setnutri ] = useState<boolean>();
+  const [error, seterror ] = useState<string>(""); // if is not "" it would be a error message
 
-    useEffect(() => 
-    {
-        const queryParams = new URLSearchParams(location.search);
-        const soyNutri = queryParams.get('soyNutri');
-        if(soyNutri)
-        {
-            setnutri(true)
-            redirigirSiNoHayNutriNom();
-        }
-        else
-        {
-            setnutri(false)
-            redirigirSiNoHayUserNom(); 
-        }
-        
-        const diaId = queryParams.get('diaId') || sessionStorage.getItem("diaId");
-        
-        if(diaId)
-            dameAlimentosComidosHoy(diaId)
-        else
-            location.href = "../myday"
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+ 
+  useEffect(() => 
+  {
+      const queryParams = new URLSearchParams(location.search);
+      const soyNutri = queryParams.get('soyNutri');
+      if(soyNutri)
+      {
+          setnutri(true)
+          redirigirSiNoHayNutriNom();
+      }
+      else
+      {
+          setnutri(false)
+          redirigirSiNoHayUserNom(); 
+      }
+      
+      const diaId = queryParams.get('diaId') || sessionStorage.getItem("diaId");
+      
+      if(diaId)
+          dameAlimentosComidosHoy(diaId)
+      else
+          location.href = "../myday"
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-    const dameAlimentosComidosHoy = async (diaId:string) =>
-        {
-        // coge el id dia de hoy
-        try {
-            const response = await axios.get(
-                `${API_URL}/dias/diaAlimentos/${diaId}`,
-                {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                }
-            );
-            if (response.data) {
-                props.setalimentos(response.data)
-            }
-        } catch (error:any) 
-        {
-            if(error.status == 404)
+  const dameAlimentosComidosHoy = async (diaId:string) =>
+  {
+    // coge el id dia de hoy
+    try {
+        const response = await axios.get(
+            `${API_URL}/dias/diaAlimentos/${diaId}`,
             {
-                props.setalimentos([]) // its filled with [] to tell down that is not undefined
+                headers: {
+                    'Content-Type': 'application/json'
+                }
             }
-            console.log('Error al coger alimentos de hoy:', error);
+        );
+        if (response.data) {
+            props.setalimentos(response.data)
         }
-        // devuelve alimentos
-        // los muestra
-        };
+    } catch (error:any) 
+    {
+        if(error.status == 404)
+        {
+            props.setalimentos([]) // its filled with [] to tell down that is not undefined
+        }
+        console.log('Error al coger alimentos de hoy:', error);
+    }
+    // devuelve alimentos
+    // los muestra
+  };
+  
   
   return (
     <>
-      { props.alimentos && 
+      { props.alimentos!= null && 
       <Flex
         direction="column"
         align="center"
@@ -123,15 +126,19 @@ export default function FoodListContent(props:{alimentos:alimentosComidosSkeleto
         } >
       </CustomCard>
 
+      {error !== "" && <PopUpErrorMessage title={''} texto={error}></PopUpErrorMessage>}
+
       <CustomCard mt="10px" p={props.alimentos?.length == 0 ? "20px" : "30px"} hijo={ 
         <>
 
-          { props.alimentos && props.alimentos?.length > 0 &&
+          { nutri!= undefined && props.alimentos?.length > 0 &&
           props.alimentos.map((alimento, index) => (
-            <AlimentoMiniJustRead key={index} alimentoComido={alimento[0]}></AlimentoMiniJustRead>
+            <AlimentoMiniJustRead 
+            key={index} alimentoComido={alimento[0]} 
+            nutri={nutri} seterror={seterror} dameAlimentosComidosHoy={dameAlimentosComidosHoy} />
           ))}
 
-          {props.alimentos && props.alimentos?.length == 0 &&
+          { props.alimentos?.length == 0 &&
             <Text color="red">There is no food registered for today</Text>}
 
         </>}>

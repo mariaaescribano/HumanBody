@@ -34,12 +34,12 @@ export default function MacroMiniCards(props: {
         >
           {Icono && <Icono />}
         </Box>
-        <Text color="white" fontWeight="500">{title}</Text>
+        <Text color={props.fuenteMacro!= "" ? props.macro==0 ? "white" : "black" : "gray.100" } fontWeight="500">{title}</Text>
       </HStack>
 
       <HStack align="flex-start" mt="10px" mb="5px" spacing="10px" h="50px">
         <Box
-          color="white"
+          color={props.fuenteMacro!= "" ? props.macro==0 ? "white" : "black" : "gray.100" }
           ml="50px"
           flex="1"
           wordBreak="break-word"
@@ -57,7 +57,7 @@ export default function MacroMiniCards(props: {
 
         <Box h="100%" w="1px" bg="white" alignSelf="stretch" />
 
-        <Box color="white" textAlign="center" minW="50px">
+        <Box color={props.fuenteMacro!= "" ? props.macro==0 ? "white" : "black" : "gray.100" } textAlign="center" minW="50px">
           <Text fontSize="xs" fontWeight="bold">TOTAL</Text>
           <Text fontSize="md">{props.totalMacro}g</Text>
         </Box>

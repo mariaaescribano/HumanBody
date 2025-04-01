@@ -327,7 +327,7 @@ export default function DesignMealMain()
     {
       // we only have the name, needs the alimento Id
       let idAlimento = await getIdAlimentoPorNombre(alimentoNom)
-      // new, we can get the object alimento
+      // now, we can get the object alimento
       let alimentoConcreto = await dameDatosDeAlimentoConcreto(idAlimento);
       // get the receipt of the alimento original
       let reciboOriginal = await dameReciboDeAlimentoConcreto(alimentoConcreto.recibo_id)

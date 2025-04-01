@@ -8,7 +8,7 @@ import PurpleSpinner from '@/components/global/random/PurpleSpinner';
 
 export default function FoodList() 
 {
-  const [alimentos, setalimentos ] = useState<alimentosComidosSkeleton[]>();
+  const [alimentos, setalimentos ] = useState<alimentosComidosSkeleton[] | null >(null);
 
   return (
     <>

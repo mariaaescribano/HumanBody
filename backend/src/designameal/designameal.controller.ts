@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, BadRequestException, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, BadRequestException, NotFoundException, Put } from '@nestjs/common';
 import { DesignAMealService } from './designameal.service';
 import { designamealSkeleton } from 'src/dto/meal.dto';
 
@@ -29,10 +29,30 @@ export class DesignAMealController {
     return await this.designamealService.getmealFunction(idMeal)
   }
 
-  @Get('mealsOfDay/:idDia')
-  async mealsOfDay(@Param("idDia") idDia: string) 
+  @Get('mealsOfDay/:idDia/:userNom')
+  async mealsOfDay(@Param("idDia") idDia: string, @Param("userNom") userNom: string) 
   {
-    return await this.designamealService.mealsOfDayFunction(idDia)
+    return await this.designamealService.mealsOfDayFunction(idDia, userNom)
+  }
+
+  @Put('approve/:idDia/:userNom')
+  async approveByNutri(@Param("idDia") idDia: string, @Param("userNom") userNom: string) 
+  {
+    let resp = await this.designamealService.isDesignaMealApprovedByNutri(idDia, userNom)
+    console.log(resp)
+    if(resp==0)
+    {
+      await this.designamealService.approveByNutriFunction(idDia, userNom);
+      return "approved"
+    }
+    else
+      return "Already approved"
+  }
+
+  @Get('isApproved/:idDia/:userNom')
+  async isApproved(@Param("idDia") idDia: string, @Param("userNom") userNom: string) 
+  {
+    return await this.designamealService.isDesignaMealApprovedByNutri(idDia, userNom)
   }
 
 }

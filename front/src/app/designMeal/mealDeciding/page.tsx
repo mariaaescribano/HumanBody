@@ -296,7 +296,7 @@ export default function DesignMeal_MealDeciding()
           caloriesNeeded: caloriesNeeded.current,
           proteTotal: selectedAlimentos.proteTotal == "" ? meal?.proteTotal : selectedAlimentos.proteTotal,
           fuenteProte: selectedAlimentos.prote,
-          carbsTotal: selectedAlimentos.carbsTotal == "" ? meal?.carbsTotal : selectedAlimentos.proteTotal,
+          carbsTotal: selectedAlimentos.carbsTotal == "" ? meal?.carbsTotal : selectedAlimentos.carbsTotal,
           fuenteCarbs: selectedAlimentos.carbs,
           fatTotal: selectedAlimentos.fatsTotal == "" ?  meal?.fatTotal : selectedAlimentos.fatsTotal,
           fuenteFat: selectedAlimentos.fats,

@@ -67,7 +67,6 @@ export class AlimentosService {
   }
 
   async getIdSegunNombreAlimento(alimentoNombre: string) {
-    console.log(alimentoNombre)
     const sql = 'SELECT id FROM alimento WHERE nombre = ?';
     const result = await this.databaseService.query(sql, [alimentoNombre]);
     return result[0].id;

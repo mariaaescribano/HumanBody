@@ -47,35 +47,63 @@ export async function cambiarNombreArchivo(rutaCarpeta: string, nombreViejo: str
   }
 };
 
-export function removeNameFromConcatenatedList(nombresConcatenados: string, nameToRemove: string): string[] {
-  let nombre = "";
-  let nombresArray: string[] = [];
-  
-  for (let i = 0; i < nombresConcatenados.length; i++) {
-    const char = nombresConcatenados[i];
+
+export function removeNameFromConcatenatedList(numbersConcatenated: string, numberToRemove: string): string {
+  let numbersArray = numbersConcatenated.split("-").filter(num => num !== "");
+  console.log("Initial numbers array:", numbersArray);
+  console.log("number to delete :", numberToRemove);
+  let result = "-";
+  for (let i = 0; i < numbersArray.length; i++) {
+    console.log(`Checking number: ${numbersArray[i]}`);
     
-    if (char === ",") {
-      if (nombre.trim()) { 
-        // Check if the current name is the one to remove
-        if (nombre.trim() !== nameToRemove) {
-          nombresArray.push(nombre.trim());
-        }
+    if (numbersArray[i] != numberToRemove) {
+      if (result !== "-") {
+        result += "-"; // Add separator only if it's not the first number
+        console.log(`Adding separator to result: ${result}`);
       }
-      nombre = ""; // Reset the current name
-    } else {
-      nombre += char; // Build the name character by character
-    }
+      result += numbersArray[i];
+      console.log(`Adding number to result: ${result}`);
+    } 
   }
 
-  // Add the last name to the array (after the loop ends)
-  if (nombre.trim()) {
-    if (nombre.trim() !== nameToRemove) {
-      nombresArray.push(nombre.trim());
-    }
-  }
-
-  return nombresArray;
+  const finalResult = result === "-" ? "" : result; // Ensure empty string if no numbers remain
+  console.log("Final result:", finalResult);
+  
+  return finalResult;
 }
+
+
+
+
+// export function removeNameFromConcatenatedList(nombresConcatenados: string, nameToRemove: string): string[] {
+//   let nombre = "";
+//   let nombresArray: string[] = [];
+  
+//   for (let i = 0; i < nombresConcatenados.length; i++) {
+//     const char = nombresConcatenados[i];
+    
+//     if (char === ",") {
+//       if (nombre.trim()) { 
+//         // Check if the current name is the one to remove
+//         if (nombre.trim() !== nameToRemove) {
+//           nombresArray.push(nombre.trim());
+//         }
+//       }
+//       nombre = ""; // Reset the current name
+//     } else {
+//       nombre += char; // Build the name character by character
+//     }
+//   }
+
+//   // Add the last name to the array (after the loop ends)
+//   if (nombre.trim()) {
+//     if (nombre.trim() !== nameToRemove) {
+//       nombresArray.push(nombre.trim());
+//     }
+//   }
+
+//   return nombresArray;
+// }
 
 
 export function convertirCadenaANumeros(cadena: any, caracter?:string)

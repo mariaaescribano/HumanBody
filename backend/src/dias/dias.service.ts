@@ -118,4 +118,17 @@ export class DiasService {
       throw new NotFoundException();
   }
 
+
+  async updateCaloriesFunction(calorias:string, idDia: string) {
+    const sql = `UPDATE dias SET calorias_total = ? WHERE id = ?`;
+    await this.databaseService.query(sql, [ calorias, idDia]);
+  }
+
+
+  async updateAlimentosComidosDeDiaId(alimentosSinalimento:string, idDia: string) {
+    const sql = `UPDATE dias SET alimentos_id = ? WHERE id = ?`;
+    await this.databaseService.query(sql, [ alimentosSinalimento, idDia]);
+    return true;
+  }
+
 }

@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Param, Put, NotFoundException } from '@nestjs/common';
 import { DiasService } from './dias.service';
 import { diasSkeleton } from 'src/dto/dias.dto';
-import { convertirCadenaANumeros } from 'src/GlobalHelperBack';
+import { convertirCadenaANumeros, removeNameFromConcatenatedList } from 'src/GlobalHelperBack';
 import { AlimentosComidosService } from 'src/alimentosComidos/alimentosComidos.service';
 
 
@@ -41,15 +41,30 @@ export class DiasController {
     return {dia};
   }
 
+
+  @Put("updateCaloriesAlimentosId/:calories/:alimentoIdABorrar/:idDia")
+  async updateCaloriesAlimentosId(
+    @Param('calories') calories: string, 
+    @Param('alimentoIdABorrar') alimentoIdABorrar: string,
+    @Param('idDia') idDia: string ) 
+  {
+    await this.diasService.updateCaloriesFunction(calories, idDia);
+
+    // let diasComidos = await this.cogeAlimentosComidosdia(Number(idDia));
+    const alimentos = await this.diasService.diaAlimentosFunction(Number(idDia));
+    let alimentosSinalimento = removeNameFromConcatenatedList(alimentos, alimentoIdABorrar)
+    console.log(alimentos, alimentosSinalimento)
+    await this.diasService.updateAlimentosComidosDeDiaId(alimentosSinalimento.toString(), idDia)
+  }
+
+
   @Get("diaAlimentos/:idDia")
   async diaAlimentos(@Param('idDia') idDia: number) {
     if(idDia)
     {
-      const alimentos = await this.diasService.diaAlimentosFunction(idDia);
-      // one by one take the alimentos from the bd
-      if(alimentos)
-      {
-        let idsAlimentos = convertirCadenaANumeros(alimentos, "-")
+      let idsAlimentos = await this.cogeAlimentosComidosdia(idDia)
+      if(idsAlimentos.length>0)
+      { 
         let guarda:any = [];
         for(let i=0; i< idsAlimentos.length; i++)
         {
@@ -58,11 +73,23 @@ export class DiasController {
         }
         return guarda;
       }
-      else
-        throw new NotFoundException()
+      else 
+        return []
     }
     else
       throw new NotFoundException()
+  }
+
+  async cogeAlimentosComidosdia(idDia: number)
+  {
+    const alimentos = await this.diasService.diaAlimentosFunction(idDia);
+    // one by one take the alimentos from the bd
+    if(alimentos)
+    {
+      return convertirCadenaANumeros(alimentos, "-")
+    }
+    else
+      return []
   }
   
 }

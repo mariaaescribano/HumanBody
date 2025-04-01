@@ -90,7 +90,6 @@ export class UsuariosController {
     {
       for (let j = 0; j < todosDiasDeFechaHoy.length; j++)
       {
-        console.log(idEnNumberArray[i] ,todosDiasDeFechaHoy[j])
         if(idEnNumberArray[i] == todosDiasDeFechaHoy[j].id)
         {
           idDiaCoincide= idEnNumberArray[i];

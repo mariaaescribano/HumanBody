@@ -126,7 +126,15 @@ export class NutritionistService {
   
     if (result.length > 0) {
       let restoSolicitudes = await removeNameFromConcatenatedList(result[0].solicitudesDeContrato, userNom);
-      updateSolicitudes = restoSolicitudes.join(","); // Convertimos el array de nuevo en string
+      // Convertimos el array de nuevo en string
+      let updateSolicitudes = "";
+      for (let i = 0; i < restoSolicitudes.length; i++) {
+        if (i > 0) {
+          updateSolicitudes += ","; // Add comma separator except for the first element
+        }
+        updateSolicitudes += restoSolicitudes[i];
+      }
+
     } else {
       updateSolicitudes = "";
     }

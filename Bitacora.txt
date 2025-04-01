@@ -95,14 +95,11 @@ ORDEN: prote: "#610C04" -fats:"#abdefa" -carbs:"#EDC9AF"
 
 AVENTURAS :D
 
-
 USER/PATIENT
 --> q user pueda comunicarse con nutri
 
 
 DESIGN A MEAL
---> finish retocating lastPage details
---> put the card in MyDay page :)
 --> q user le pueda mandar sus diseños de dias a su nutri
 
 

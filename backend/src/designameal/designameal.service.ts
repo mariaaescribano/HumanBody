@@ -47,12 +47,24 @@ export class DesignAMealService {
     return result[0];
   } 
 
-  async mealsOfDayFunction(idDia: string) 
+  async mealsOfDayFunction(idDia: string, userNom:string) 
   {
-    const sql = 'SELECT * FROM designameal WHERE idDia = ?';
-    const result = await this.databaseService.query(sql, [idDia]);
+    const sql = 'SELECT * FROM designameal WHERE idDia = ? and nomUser=?';
+    const result = await this.databaseService.query(sql, [idDia, userNom]);
     const ids = result.map((item) => item.id);  
     return ids;
   } 
+
+  async isDesignaMealApprovedByNutri(idDia: string, userNom:string) 
+  {
+    const sql = 'SELECT approvedByNutri FROM designameal WHERE idDia = ? and nomUser=?';
+    const result = await this.databaseService.query(sql, [idDia, userNom]);
+    return result[0].approvedByNutri;
+  } 
+
+  async approveByNutriFunction(idDia: string, userNom: string) {
+    const sql = 'UPDATE designameal SET approvedByNutri = 1 WHERE idDia = ? AND nomUser = ?';
+    const result = await this.databaseService.query(sql, [idDia, userNom]);
+  }  
 
 }

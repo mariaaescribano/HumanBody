@@ -13,5 +13,11 @@ export class AlimentosComidosController {
   {
     return await this.alimentosComidosService.createFunction(body);
   }
+
+  @Delete('delete/:idAlimentoComido')
+  async delete(@Param('idAlimentoComido') idAlimentoComido: string) 
+  {
+    return await this.alimentosComidosService.deleteRejectedAlimentoComido(idAlimentoComido);
+  }
   
 }

@@ -27,7 +27,7 @@ export default function FinalMealCard(props:{meal:designamealSkeleton, index:num
                     <HStack>
                         <CaloryIcon></CaloryIcon>
                         <Text fontSize="sm" color="black" fontWeight={"bold"}>
-                            TOTAL {props.meal.caloriasTotal} kcal
+                            TOTAL {props.meal.caloriasSelected} kcal
                         </Text>
                     </HStack>
                 </VStack>

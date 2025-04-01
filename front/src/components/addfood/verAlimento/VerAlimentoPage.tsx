@@ -234,7 +234,7 @@ export default function VerAlimentoPage(props:
   {
     if(calories!= "" && alimento && reciboPersonalizado)
     {
-      let nuevoReciboPersonalizado= reglasDeTresParaAlimentoGramosPersonalizados(reciboOriginal, grams, alimento, setcalories)
+      let nuevoReciboPersonalizado= reglasDeTresParaAlimentoGramosPersonalizados(reciboOriginal, null, grams, alimento, setcalories)
       if(nuevoReciboPersonalizado)
         setreciboPersonalizado(nuevoReciboPersonalizado)
     }
