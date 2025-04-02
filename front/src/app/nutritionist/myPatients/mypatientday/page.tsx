@@ -25,7 +25,7 @@ import axios from 'axios';
 // Custom components
 import React, { useEffect, useState, useRef } from 'react';
 import CustomCard from '@/components/global/cards/CustomCard';
-import { API_URL, cogeFichaDeUserNom, crearRecibo, dameDatosDelRecibo, formatDateToISOFriendly, getFecha, getInternetDateParts, getTamanyoPantalla, redirigirSiNoHayNutriNom, redirigirSiNoHayUserNom, userNutriId } from '../../../../GlobalHelper';
+import { API_URL, buscaidDiaHoyDePatient, cogeFichaDeUserNom, crearRecibo, dameDatosDelRecibo, formatDateToISOFriendly, getFecha, getInternetDateParts, getTamanyoPantalla, redirigirSiNoHayNutriNom, redirigirSiNoHayUserNom, userNutriId } from '../../../../GlobalHelper';
 import ElementoPrimero from '@/components/myday/ElementoPrimero';
 import MacroNutrCard from '@/components/signin/MacroNutrCard';
 import FiberCard from '@/components/global/cards/FiberCard';
@@ -88,7 +88,7 @@ export default function MyPatientDay()
     // busca en el id del user el array de dias q tiene
     // busca si hay dia q se corresponde con dia de hoy
     // si es asi, lo muestra (cogiendo TODO, calorias y recibo)
-    let diaHoyDePatient = await buscaidDiaHoyDePatient(fechaFunc);
+    let diaHoyDePatient = await buscaidDiaHoyDePatient(fechaFunc, patientNomSeleccionado.current);
     if(diaHoyDePatient!= undefined)
     {
       idDia.current = diaHoyDePatient.id;
@@ -104,29 +104,6 @@ export default function MyPatientDay()
     else
       setdiaExiste(false)
   };
-
-  const buscaidDiaHoyDePatient = async (fecha:string) =>
-  {
-    try
-    {
-      const response = await axios.get(
-      `${API_URL}/usuarios/patientDiaHoy/${patientNomSeleccionado.current}/${fecha}`,
-      {
-        headers: {
-            'Content-Type': 'application/json'
-        },
-      }
-      );
-      if(response.data != null)
-      {
-        return response.data[0];
-      }
-    }
-    catch (error) {
-        console.log('Error fetching data:', error);
-    }
-  };
-
 
 
   useEffect(() => 

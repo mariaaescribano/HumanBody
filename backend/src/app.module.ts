@@ -13,6 +13,7 @@ import { NutritionistModule } from './nutritionist/nutritionist.module';
 import { NutricomentariosModule } from './nutricomentarios/nutricomentarios.module';
 import { AlimentosComidosModule } from './alimentosComidos/alimentosComidos.module';
 import { DesignAMealModule } from './designameal/designameal.module';
+import { MessageModule } from './message/message.module';
 
 // CONTROLLERS
 import { AppController } from './app.controller';
@@ -27,10 +28,12 @@ import { NutritionistController } from './nutritionist/nutritionist.controller';
 import { NutricomentariosController } from './nutricomentarios/nutricomentarios.controller';
 import { AlimentosComidosController } from './alimentosComidos/alimentosComidos.controller';
 import { DesignAMealController } from './designameal/designameal.controller';
+import { MessageController } from './message/message.controller';
+
 
 @Module({
-  imports: [DatabaseModule,DesignAMealModule, AlimentosComidosModule, NutricomentariosModule, NutritionistModule, RecibosModule, UsuariosModule, fidelitytomyselfModule, FidelidadModule, FichasModule, AlimentosModule, DiasModule],  
-  controllers: [AppController,DesignAMealController, AlimentosComidosController, NutricomentariosController, NutritionistController, RecibosController, fidelitytomyselfController, UsuariosController, FidelidadController, FichasController, AlimentosController, DiasController],
+  imports: [DatabaseModule,DesignAMealModule, MessageModule, AlimentosComidosModule, NutricomentariosModule, NutritionistModule, RecibosModule, UsuariosModule, fidelitytomyselfModule, FidelidadModule, FichasModule, AlimentosModule, DiasModule],  
+  controllers: [AppController,DesignAMealController, MessageController, AlimentosComidosController, NutricomentariosController, NutritionistController, RecibosController, fidelitytomyselfController, UsuariosController, FidelidadController, FichasController, AlimentosController, DiasController],
   providers: [],
 })
 export class AppModule {}

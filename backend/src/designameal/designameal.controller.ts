@@ -39,7 +39,6 @@ export class DesignAMealController {
   async approveByNutri(@Param("idDia") idDia: string, @Param("userNom") userNom: string) 
   {
     let resp = await this.designamealService.isDesignaMealApprovedByNutri(idDia, userNom)
-    console.log(resp)
     if(resp==0)
     {
       await this.designamealService.approveByNutriFunction(idDia, userNom);

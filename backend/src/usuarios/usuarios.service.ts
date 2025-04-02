@@ -37,6 +37,12 @@ export class UsuariosService {
     return result.length > 0 ? true : false;
   }
 
+  async findUserByName(nombre: string) {
+    const sql = 'SELECT * FROM usuarios WHERE nombre = ?';
+    const result = await this.databaseService.query(sql, [nombre]);
+    return result[0];
+  }
+
   async findFichaIdByName(nombre: string) {
     // obtiene el id de la ficha
     const sql = 'SELECT ficha_id FROM usuarios WHERE nombre = ?';

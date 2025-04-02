@@ -50,25 +50,16 @@ export async function cambiarNombreArchivo(rutaCarpeta: string, nombreViejo: str
 
 export function removeNameFromConcatenatedList(numbersConcatenated: string, numberToRemove: string): string {
   let numbersArray = numbersConcatenated.split("-").filter(num => num !== "");
-  console.log("Initial numbers array:", numbersArray);
-  console.log("number to delete :", numberToRemove);
   let result = "-";
   for (let i = 0; i < numbersArray.length; i++) {
-    console.log(`Checking number: ${numbersArray[i]}`);
-    
     if (numbersArray[i] != numberToRemove) {
       if (result !== "-") {
         result += "-"; // Add separator only if it's not the first number
-        console.log(`Adding separator to result: ${result}`);
       }
       result += numbersArray[i];
-      console.log(`Adding number to result: ${result}`);
     } 
   }
-
   const finalResult = result === "-" ? "" : result; // Ensure empty string if no numbers remain
-  console.log("Final result:", finalResult);
-  
   return finalResult;
 }
 

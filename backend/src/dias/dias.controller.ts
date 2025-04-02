@@ -53,7 +53,6 @@ export class DiasController {
     // let diasComidos = await this.cogeAlimentosComidosdia(Number(idDia));
     const alimentos = await this.diasService.diaAlimentosFunction(Number(idDia));
     let alimentosSinalimento = removeNameFromConcatenatedList(alimentos, alimentoIdABorrar)
-    console.log(alimentos, alimentosSinalimento)
     await this.diasService.updateAlimentosComidosDeDiaId(alimentosSinalimento.toString(), idDia)
   }
 

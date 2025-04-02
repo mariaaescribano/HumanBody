@@ -1175,3 +1175,54 @@ export const dameAlimentosComidosHoy = async (diaId:string, setalimentos?:any) =
 
 
 
+// #region diaHoy patient
+export const buscaidDiaHoyDePatient = async (fecha:string, patientNom:string) =>
+{
+  try
+  {
+    const response = await axios.get(
+    `${API_URL}/usuarios/patientDiaHoy/${patientNom}/${fecha}`,
+    {
+      headers: {
+          'Content-Type': 'application/json'
+      },
+    }
+    );
+    if(response.data != null)
+    {
+      return response.data[0];
+    }
+  }
+  catch (error) {
+      console.log('Error fetching data:', error);
+  }
+};
+
+
+
+
+
+
+// #region send message
+
+export const getDatosNutri = async (nutriNombre:string) =>
+{
+  try
+  {
+      const response = await axios.get(
+      `${API_URL}/nutritionist/${nutriNombre}`,
+      {
+          headers: {
+              'Content-Type': 'application/json'
+          },
+      }
+      );
+      if(response.data != null)
+      {
+        return response.data[0]
+      }
+  }
+  catch (error) {
+      console.log('Error fetching data:', error);
+  }
+};

@@ -22,6 +22,13 @@ export class UsuariosController {
     return await this.usuariosService.findAll();
   }
 
+  @Get("getUserFoto/:nombre")
+  async user(@Param('nombre') nombre: string) {
+    let idFicha = await this.usuariosService.dameUserFichaId(nombre);
+    let foto = await this.fichasService.getFotoPerfil(idFicha);
+    return foto;
+  }
+
   @Post("createUser")
   async createUser(@Body() body) {
     return await this.usuariosService.createUser(body);

@@ -43,6 +43,13 @@ export class FichasService {
     return result;
   }
 
+  async getFotoPerfil(idFicha: number) 
+  {
+    const sql = 'SELECT perfilPic FROM ficha WHERE id = ?';
+    const result = await this.databaseService.query(sql, [idFicha]);
+    return result;
+  }
+
 
 
   async updateAlimFav(idFicha:number, idAlimento:number) 

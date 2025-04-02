@@ -158,7 +158,7 @@ export default function MyPatients()
         {/* pacientes */} 
         {patients.length > 0 &&<CustomCard mt="10px" p="20px" hijo={
         <>
-             <RecommendCard patients={patients} recommending={false} />
+            <RecommendCard patients={patients} recommending={false} />
         </>
         }></CustomCard>}
         {patients.length == 0 &&<CustomCard mt="10px" p="20px" hijo={

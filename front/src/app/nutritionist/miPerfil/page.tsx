@@ -29,7 +29,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import SelectSignIn from '@/components/signin/SelectSignIn';
 import PurpleSpinner from '@/components/global/random/PurpleSpinner';
 import CustomCard from '@/components/global/cards/CustomCard';
-import { API_URL, cogeFichaDeUserNom, dameDatosDelRecibo, formatDateToISOFriendly, getFecha, getInternetDateParts, getTamanyoPantalla, redirigirSiNoHayNutriNom, redirigirSiNoHayUserNom, StringIsNull } from '../../../GlobalHelper';
+import { API_URL, cogeFichaDeUserNom, dameDatosDelRecibo, formatDateToISOFriendly, getDatosNutri, getFecha, getInternetDateParts, getTamanyoPantalla, redirigirSiNoHayNutriNom, redirigirSiNoHayUserNom, StringIsNull } from '../../../GlobalHelper';
 import {  reciboConstNames, reciboSkeleton, showMacroNutrSignUp } from '../../../../../backend/src/dto/recibos.dto';
 import FiberCard from '@/components/global/cards/FiberCard';
 import BarraMenu from '@/components/global/BarraMenu';
@@ -81,26 +81,10 @@ export default function NutritionistMiPerfil()
 
     const cogeDatosNutri = async () =>
     {
-        try
-        {
-            const response = await axios.get(
-            `${API_URL}/nutritionist/${sessionStorage.getItem("nutriNom")}`,
-            {
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-            }
-            );
-            if(response.data != null)
-            {
-                setnutriData(response.data[0])
-                setnewUserNom(response.data[0].nom)
-                cogeFotoPerfil(response.data[0].perfilPic)
-            }
-        }
-        catch (error) {
-            console.log('Error fetching data:', error);
-        }
+        let datosNutri = await getDatosNutri(sessionStorage.getItem("nutriNom"))
+        setnutriData(datosNutri)
+        setnewUserNom(datosNutri.nom)
+        cogeFotoPerfil(datosNutri.perfilPic)
     };
 
 
