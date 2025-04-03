@@ -27,6 +27,7 @@ export default function NutritionistClientCard(props:{  })
     const [nutriAsked, setnutriAsked] = useState<nutriPerfil>(); 
 
     const [myNutri, setmyNutri] = useState<nutriPerfil>(); 
+    const [messagesNotRead, setmessagesNotRead] = useState<number>(); 
 ////////////////////////////////////////////////////////////////
 
     useEffect(() => 
@@ -143,6 +144,7 @@ export default function NutritionistClientCard(props:{  })
     };
 
 
+    // #region user has nutri
     ////// USER HAS NUTRI //////
     // if client has a nutri just show it
     const cogeDatosNutri = async (userNutriId:string) =>
@@ -165,6 +167,7 @@ export default function NutritionistClientCard(props:{  })
                     response.data.nutri[0].perfilPic= foto;
                 }
                 setmyNutri(response.data.nutri[0])
+                getmessagesNotRead(response.data.nutri[0].id)
                 return true;
             }
             else
@@ -199,7 +202,30 @@ export default function NutritionistClientCard(props:{  })
         }
     };
 
+    const getmessagesNotRead = async (userNutriId:string) =>
+    {
+        try
+        {
+            const response = await axios.get(
+            `${API_URL}/messages/notReadMessages/${sessionStorage.getItem("userNom")}/${userNutriId}/0`,
+            {
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            }
+            );
+            if(response.data)
+            {
+                setmessagesNotRead(response.data)
+            }
+        }
+        catch (error) {
+            console.log('Error fetching data:', error);
+        }
+    };
 
+
+// #region return
     return (
         <>
         {cardType!= -1 && 
@@ -226,7 +252,7 @@ export default function NutritionistClientCard(props:{  })
                 <Flex direction="column" align="center" w="100%" ml= "0px">
                     {/* contact button */}
                     <HStack>
-                        <CuteBoxIcon icono={<svg onClick={()=> location.href="../sendMessage"} xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 -960 960 960" fill="#000000">
+                        <CuteBoxIcon messagesWithoutRead={messagesNotRead} icono={<svg onClick={()=> location.href="../sendMessage"} xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 -960 960 960" fill="#000000">
                             <path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm320-280L160-640v400h640v-400L480-440Zm0-80 320-200H160l320 200ZM160-640v-80 480-400Z"/>
                             </svg>}>
                         </CuteBoxIcon>

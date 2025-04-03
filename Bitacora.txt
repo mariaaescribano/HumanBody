@@ -69,7 +69,7 @@ for (let i = 0; i < nombresConcatenados.length; i++)
       
 }
 
-
+// #region 
 
 
 
@@ -95,12 +95,9 @@ ORDEN: prote: "#610C04" -fats:"#abdefa" -carbs:"#EDC9AF"
 
 AVENTURAS :D
 
---> poder adjuntar solo una foto con el mensaje
---> see good the pic with the message
---> recuperate past messages and show them
 --> put hour to the message
 --> put eye to the message
-
+--> recorrer all program
 
 
 USER/PATIENT

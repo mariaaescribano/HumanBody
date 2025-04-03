@@ -50,4 +50,6 @@ export interface patientSkeleton
 	fidelitytomyself_id: string; 
 	alimentos_fav_id: string; 
 	perfilPic: string;
+
+	messagesNotRead?: number;
 };

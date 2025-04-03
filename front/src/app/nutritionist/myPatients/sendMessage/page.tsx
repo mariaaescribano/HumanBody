@@ -6,7 +6,7 @@ import { buscaidDiaHoyDePatient, getFecha } from '@/GlobalHelper';
 
 export default function SendMessageFromNutri() 
 {
-  const [cargado, setcargado] = useState<boolean>(true); // cargar todo el componente 
+  const [cargado, setcargado] = useState<boolean>(false); // cargar todo el componente 
   const [diaId, setdiaId] = useState<string>(); // dia Id del patient
  
   useEffect(() => 
@@ -15,7 +15,7 @@ export default function SendMessageFromNutri()
     {
       let fechaDeDia = await getFecha();
       let diaHoyDePatient = await buscaidDiaHoyDePatient(fechaDeDia, sessionStorage.getItem("patientTratando"));
-      setdiaId(diaHoyDePatient)
+      setdiaId(diaHoyDePatient.id)
     };
     diaHoy()
 

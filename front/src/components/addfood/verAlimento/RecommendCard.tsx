@@ -41,7 +41,7 @@ export default function RecommendCard(props: { patients:patientSkeleton[] | [], 
                         height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Z"/></svg>
                         }></CuteBoxIcon>
 
-                        <CuteBoxIcon mt="0px" icono={<svg cursor="pointer" xmlns="http://www.w3.org/2000/svg" 
+                        <CuteBoxIcon messagesWithoutRead={patient.messagesNotRead} mt="0px" icono={<svg cursor="pointer" xmlns="http://www.w3.org/2000/svg" 
                         onClick={()=> {sessionStorage.setItem("patientTratando",patient.nombre); location.href=`./sendMessage`;}} 
                         height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm320-280L160-640v400h640v-400L480-440Zm0-80 320-200H160l320 200ZM160-640v-80 480-400Z"/></svg>}>
                         </CuteBoxIcon>

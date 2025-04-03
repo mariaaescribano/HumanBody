@@ -80,11 +80,13 @@ export default function MyPatients()
         );
             if(response.data != null)
             {
+               
                 setpatientsRequests(response.data)
+
+                // get patients pics
                 let guarda = [];
                 for(let i=0; i< response.data.length; i++)
                 {
-                    console.log(response.data[i].perfilPic)
                     if(response.data[i].perfilPic != null)
                     {
                         let foto = await fileToBase64(response.data[i].perfilPic);
@@ -103,7 +105,9 @@ export default function MyPatients()
         }
     };
 
+   
 
+    // #region hiring
     // IN CASE OF HAVING REQUESTS CAN ACCEPT OR REJECT THEM //
     const acceptDeleteRequest = async (userNom:string, accept:boolean) =>
     {
@@ -131,6 +135,7 @@ export default function MyPatients()
         }
     };
 
+// #region return
   return (
     <>
         {patients != null && patientsRequests!= null &&

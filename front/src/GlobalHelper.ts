@@ -263,6 +263,12 @@ export const cogePacientesDeNutri = async (nutriNom:string) =>
           for(let i=0; i< response.data.pacientes.length; i++)
           {
             let paciente = response.data.pacientes[i]
+
+            // get patients numberof message without read
+            let number = await getmessagesNotRead(paciente.nombre);
+            paciente.messagesNotRead = number;
+
+            
             if(paciente.perfilPic != null)
             {
                 let foto = await fileToBase64(paciente.perfilPic);
@@ -279,6 +285,29 @@ export const cogePacientesDeNutri = async (nutriNom:string) =>
     }
     catch (error) {
     console.error('Error fetching data:', error);
+    }
+};
+
+
+const getmessagesNotRead = async (userNom:string) =>
+{
+    try
+    {
+        const response = await axios.get(
+        `${API_URL}/messages/notReadMessages/${userNom}/${sessionStorage.getItem("nutriId")}/1`,
+        {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        }
+        );
+        if(response.data)
+        {
+            return (response.data)
+        }
+    }
+    catch (error) {
+        console.log('Error fetching data:', error);
     }
 };
 

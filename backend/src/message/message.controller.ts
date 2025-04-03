@@ -1,6 +1,8 @@
-import { Controller, Get, Post, Body, Param, Delete, BadRequestException, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, BadRequestException, NotFoundException, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { MessageService } from './message.service';
 import { messageSkeleton } from 'src/dto/message.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { convertFileToBase64, crearYGuardarTxt, descodeReturnFoto } from 'src/GlobalHelperBack';
 
 @Controller('messages')  
 export class MessageController {
@@ -8,8 +10,60 @@ export class MessageController {
   ) {}
 
   @Post("create")
-  async createMessage(@Body() body: messageSkeleton) {
-    return await this.messageService.createMessageFunction(body);
+  @UseInterceptors(FileInterceptor('fotoFile'))
+  async createMessage(
+    @Body() body: messageSkeleton, 
+    @UploadedFile() file: Express.Multer.File
+  ) {
+    try 
+    {
+      if (!file || file.size === 0) {
+        body.foto = "";  
+        let idMessage = await this.messageService.createMessageFunction(body);
+      } 
+      else 
+      {
+        let idMessage = await this.messageService.createMessageFunction(body);
+        const base64String = await convertFileToBase64(file);
+        const result = await crearYGuardarTxt(idMessage, base64String, true);
+      }
+      return "ok"
+    } 
+    catch (error) {
+    
+    }
+    
+  }
+
+
+  @Get(":idDia/:idNutri/:userNom")
+  async recuperateMessages(
+    @Param('idDia') idDia: string,
+    @Param('idNutri') idNutri: string,
+    @Param('userNom') userNom: string,
+  ) {
+    return await this.messageService.recuperateMessagesFunction(idDia, idNutri, userNom);
+  }
+
+  @Get("messageFoto/:idMessage")
+  async messageFoto(@Param('idMessage') idMessage: string) {
+    return await descodeReturnFoto(idMessage+".txt", true);
+  }
+
+  // im a patient and i want to see the messages that my nutri sent me that i hadnt see
+  @Get("notReadMessages/:userNom/:nutriId/:soy") // soy can only be 0 or 1(nutri)
+  async notReadMessages(
+    @Param('userNom') userNom: string,
+    @Param('nutriId') nutriId: string,
+    @Param('soy') soy: string) 
+  {
+    let iWantMessagesFrom = "0";
+    if(soy =="0") //patient want to see the messages from the nutri
+      iWantMessagesFrom="1"
+    else
+      iWantMessagesFrom="0"
+
+    return await this.messageService.notReadMessagesFunction(userNom, nutriId, iWantMessagesFrom);
   }
   
 }

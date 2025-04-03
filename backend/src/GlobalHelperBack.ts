@@ -11,9 +11,14 @@ export async function convertFileToBase64(file: Express.Multer.File): Promise<st
   }
 }
 
-export async function crearYGuardarTxt(nombreArchivo: string, contenido: string): Promise<boolean> {
+export async function crearYGuardarTxt(nombreArchivo: string, contenido: string, soyMessage?:boolean): Promise<boolean> {
   try {
-    const rutaArchivo = path.join(__dirname, pathACarpetaDeFotos, `${nombreArchivo}.txt`);
+    let carpetaBase = pathACarpetaDeFotos; 
+    if (soyMessage) {
+      carpetaBase =  '../../../../messageFotos';
+    }
+
+    const rutaArchivo = path.join(__dirname, carpetaBase, `${nombreArchivo}.txt`);
     const dir = path.dirname(rutaArchivo);
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
@@ -29,8 +34,12 @@ export async function crearYGuardarTxt(nombreArchivo: string, contenido: string)
   }
 }
 
-export async function descodeReturnFoto(nomFile: string) {
-  const rutaArchivoBase64 = path.join(__dirname, pathACarpetaDeFotos, nomFile);
+export async function descodeReturnFoto(nomFile: string, soyMessage?:boolean) {
+  let carpetaBase = pathACarpetaDeFotos; 
+  if (soyMessage) {
+    carpetaBase =  '../../../../messageFotos';
+  }
+  const rutaArchivoBase64 = path.join(__dirname, carpetaBase, nomFile);
   const base64Data = fs.readFileSync(rutaArchivoBase64, 'utf8');
   return base64Data;
 }

@@ -5,7 +5,7 @@ import SendMessagePage from '@/components/sendMessage/SendMessagePage';
 
 export default function SendMessageFromUser() 
 {
-  const [cargado, setcargado] = useState<boolean>(true); // cargar todo el componente 
+  const [cargado, setcargado] = useState<boolean>(false); // cargar todo el componente 
 
   return (
     <>
