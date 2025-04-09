@@ -380,7 +380,7 @@ export default function DesignMealMain()
             
             {/* titulo */}
             <CustomCard mt="0px" hijo={
-                <TitleCard title={'DESIGN YOUR MEAL II'} 
+                <TitleCard title={'DESIGN YOUR DAY II'} 
                 firstBtnText={'Delete & Go back'} goback={goBack} 
                 secondBtnText={'Save & Next'} letsgo={saveDesignedMeal} 
                 mensajeError={btnSavePulsado == 2? true : undefined} textMensajeError={'All meals saved!'} statusMensajeError={'success'}

@@ -395,7 +395,7 @@ export default function DesignMeal_MealDeciding()
           <Flex justify="start" gap="5px" align="center" mb="10px">
             <VStack>
             <Text fontSize="sm" fontWeight="700">
-              DESIGN YOUR MEAL III:
+              DESIGN YOUR DAY III:
             </Text>
 
             <HStack>

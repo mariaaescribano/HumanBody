@@ -9,4 +9,6 @@ export interface messageSkeleton
     message:string;
     foto:string;
     vistoPorLaOtraPersona:number;
+    hora:string;
+    designameal?:number;
 };

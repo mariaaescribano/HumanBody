@@ -133,7 +133,7 @@ export default function MiPerfil()
             reciboId.current = ficha.recibo_id;
 
             if(ficha.perfilPic!= null)
-                cogeFotoPerfil(ficha.perfilPic)
+                await cogeFotoPerfil(ficha.perfilPic)
             else
                 setloaded(true)
 
@@ -202,7 +202,7 @@ export default function MiPerfil()
         );
             if(response.data != null)
             {
-                cogeFichaDeUser()
+                await cogeFichaDeUser()
                 setsubiendoDatos(2)
                 const timer = setTimeout(() => 
                 {
@@ -373,6 +373,8 @@ export default function MiPerfil()
             }
         }
         catch (error) {
+            perfilPicVer.current = "";
+            setloaded(true)
             console.log('Error fetching data:', error);
         }
     };
@@ -565,11 +567,13 @@ export default function MiPerfil()
             }></CustomCard>}
 
             {/* viendo */}
-            {editarDatos== false && <UserPersonalData user={user} editando={true} activityLevelIndex={parseInt(exerciseFrequency, 10)} objectiveIndex={Number(objetivo)}  
+            {editarDatos== false && <UserPersonalData user={user} editando={true} 
+            activityLevelIndex={parseInt(exerciseFrequency, 10)} objectiveIndex={Number(objetivo)}  
             caloriesWithObjective={targetCalories} screenSize={screenSize} TMB={TMB} />}
 
             <Box mt={"0px"}>  
-                <PencilIconOnTop subiendo={subiendoDatos} setEmpezarAEditar={seteditarDatos} editando={editarDatos} function={salvaDatos} />
+                <PencilIconOnTop subiendo={subiendoDatos} setEmpezarAEditar={seteditarDatos} 
+                editando={editarDatos} function={salvaDatos} />
             </Box>
         </Box> 
 

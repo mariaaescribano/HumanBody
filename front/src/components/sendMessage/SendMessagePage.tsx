@@ -28,7 +28,7 @@ import axios from 'axios';
 // Custom components
 import React, { useEffect, useState, useRef } from 'react';
 import CustomCard from '@/components/global/cards/CustomCard';
-import { API_URL, colorNutricionist, fileToBase64, getDatosNutri} from '../../GlobalHelper';
+import { API_URL, colorNutricionist, fileToBase64, formatDateToISOFriendly, getCurrentTime, getDatosNutri, getFecha} from '../../GlobalHelper';
 import BarraMenu from '../global/BarraMenu';
 import BarraMenuNutri from '../nutritionist/BarraMenuNutri';
 import Message from './Message';
@@ -45,6 +45,10 @@ export default function SendMessagePage(props: {
   
     const [dataOtherPerson, setdataOtherPerson ] = useState<{nom:string, pic:string}>();
     const [pastMessages, setpastMessages ] = useState<messageSkeleton[]>([]);
+    const checkBlueInNewMessages = useRef<boolean>(false); // to know if the blue check have already been put
+    const fecha = useRef<string>(undefined);
+
+    const [messageDefault, setmessageDefault] = useState<boolean>(false);
 
     // uploading photo
     // 0: normal, 1:has photo, 2: spinner
@@ -54,7 +58,7 @@ export default function SendMessagePage(props: {
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     // sending message
-    // 0: no, 1: yes (message is "" or is been posted), 2: spinner, 3: correct, 4:error
+    // 0: no disabled, 1: yes disabled(message is "" or is been posted), 2: spinner, 3: correct, 4:error
     const [disabled, setdisabled ] = useState<number>(1); 
     const [message, setmessage ] = useState<string>(""); // currently writing
     const inputWriteMessage = useRef(null);
@@ -64,7 +68,7 @@ export default function SendMessagePage(props: {
     // 0: take the data from the other person to see it in the screen
     useEffect(() => 
     {
-        if(props.nutri!= null && props.idNutri && props.userNom)
+        if(props.nutri!= null && props.idNutri && props.userNom && props.diaId!= "")
         {
             // we will take the data from the other person (to show in the title)
             if(props.nutri == true)
@@ -73,6 +77,15 @@ export default function SendMessagePage(props: {
             }
             else
             {
+                const queryParams = new URLSearchParams(location.search);
+                const mira = queryParams.get('mira') || '';
+                if(mira)
+                {
+                    setdisabled(0)
+                    setpressPhotoBtn(1)
+                    setmessageDefault(true);
+                    setmessage("Hey, look my Design A Day :D ")
+                }
                 cogeDatosNutri()
             }
         };
@@ -135,64 +148,68 @@ export default function SendMessagePage(props: {
     {
         if(dataOtherPerson!= undefined)
         {
-            const recuperateMessageFotoByIdText = async (idMessage:string) =>
-            {
-                try
-                {
-                    const response = await axios.get(
-                    `${API_URL}/messages/messageFoto/${idMessage}`,
-                    {
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                    }
-                    );
-                    if(response.data)
-                    {
-                        return response.data
-                    }
-                }
-                catch (error) {
-                    console.log('Error fetching data:', error);
-                }
-            };
-
-            const recuperatePastMessages = async () =>
-            {
-                try
-                {
-                    const response = await axios.get(
-                    `${API_URL}/messages/${props.diaId}/${props.idNutri}/${props.userNom}`,
-                    {
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                    }
-                    );
-                    if(response.data)
-                    {
-                        for (let i = 0; i < response.data.length; i++) 
-                        {
-                            if(response.data[i].foto == "1")
-                            {
-                                let fotoBase64 = await recuperateMessageFotoByIdText(response.data[i].id)
-                                if(fotoBase64!= "")
-                                    response.data[i].foto = (`data:image/jpeg;base64,${fotoBase64}`);
-                            }
-                            else
-                                response.data[i].foto = "" 
-                        }
-                        setpastMessages(response.data) 
-                        props.setcargado(true)
-                    }
-                }
-                catch (error) {
-                    console.log('Error fetching data:', error);
-                }
-            };
             recuperatePastMessages()
         }
     }, [dataOtherPerson]);
+
+    const recuperateMessageFotoByIdText = async (idMessage:string) =>
+    {
+        try
+        {
+            const response = await axios.get(
+            `${API_URL}/messages/messageFoto/${idMessage}`,
+            {
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            }
+            );
+            if(response.data)
+            {
+                return response.data
+            }
+        }
+        catch (error) {
+            console.log('Error fetching data:', error);
+        }
+    };
+
+    const recuperatePastMessages = async () =>
+    {
+        fecha.current = await getFecha(); 
+        fecha.current = formatDateToISOFriendly(fecha.current)
+        try
+        {
+            const response = await axios.get(
+            `${API_URL}/messages/${props.diaId}/${props.idNutri}/${props.userNom}`,
+            {
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            }
+            );
+            if(response.data)
+            {
+                for (let i = 0; i < response.data.length; i++) 
+                {
+                    if(response.data[i].foto == "1")
+                    {
+                        let fotoBase64 = await recuperateMessageFotoByIdText(response.data[i].id)
+                        if(fotoBase64!= "")
+                            response.data[i].foto = (`data:image/jpeg;base64,${fotoBase64}`);
+                    }
+                    else
+                        response.data[i].foto = "" 
+                }
+                setpastMessages(response.data) 
+                props.setcargado(true)
+            }
+        }
+        catch (error) {
+            console.log('Error fetching data:', error);
+        }
+    };
+    //////////////////////////////////////////////////////
 
 
     // 2: post a message //////////////////////////////////////////////////////
@@ -219,7 +236,9 @@ export default function SendMessagePage(props: {
             sendBy: props.nutri == true ? 1 : 0, // 0:patient, 1: nutri
             message: message,
             foto:photo, 
-            vistoPorLaOtraPersona: 0
+            vistoPorLaOtraPersona: 0,
+            hora: await getCurrentTime(),
+            designameal: messageDefault == true ? 1 : 0 
         };
 
         const formData = new FormData();
@@ -231,6 +250,8 @@ export default function SendMessagePage(props: {
         formData.append("foto", photoFile.current == undefined ? "0": "1"); 
         formData.append("fotoFile", photoFile.current); // Send file, not Base64
         formData.append("vistoPorLaOtraPersona", "0");
+        formData.append("hora", body.hora);
+        formData.append("designameal", body.designameal ? body.designameal : 0);
 
         try
         {
@@ -252,6 +273,10 @@ export default function SendMessagePage(props: {
                 setmessage("")
                 setpressPhotoBtn(0)
                 setPhoto("")
+                if(messageDefault == true)
+                {
+                    window.history.pushState({}, '', '../sendMessage');
+                }
                 inputWriteMessage.current.focus()
                 const timer = setTimeout(() => {
                     setdisabled(1)  
@@ -271,7 +296,7 @@ export default function SendMessagePage(props: {
         }
     };
 
-    //////////////////////////////////////////////////////
+
     // upload photo //////////////////////////////////////////////////////
     const handleOpenFileExplorer = () => {
         if(fileInputRef.current)
@@ -299,21 +324,79 @@ export default function SendMessagePage(props: {
         setPhoto("");
         setpressPhotoBtn(0)
     };
-    
+    // end upload photo //////////////////////////////////////////////////////
 
 
     // scroll until the last message //////////////////////////////////////////////////////
     const lastMessageRef = useRef(null);
 
     useEffect(() => {
-        if (lastMessageRef.current) {
+        // if there are messages without blue tick, now they will be
+        if(pastMessages.length>0 && checkBlueInNewMessages.current==false)
+            putBlueCheckOnMessages();
+
+        if (lastMessageRef.current) 
+        {
             lastMessageRef.current.scrollIntoView({ behavior: "smooth" });
         }
     }, [pastMessages]);
     //////////////////////////////////////////////////////
 
 
-  return (
+    // put blue tick //////////////////////////////////////////////////////
+    const putBlueCheckOnMessages = async () => {
+        // if I'm nutri, the message must be sent by 0 (patient)
+        // go one by one changing the messages
+        const updatePromises = pastMessages.map((message) => {
+            if (props.nutri === true) {
+            if (message.sendBy === 0 && message.vistoPorLaOtraPersona === 0 && message.id) {
+                message.vistoPorLaOtraPersona = 1;
+                return updateMessageCheck(message.id);
+            }
+            } else {
+            if (message.sendBy === 1 && message.vistoPorLaOtraPersona === 0 && message.id) {
+                message.vistoPorLaOtraPersona = 1;
+                return updateMessageCheck(message.id);
+            }
+            }
+            return null;
+        }).filter(promise => promise !== null);
+        
+        // Wait for all update requests to complete
+        await Promise.all(updatePromises);
+        
+        setpastMessages([...pastMessages]);  // use a new reference to trigger re-render
+        checkBlueInNewMessages.current=true;
+        };
+        
+        const updateMessageCheck = async (idMessage: number | undefined) => {
+        try {
+            const response = await axios.put(
+            `${API_URL}/messages/changeToBlueTick/${idMessage}`,
+            {},
+            {
+                headers: {
+                'Content-Type': 'application/json',
+                },
+            }
+            );
+        
+            // Check the response for success (adjust based on your API's response structure)
+            if (response.status === 200 && response.data?.message === 'ok') {
+            console.log(`Message ${idMessage} updated successfully`);
+            } else {
+            console.log(`Failed to update message ${idMessage}`);
+            }
+        } catch (error) {
+            console.log('Error fetching data:', error);
+        }
+    };
+        
+    //////////////////////////////////////////////////////
+
+
+  return (<>
+    {props.cargado == true && props.diaId !== "" && 
     <Flex
         direction="column"
         align="center"
@@ -328,8 +411,14 @@ export default function SendMessagePage(props: {
         {props.nutri==false && <BarraMenu></BarraMenu>}
         {props.nutri==true && <BarraMenuNutri></BarraMenuNutri>}
 
+        <CustomCard mt="0px" p="10px" hijo={
+            <Text color={"black"} fontSize="sd" h="10px" mb="10px">
+                {fecha.current + " chat"}
+            </Text>
+        }></CustomCard>
+
         {/* title */}
-        <CustomCard mt="0px" p="15px" hijo={
+        <CustomCard mt="5px" p="15px" hijo={
             <HStack>
                 <Avatar src={dataOtherPerson?.pic} size="md"/>
                 <VStack mt="-25px">
@@ -367,7 +456,9 @@ export default function SendMessagePage(props: {
                 {pastMessages.map((item, index) => (
                     <Message 
                         key={index} 
+                        diaId={props.diaId} 
                         object={item} 
+                        nutri={props.nutri} 
                         ref={index === pastMessages.length - 1 ? lastMessageRef : null} 
                     />
                 ))}
@@ -392,11 +483,13 @@ export default function SendMessagePage(props: {
                     </Box>
                 </Flex>}
 
-                <Input textAlign="center" ml="20px" ref={inputWriteMessage} value={message} onChange={(e) => writeMessage(e)}
+                {/* send default message to see design a meal */}
+                <Input textAlign="center" ml="20px" ref={inputWriteMessage} 
+                value={message} onChange={(e) => writeMessage(e)}
                 focusBorderColor={props.nutri == true ? colorNutricionist : "purple.100"} 
                 style={{ width: "100%", borderRadius:"20px", marginTop:"10px" }} 
                 />
-                   
+            
                 
                 <Box marginTop={"12px"} ml="10px" mr="5px">
                     <HStack>
@@ -432,5 +525,26 @@ export default function SendMessagePage(props: {
             </Flex>
         }></CustomCard>
         
-    </Flex>);
+    </Flex>}
+    
+
+    {props.cargado == true && props.diaId == "" && 
+    <Flex
+        direction="column"
+        align="center"
+        bg={props.nutri == true ? colorNutricionist : "purple.100"}
+        w="100%"
+        h="100%"
+        justify="center"
+        p="20px"
+        minH="100vh"
+        position={"relative"}
+    >
+        {props.nutri==true && <BarraMenuNutri></BarraMenuNutri>}
+        <CustomCard mt="5px" p="15px" hijo={
+            <Text color="red">Your patient doesn't have "Today" created, so can't receive messages</Text>
+        }></CustomCard>
+    </Flex>}
+
+    </>);
 }

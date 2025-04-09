@@ -3,6 +3,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import GreenSpinner from '@/components/global/random/GreenSpinner';
 import SendMessagePage from '@/components/sendMessage/SendMessagePage';
 import { buscaidDiaHoyDePatient, getFecha } from '@/GlobalHelper';
+import {Text} from '@chakra-ui/react';
 
 export default function SendMessageFromNutri() 
 {
@@ -15,7 +16,15 @@ export default function SendMessageFromNutri()
     {
       let fechaDeDia = await getFecha();
       let diaHoyDePatient = await buscaidDiaHoyDePatient(fechaDeDia, sessionStorage.getItem("patientTratando"));
-      setdiaId(diaHoyDePatient.id)
+      console.log(diaHoyDePatient)
+      if(diaHoyDePatient)
+        setdiaId(diaHoyDePatient.id)
+      else  
+      {
+        console.log("jdjdjd")
+        setdiaId("")
+        setcargado(true)
+      }
     };
     diaHoy()
 
@@ -23,7 +32,7 @@ export default function SendMessageFromNutri()
 
   return (
     <>
-      {diaId!= undefined && 
+      {diaId!= undefined &&
       <><div style={{ display: cargado == false ? 'none' : "block" }}>
         <SendMessagePage 
             idNutri={sessionStorage.getItem("nutriId")} userNom={sessionStorage.getItem("patientTratando")}

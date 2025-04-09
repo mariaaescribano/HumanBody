@@ -272,27 +272,39 @@ export default function NutritionistMiPerfil()
         </AvatarPart>
 
         <Box w="100%" display="flex" justifyContent="center">
-            <CustomCard mt="10px" p="30px" hijo={
+            <CustomCard mt="10px" p="30px" hijo={<>
+                {updateDescrip == true && 
                 <Flex direction='column' w="80%">
                     <InputField
                     mb="20px"
                     id="second"
-                    defaultValue={nutriData.description}
-                    onChange={(e:any)=> handleInputChange(e.target.value, "description")}
-                    placeholder="ksskskk"
+                    defaultValue={nutriData.email}
+                    onChange={(e:any)=> handleInputChange(e.target.value, "email")}
                     label="Email"
                     textAlign={"center"}
                     />
                     <InputField
                     mb="20px"
                     id="first"
-                    defaultValue={nutriData.email}
-                    onChange={(e:any)=> handleInputChange(e.target.value, "email")}
+                    defaultValue={nutriData.description}
+                    onChange={(e:any)=> handleInputChange(e.target.value, "description")}
                     placeholder="I want to help people feel connected with themselves"
                     label="Description"
                     textAlign={"center"}
                     />
+                </Flex>}
+                
+                {updateDescrip == false && 
+                <Flex direction="column" w="80%" align="center" textAlign="center">
+                    <Text>
+                        <b>Email:</b> {nutriData.email}
+                    </Text>
+                    <Text>
+                        <b>Description:</b> {nutriData.description}
+                    </Text>
                 </Flex>
+                }
+                </>
             }></CustomCard>
             <Box mt={"0px"}>  
                 <PencilIconOnTop subiendo={subiendoDatos} setEmpezarAEditar={setupdateDescrip} 

@@ -131,4 +131,17 @@ export class DiasService {
     return true;
   }
 
+
+  async existeDiaWithDate(fecha:string) {
+    const sql = `SELECT * FROM dias WHERE fecha=?`;
+    const result = await this.databaseService.query(sql, [fecha]);
+    if (result.affectedRows > 0)
+    {
+      return true;
+    } 
+    else
+      return false;
+  }
+
+
 }

@@ -17,7 +17,7 @@ export default function RecommendCard(props: { patients:patientSkeleton[] | [], 
         {props.recommending == true && 
         <>
         <Text fontSize="md" fontWeight="bold" mb="10px">Recommending to...</Text>
-        {props.recommended == true &&<SuccessErrorMessage status={'success'} title={'Food recommended!'}></SuccessErrorMessage>}
+        {props.recommended == true && <SuccessErrorMessage status={'success'} title={'Food recommended!'}></SuccessErrorMessage>}
         </>}
         
         { props.patients && props.patients.map((patient: any, index: number) => {

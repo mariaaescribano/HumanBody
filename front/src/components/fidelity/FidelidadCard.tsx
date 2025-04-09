@@ -154,8 +154,8 @@ export default function FidelidadCard(props:{ soloLeer?:boolean, diaId:number | 
                     </HStack>
 
                     <HStack>
-                        {respuesta != undefined &&  <Box position="absolute" top="0" ml={{base:"0px", md: "-180px"}} zIndex="10" w="20%">
-                        <SuccessErrorMessage status={'success'} title={'Fidelity updated!'} />
+                        {respuesta != undefined &&  <Box position="absolute" top="0" ml={{base:"0px", md: "-60px"}} zIndex="10" w="20%">
+                        <SuccessErrorMessage status={'success'} title={''} height="50px"/>
                     </Box>} 
                         {props.diaId !== null && 
                         <Button

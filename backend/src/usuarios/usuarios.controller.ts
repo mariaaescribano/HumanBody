@@ -152,7 +152,7 @@ export class UsuariosController {
      @Param('oldUserNom') oldUserNom: string
    ) {
      try {
-      cambiarNombreArchivo(pathACarpetaDeFotos, oldUserNom , newUserNom);
+      await cambiarNombreArchivo(pathACarpetaDeFotos, oldUserNom , newUserNom);
       const fichaObjId = await this.usuariosService.findFichaIdByName(oldUserNom);
       await this.fichasService.actualizarFotoPerfilRuta(fichaObjId, newUserNom);
       await this.usuariosService.editNombreFunction(oldUserNom, newUserNom);

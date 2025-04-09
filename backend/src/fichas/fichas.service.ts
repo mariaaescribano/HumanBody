@@ -33,7 +33,7 @@ export class FichasService {
   async actualizarFotoPerfilRuta(fichaObjId:number, newUserNom:string) 
   {
     const sql = 'UPDATE ficha SET perfilPic  = ? WHERE id = ?;';
-    const result = await this.databaseService.query(sql, [fichaObjId, newUserNom+".txt"]);
+    const result = await this.databaseService.query(sql, [ newUserNom+".txt", fichaObjId]);
   }
 
   async getFichaFunction(idFicha: number) 

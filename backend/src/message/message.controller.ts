@@ -1,12 +1,14 @@
-import { Controller, Get, Post, Body, Param, Delete, BadRequestException, NotFoundException, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, BadRequestException, NotFoundException, UploadedFile, UseInterceptors, Put } from '@nestjs/common';
 import { MessageService } from './message.service';
 import { messageSkeleton } from 'src/dto/message.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { convertFileToBase64, crearYGuardarTxt, descodeReturnFoto } from 'src/GlobalHelperBack';
+import { convertFileToBase64, crearYGuardarTxt, descodeReturnFoto, getFecha } from 'src/GlobalHelperBack';
+import { DiasService } from 'src/dias/dias.service';
 
 @Controller('messages')  
 export class MessageController {
-  constructor(private readonly messageService: MessageService
+  constructor(private readonly messageService: MessageService,
+    private readonly diaService: DiasService
   ) {}
 
   @Post("create")
@@ -33,6 +35,13 @@ export class MessageController {
     
     }
     
+  }
+
+  @Put("changeToBlueTick/:idMessage")
+  async updateMessages(
+    @Param('idMessage') idMessage: string
+  ) {
+    return await this.messageService.changeToBlueTickFunction(idMessage);
   }
 
 
@@ -63,7 +72,14 @@ export class MessageController {
     else
       iWantMessagesFrom="0"
 
-    return await this.messageService.notReadMessagesFunction(userNom, nutriId, iWantMessagesFrom);
+    // take fecha de hoy and look if the day id of the messages fits
+    let fecha =  await getFecha();
+    // comprobate if exist a day with this date
+    let existe = await this.diaService.existeDiaWithDate(fecha);
+    if(existe)
+      return await this.messageService.notReadMessagesFunction(userNom, nutriId, iWantMessagesFrom);
+    else 
+      return 0;
   }
   
 }

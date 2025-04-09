@@ -91,13 +91,14 @@ export default function LastPagePage(props:{ meals:designamealSkeleton[] , setme
   const getIdMealsOfMyPatient = async (idDia:string, patientNom:string) =>
   {
       let ids = await designamealExists(idDia, patientNom)
+      console.log(ids)
       if(!ArrayIsNullEmpty(ids))
       {
           if(ids.length>0)
             getMealsObjects(null, props.setmeals, ids)
       }  
       else
-          location.href="./mypatientday"
+        location.href="./mypatientday"
   };
 
 
@@ -120,6 +121,7 @@ export default function LastPagePage(props:{ meals:designamealSkeleton[] , setme
         const timer = setTimeout(() => {
           setbtnPressed(0)
           setdesignamealapproved(true)
+          location.href = "./sendMessage"
         }, 3000);
         return () => clearTimeout(timer); 
       }
@@ -131,28 +133,29 @@ export default function LastPagePage(props:{ meals:designamealSkeleton[] , setme
 
   const nutriHaAprobado = async () =>
   {
-      try
-      {
-          const response = await axios.get(
-          `${API_URL}/designameal/isApproved/${idDia.current}/${patientNom.current}`,
-          {
-              headers: {
-                  'Content-Type': 'application/json'
-              },
-          });
-          if(response.data==1) // esta aprobado
-          {
-              setdesignamealapproved(true)
-          }
-      }
-      catch (error) {
-      console.log('Error fetching data:', error);
-      }
+    try
+    {
+        const response = await axios.get(
+        `${API_URL}/designameal/isApproved/${idDia.current}/${patientNom.current}`,
+        {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+        if(response.data==1) // esta aprobado
+        {
+            setdesignamealapproved(true)
+        }
+    }
+    catch (error) {
+    console.log('Error fetching data:', error);
+    }
   };
 
   const sendToNutri = async () =>
   {
-      // xxx must take you to the message page, with the message ready to send
+    // must take you to the message page, with the message ready to send
+    location.href = "../../sendMessage?mira=true";
   };
 
 
@@ -183,7 +186,7 @@ export default function LastPagePage(props:{ meals:designamealSkeleton[] , setme
           deleteMealObjectsFromSessionStorage()
           const timer = setTimeout(() => {
             setbtnPressed(0)
-            //location.href = "./start"
+            location.href = "./start"
           }, 3000);
           return () => clearTimeout(timer); 
           
@@ -302,7 +305,7 @@ export default function LastPagePage(props:{ meals:designamealSkeleton[] , setme
             
             {/* titulo */}
             <CustomCard mt="0px" p="25px" hijo={<>
-              {props.soyNutri=="false" && <Text fontSize="2xl" fontWeight="700">YOUR DESIGNED MEAL</Text>}
+              {props.soyNutri=="false" && <Text fontSize="2xl" fontWeight="700">YOUR DESIGNED DAY</Text>}
               {props.soyNutri=="true" && 
                 <VStack>
                         <Text fontSize="2xl" fontWeight="700">DESIGNED MEAL</Text>

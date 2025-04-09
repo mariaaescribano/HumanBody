@@ -71,6 +71,9 @@ for (let i = 0; i < nombresConcatenados.length; i++)
 
 // #region 
 
+// to know if you made a sql petition correctly
+ const result = await this.databaseService.query(sql, [idMessage]);
+    if (result.affectedRows > 0) 
 
 
 IDENTIFICADORES DE ERRORES 
@@ -96,7 +99,6 @@ ORDEN: prote: "#610C04" -fats:"#abdefa" -carbs:"#EDC9AF"
 AVENTURAS :D
 
 --> put hour to the message
---> put eye to the message
 --> recorrer all program
 
 

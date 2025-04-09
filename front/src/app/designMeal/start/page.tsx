@@ -110,7 +110,7 @@ export default function DesignMealStart()
         
         {/* titulo */}
         <CustomCard mt="0px" hijo={
-            <TitleCard title={'DESIGN YOUR MEAL I'}
+            <TitleCard title={'DESIGN YOUR DAY I'}
             firstBtnText={'X Cancel'} goback={()=> location.href = "../../myday"} 
             secondBtnText={'Next'} letsgo={salvaSS} secondBtnIcon={<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="m536-84-56-56 142-142-340-340-142 142-56-56 56-58-56-56 84-84-56-58 56-56 58 56 84-84 56 56 58-56 56 56-142 142 340 340 142-142 56 56-56 58 56 56-84 84 56 58-56 56-58-56-84 84-56-56-58 56Z"/></svg>}/>
         }/>

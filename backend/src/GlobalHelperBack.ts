@@ -3,6 +3,22 @@ import * as path from 'path';
 
 export const pathACarpetaDeFotos = '../../../../usuariosFotos';
 
+export const getFecha = async () => {
+  const madridDate = new Date().toLocaleString('es-ES', {
+    timeZone: 'Europe/Madrid',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  });
+
+  // Convertimos la fecha a formato "DD-MM-YYYY"
+  const [day, month, year] = madridDate.split('/');
+  const formattedDate = `${year}-${month}-${day}`;
+
+  return formattedDate;
+};
+
+
 export async function convertFileToBase64(file: Express.Multer.File): Promise<string> {
   try {
     return file.buffer.toString('base64');
@@ -49,7 +65,7 @@ export async function cambiarNombreArchivo(rutaCarpeta: string, nombreViejo: str
   try {
     const rutaVieja = path.join(ruta, nombreViejo+".txt");
     const rutaNueva = path.join(ruta, nombreNuevo+".txt");
-
+    console.log(nombreNuevo, nombreViejo, rutaVieja, rutaNueva)
     fs.renameSync(rutaVieja, rutaNueva);
   } catch (error) {
     console.error('Error al renombrar el archivo:', error);

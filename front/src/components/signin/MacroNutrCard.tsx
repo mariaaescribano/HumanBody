@@ -63,7 +63,7 @@ export default function MacroNutrCard(props: {title:string, total:string, stillN
                         ........................................................................................................................................................
                     </Text>
                     <Text flexShrink={0} width={{ base: "100%", sm: "auto" }}>
-                        {item.price}
+                        {item.price.includes("NaN") ? "0 grams" : item.price}
                     </Text>
                 </Flex>
             ))}
@@ -84,9 +84,8 @@ export default function MacroNutrCard(props: {title:string, total:string, stillN
                 >
                     <HStack justify="start" align="start">
                         <Text flexShrink={0} width={{ base: "100%", sm: "auto" }}>
-                            {item.label} : {item.price}
+                            {item.label} : {item.price.includes("NaN") ? "0 grams" : item.price}
                         </Text>
-                        {/* <MeryTooltip texto={item.tooltip} /> */}
                     </HStack>
                 </VStack>
             ))}
@@ -95,20 +94,20 @@ export default function MacroNutrCard(props: {title:string, total:string, stillN
             <Box w="100%" borderBottom="2px solid black" my="20px" />
             {!props.stillNeed &&  <Flex justify="space-between" w="100%" fontSize="xl" fontWeight={"bold"}>
                 <Text>{"TOTAL"} </Text>
-                <Text>{props.total} grams</Text>
+                <Text>{ isNaN(Number(props.total)) ? 0 : props.total} grams</Text>
             </Flex> }
 
             {props.stillNeed && props.stillNeed == true && 
             <>
             <Flex justify="space-between" w="100%" fontSize="xl" fontWeight={"bold"}>
                 <Text>{"TOTAL PER NOW"} </Text>
-                <Text>{props.total} grams</Text>
+                <Text>{ isNaN(Number(props.total)) ? 0 : props.total} grams</Text>
             </Flex>
 
             <Box w="100%" borderBottom="2px solid black" my="20px" />
             <Flex justify="space-between" w="100%" fontSize="lg" fontWeight={"bold"}>
                 <Text>{"STILL NEED"} </Text>
-                <Text>{props.reciboObjetivo} grams</Text>
+                <Text>{ isNaN(Number(props.reciboObjetivo)) ? 0 : props.reciboObjetivo} grams</Text>
             </Flex> </>}
             
             {/* si tiene nutricionista o es el nutricionista, entra */}

@@ -93,7 +93,6 @@ export default function NutritionistClientCard(props:{  })
                     },
                 }
                 );
-                console.log(response.data)
             if(response.data.nutris != null)
             {
                 setnutris(response.data.nutris)

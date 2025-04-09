@@ -134,6 +134,7 @@ export class UsuariosService {
     const sql = 'SELECT	ficha_id FROM usuarios WHERE nombre = ?';
     const params = [userNom];
     const result = await this.databaseService.query(sql, params);
+    console.log(result, result[0].ficha_id)
     return result[0].ficha_id;
   }
   

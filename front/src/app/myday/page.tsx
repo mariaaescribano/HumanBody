@@ -522,7 +522,7 @@ export default function MyDay()
         </CustomCard>
 
         {/* fidelidad card */}
-        <CustomCard mt="10px" p="30px" hijo={<FidelidadCard diaId={null}/>}></CustomCard>
+        <CustomCard mt="10px" p="30px" hijo={<FidelidadCard diaId={sessionStorage.getItem("diaId")}/>}></CustomCard>
                  
 
         { reciboObjetivo!= null && <>

@@ -48,7 +48,7 @@ export class RecibosService {
     WHERE id = ?`;
     await this.databaseService.query(sql, [updateData.grasas, 
       updateData.monoinsaturadas, updateData.poliinsaturadas, updateData.saturadas, 
-      updateData.prote, updateData.incompleto,updateData.completo, updateData.carbs, updateData.complejos,
+      updateData.prote, updateData.incompleto, updateData.completo, updateData.carbs, updateData.complejos,
       updateData.simples, updateData.fibra
       , idRecibo]);
     return this.returnReciboConcretoFuncion(idRecibo); // Retorna el recibo actualizado

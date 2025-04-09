@@ -13,12 +13,12 @@ export class MessageService {
 
     const sql = `
         INSERT INTO messages 
-        (userNom, nutriId, diaId, sendBy, message, foto, vistoPorLaOtraPersona) 
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        (userNom, nutriId, diaId, sendBy, message, foto, vistoPorLaOtraPersona, hora, designameal ) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
     
     const params = [body.userNom, body.nutriId, body.diaId, body.sendBy,
-        body.message, body.foto, body.vistoPorLaOtraPersona
+        body.message, body.foto, body.vistoPorLaOtraPersona, body.hora, body.designameal
     ];
     try {
         const result = await this.databaseService.query(sql, params);
@@ -72,7 +72,18 @@ export class MessageService {
       throw new InternalServerErrorException("Failed to retrieve unread messages.");
     }
   }
-  
 
+  async changeToBlueTickFunction(idMessage: string) {
+    if(!idMessage)
+      throw new NotFoundException();
+
+    const sql = 'UPDATE messages SET vistoPorLaOtraPersona = 1 WHERE id = ?';
+    const result = await this.databaseService.query(sql, [idMessage]);
+    // if (result.affectedRows > 0) {
+    //   console.log('ok');
+    // } else {
+    //   console.log('No ok');
+    // }
+  }
 
 }

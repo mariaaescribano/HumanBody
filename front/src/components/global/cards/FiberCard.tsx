@@ -78,7 +78,11 @@ export default function FiberCard(props: { edit:boolean, stillNeed?:boolean, rec
             {/* <MeryTooltip texto={"Fiber is a carb but it isn't summed with the carbohydrates."} /> */}
 
           <HStack>
-              <Text> {props.totalFiber ? props.totalFiber : "0"} </Text>
+              {/* <Text> {props.totalFiber ? props.totalFiber : "0"} </Text> */}
+              <Text>
+                  {(!props.totalFiber || props.totalFiber.includes("NaN")) ? "0" : props.totalFiber}
+              </Text>
+
               <Text>grams </Text>
           </HStack></Flex>}
 

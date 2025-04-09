@@ -34,6 +34,11 @@ export function ArrayIsNull(array:any[])
     return false;
 };
 
+export function getCurrentHour(): number {
+  const now = new Date();
+  return now.getHours();
+}
+
 
 export const userNutriId = () => {
   const id = sessionStorage.getItem("userNutri");
@@ -294,7 +299,7 @@ const getmessagesNotRead = async (userNom:string) =>
     try
     {
         const response = await axios.get(
-        `${API_URL}/messages/notReadMessages/${userNom}/${sessionStorage.getItem("nutriId")}/1`,
+        `${API_URL}/messages/notReadMessages/xxxdiaId/${userNom}/${sessionStorage.getItem("nutriId")}/1`,
         {
             headers: {
                 'Content-Type': 'application/json'
@@ -400,6 +405,7 @@ export const crearRecibo = async (recibo: reciboSkeleton) => {
   // coge datos ficha
   export const cogeFichaDeUserNom = async (userNom:string) =>
   {
+    console.log("fefefe")
     if(!StringIsNull(userNom))
     {
         try{
@@ -411,6 +417,7 @@ export const crearRecibo = async (recibo: reciboSkeleton) => {
             },
         }
         );
+        console.log(response.data[0])
           if(response.data[0] != null)
           {
               return response.data[0];
@@ -507,6 +514,12 @@ export const formatDateToISOFriendly = (dateString: string) => {
   return `${months[parseInt(month) - 1]} ${parseInt(day)}, ${year}`;
 }
 
+export function getCurrentTime(): string {
+  const now = new Date();
+  const hours = now.getHours().toString().padStart(2, '0');
+  const minutes = now.getMinutes().toString().padStart(2, '0');
+  return `${hours}:${minutes}`;
+}
 
 
 export const sumaDeMacros =  (reciboPersonalizado:reciboSkeleton, reciboHoy:reciboSkeleton) =>
@@ -963,6 +976,7 @@ export const designamealExists = async (idDia:string, userNom:string) =>
           },
         }
       );
+      console.log(response.data)
       if(response.data.length>0)
       {
         return response.data;
