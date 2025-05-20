@@ -42,7 +42,7 @@ export default function FiberCard(props: { edit:boolean, stillNeed?:boolean, rec
           <Box w="100%" borderBottom="2px solid black" my="20px" />
           <Flex justify="center" gap="20px" mb="10px" w="100%" fontSize="xl" fontWeight="bold" wrap="wrap">
               {props.ebooklista.map((item, index) => (
-                  <EBookButton key={index} texto={item.title} />
+                  <EBookButton key={index} texto={item.title} type={7} />
               ))}
           </Flex>
         </> }

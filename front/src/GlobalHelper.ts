@@ -2,6 +2,29 @@
 export const API_URL = "http://localhost:3001";
 export const tryAgain = "Please, try again later";
 
+// btn //
+export const proteinBtnText = "Why do I need proteins?";
+export const proteinBtnNumber = 1;
+
+export const aminoacidBtnText = "How amino acids help me?"
+export const aminoacidBtnNumber = 2;
+
+export const typesOfFatBtnText = "Types of fat and their importance"
+export const typesOfFatBtnNumber = 3;
+
+export const complexCarbsBtnText = "Why complex carbs?"
+export const complexCarbsBtnNumber = 4;
+
+export const simpleCarbsBtnText = "The truth about simple carbs"
+export const simpleCarbsBtnNumber = 5;
+
+export const fastingBtnText = "Fasting"
+export const fastingBtnNumber = 6;
+
+export const fiberBtnText = "Types of fiber"
+export const fiberBtnNumber = 7;
+// end btn //
+
 export function StringIsNull(text:string)
 {
   if(text == null || text == undefined || text === "" || text == "")

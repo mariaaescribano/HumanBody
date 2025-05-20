@@ -21,7 +21,7 @@ import BarraMenu from '@/components/global/BarraMenu';
 import TitleCard from '@/components/global/cards/TitleCard';
 import MainCards from '@/components/designMeal/MainCards';
 import BtnsMacrosFila from '@/components/designMeal/BtnsMacrosFila';
-import { API_URL, ArrayIsNull, ArrayIsNullEmpty, dameDatosDelRecibo, redirigirSiNoHayUserNom, toRoman } from '@/GlobalHelper';
+import { aminoacidBtnNumber, aminoacidBtnText, API_URL, ArrayIsNull, ArrayIsNullEmpty, complexCarbsBtnNumber, complexCarbsBtnText, dameDatosDelRecibo, fiberBtnNumber, fiberBtnText, proteinBtnNumber, proteinBtnText, redirigirSiNoHayUserNom, simpleCarbsBtnNumber, simpleCarbsBtnText, toRoman, typesOfFatBtnNumber, typesOfFatBtnText } from '@/GlobalHelper';
 import { alimentoMacroMealView, mealSkeleton, selectedAlimentosSkeleton } from '../../../../../backend/src/dto/meal.dto';
 import { alimentosSkeleton } from '../../../../../backend/src/dto/alimentos.dto';
 import { CaloryIcon } from '@/components/icons/CaloryIcon';
@@ -583,8 +583,12 @@ export default function DesignMeal_MealDeciding()
         {/* botones ebook */}
         <CustomCard hijo={
           <Flex flexDirection={"column"} w="100%" gap={"10px"}>
-            <EBookButton texto={'Why protein is important?'}></EBookButton>
-            <EBookButton texto={'Why protein is important?'}></EBookButton>
+            <EBookButton texto={proteinBtnText} type={proteinBtnNumber}></EBookButton>
+            <EBookButton texto={aminoacidBtnText} type={aminoacidBtnNumber}></EBookButton>
+             <EBookButton texto={typesOfFatBtnText} type={typesOfFatBtnNumber}></EBookButton>
+              <EBookButton texto={complexCarbsBtnText} type={complexCarbsBtnNumber}></EBookButton>
+               <EBookButton texto={simpleCarbsBtnText} type={simpleCarbsBtnNumber}></EBookButton>
+                <EBookButton texto={fiberBtnText} type={fiberBtnNumber}></EBookButton>
           </Flex>} ></CustomCard>
 
 

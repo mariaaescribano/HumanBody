@@ -4,7 +4,7 @@ import { Button, Flex, FormLabel, Icon, Input, Text, useColorModeValue } from '@
 import { MdBook, MdBookOnline, MdOutlineBook } from 'react-icons/md';
 // Custom components
 
-export default function EBookButton(props: {texto:string}) {
+export default function EBookButton(props: {texto:string, type:number}) {
 
 
     return (
@@ -13,6 +13,9 @@ export default function EBookButton(props: {texto:string}) {
             borderRadius="16px"
             bg="#D8F3F8"
             w="100%"
+            onClick={() => {
+                window.location.href = `${window.location.origin}/ebook?type=${props.type}`;
+            }}
             padding="8px 16px" // Asegura espacio interno para el texto
             // minW="fit-content" // Ajusta el ancho al contenido mínimo requerido
             h="fit-content"

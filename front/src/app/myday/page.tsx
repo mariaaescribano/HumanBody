@@ -29,7 +29,7 @@ import PopUpMessage from '@/components/global/message/PopUpMessage';
 import PopUpErrorMessage from '@/components/global/message/PopUpErrorMessage';
 import PurpleSpinner from '@/components/global/random/PurpleSpinner';
 import CustomCard from '@/components/global/cards/CustomCard';
-import { API_URL, ArrayIsNullEmpty, crearRecibo, dameDatosDelRecibo, designamealExists, formatDateToISOFriendly, getFecha, getInternetDateParts, getTamanyoPantalla, redirigirSiNoHayUserNom, userNutriId } from '../../GlobalHelper';
+import { aminoacidBtnNumber, aminoacidBtnText, API_URL, ArrayIsNullEmpty, complexCarbsBtnNumber, complexCarbsBtnText, crearRecibo, dameDatosDelRecibo, designamealExists, fiberBtnNumber, fiberBtnText, formatDateToISOFriendly, getFecha, getInternetDateParts, getTamanyoPantalla, proteinBtnNumber, proteinBtnText, redirigirSiNoHayUserNom, simpleCarbsBtnNumber, simpleCarbsBtnText, typesOfFatBtnNumber, typesOfFatBtnText, userNutriId } from '../../GlobalHelper';
 import ElementoPrimero from '@/components/myday/ElementoPrimero';
 import MacroNutrCard from '@/components/signin/MacroNutrCard';
 import { macroPorcentajes, reciboSkeleton, showMacroNutrSignUp } from '../../../../backend/src/dto/recibos.dto';
@@ -294,12 +294,14 @@ export default function MyDay()
 // #region EBOOKS 
    const proteinEbooks: showEbook[] = [
       {
-          title: "What are amino acids?",
-          onclick: undefined
+          title: proteinBtnText,
+          onclick: undefined,
+          type: proteinBtnNumber
       },
       {
-          title: "How proteins repair my cells?",
-          onclick: undefined
+          title: aminoacidBtnText,
+          onclick: undefined,
+          type: aminoacidBtnNumber
       }
       ];
   
@@ -323,16 +325,9 @@ export default function MyDay()
   
       const fatEbooks: showEbook[] = [
           {
-            title: "How monounsaturated fats help me?",
-            onclick: undefined
-          },
-          {
-            title: "How polyunsaturated fats help me?",
-            onclick: undefined
-          },
-          {
-            title: "Why saturated fats can hurt me?",
-            onclick: undefined
+            title: typesOfFatBtnText,
+            onclick: undefined,
+            type:typesOfFatBtnNumber
           }
       ];
       
@@ -360,27 +355,22 @@ export default function MyDay()
         
       const carbEbooks: showEbook[] = [
       {
-          title: "Why I need complex carbs?",
-          onclick: undefined
+        title: complexCarbsBtnText,
+        onclick: undefined,
+        type: complexCarbsBtnNumber
       },
-      {
-          title: "Do I need simple carbs?",
-          onclick: undefined
+       {
+        title: simpleCarbsBtnText,
+        onclick: undefined,
+        type: simpleCarbsBtnNumber
       }
       ];
   
       const fiberEbooks: showEbook[] = [
       {
-          title: "Fiber and microbiota",
-          onclick: undefined
-      },
-      {
-          title: "Fiber and neurogenesis",
-          onclick: undefined
-      },
-      {
-          title: "Fiber and neurotransmissors",
-          onclick: undefined
+          title: fiberBtnText,
+          onclick: undefined,
+          type: fiberBtnNumber
       }
       ];
       
@@ -388,11 +378,6 @@ export default function MyDay()
       
       if (reciboDeHoy != null) {
       carbButtons = [
-          // {
-          // label: "Fiber",
-          // price: `${recibo.fibra} grams`,
-          // tooltip: "Fiber promotes healthy digestion, supports heart health, helps regulate blood sugar levels and supports neuron and brain activity."
-          // },
           {
           label: "Complex",
           price: `${ Math.round(parseInt(reciboDeHoy.complejos, 10)) } grams`,

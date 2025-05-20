@@ -28,7 +28,7 @@ import PopUpMessage from '@/components/global/message/PopUpMessage';
 import PopUpErrorMessage from '@/components/global/message/PopUpErrorMessage';
 import PurpleSpinner from '@/components/global/random/PurpleSpinner';
 import CustomCard from '@/components/global/cards/CustomCard';
-import { API_URL, calcularPorcentajes, cogePacientesDeNutri, colorNutricionist, convierteNumRedondeado, crearRecibo, dameDatosDeAlimentoConcreto, dameDatosDelRecibo, dameNutriNom, dameReciboDeAlimentoConcreto, esSoloNumeros, getTamanyoPantalla, guardaAlimentoComido, redirigirSiNoHayNutriNom, redirigirSiNoHayUserNom, reglasDeTresParaAlimentoGramosPersonalizados, StringIsNull, sumaDeMacros, tryAgain, update } from '../../../GlobalHelper';
+import { aminoacidBtnNumber, aminoacidBtnText, API_URL, calcularPorcentajes, cogePacientesDeNutri, colorNutricionist, complexCarbsBtnNumber, complexCarbsBtnText, convierteNumRedondeado, crearRecibo, dameDatosDeAlimentoConcreto, dameDatosDelRecibo, dameNutriNom, dameReciboDeAlimentoConcreto, esSoloNumeros, fiberBtnNumber, fiberBtnText, getTamanyoPantalla, guardaAlimentoComido, proteinBtnNumber, proteinBtnText, redirigirSiNoHayNutriNom, redirigirSiNoHayUserNom, reglasDeTresParaAlimentoGramosPersonalizados, simpleCarbsBtnNumber, simpleCarbsBtnText, StringIsNull, sumaDeMacros, tryAgain, typesOfFatBtnNumber, typesOfFatBtnText, update } from '../../../GlobalHelper';
 import { alimentosComidosSkeleton, alimentosSkeleton } from '../../../../../backend/src/dto/alimentos.dto';
 import { reciboSkeleton, showMacroNutrSignUp } from '../../../../../backend/src/dto/recibos.dto';
 import SuccessErrorMessage from '@/components/global/message/SuccessErrorMessage';
@@ -305,13 +305,15 @@ export default function VerAlimentoPage(props:
    // listas usadas para mostrar datos
   
     const proteinEbooks: showEbook[] = [
-    {
-        title: "What are amino acids?",
-        onclick: undefined
+     {
+        title: proteinBtnText,
+        onclick: undefined,
+        type: proteinBtnNumber
     },
     {
-        title: "How proteins repair my cells?",
-        onclick: undefined
+        title: aminoacidBtnText,
+        onclick: undefined,
+        type: aminoacidBtnNumber
     }
     ];
 
@@ -334,18 +336,11 @@ export default function VerAlimentoPage(props:
     }
 
     const fatEbooks: showEbook[] = [
-        {
-          title: "How monounsaturated fats help me?",
-          onclick: undefined
-        },
-        {
-          title: "How polyunsaturated fats help me?",
-          onclick: undefined
-        },
-        {
-          title: "Why saturated fats can hurt me?",
-          onclick: undefined
-        }
+      {
+        title: typesOfFatBtnText,
+        onclick: undefined,
+        type:typesOfFatBtnNumber
+      }
     ];
     
     let fatButtons: showMacroNutrSignUp[] = [];
@@ -372,27 +367,22 @@ export default function VerAlimentoPage(props:
       
     const carbEbooks: showEbook[] = [
     {
-        title: "Why I need complex carbs?",
-        onclick: undefined
+      title: complexCarbsBtnText,
+      onclick: undefined,
+      type: complexCarbsBtnNumber
     },
-    {
-        title: "Do I need simple carbs?",
-        onclick: undefined
+      {
+      title: simpleCarbsBtnText,
+      onclick: undefined,
+      type: simpleCarbsBtnNumber
     }
     ];
 
     const fiberEbooks: showEbook[] = [
     {
-        title: "Fiber and microbiota",
-        onclick: undefined
-    },
-    {
-        title: "Fiber and neurogenesis",
-        onclick: undefined
-    },
-    {
-        title: "Fiber and neurotransmissors",
-        onclick: undefined
+        title: fiberBtnText,
+        onclick: undefined,
+        type: fiberBtnNumber
     }
     ];
     
@@ -527,17 +517,17 @@ export default function VerAlimentoPage(props:
 
     {screenSize != "" && 
     <CustomCard mt="10px" hijo={ 
-    <MacroNutrCard title={"PROTEINS"} total={reciboPersonalizado.prote == "" ? "0" : Math.round(parseInt(reciboPersonalizado.prote,10)).toString()} infoLista={proteinButtons} screenSize={screenSize} ebooklista={[]}></MacroNutrCard>}>
+    <MacroNutrCard title={"PROTEINS"} total={reciboPersonalizado.prote == "" ? "0" : Math.round(parseInt(reciboPersonalizado.prote,10)).toString()} infoLista={proteinButtons} screenSize={screenSize} ebooklista={proteinEbooks}></MacroNutrCard>}>
     </CustomCard>}
 
     {screenSize != "" && 
     <CustomCard mt="10px" hijo={ 
-    <MacroNutrCard title={"FATS"} total={reciboPersonalizado.grasas == "" ? "0" : Math.round(parseInt(reciboPersonalizado.grasas,10)).toString()} infoLista={fatButtons} screenSize={screenSize} ebooklista={[]}></MacroNutrCard>}>
+    <MacroNutrCard title={"FATS"} total={reciboPersonalizado.grasas == "" ? "0" : Math.round(parseInt(reciboPersonalizado.grasas,10)).toString()} infoLista={fatButtons} screenSize={screenSize} ebooklista={fatEbooks}></MacroNutrCard>}>
     </CustomCard>}
 
     {screenSize != "" && 
     <CustomCard mt="10px" hijo={ 
-    <MacroNutrCard title={"CARBS"} total={reciboPersonalizado.carbs == "" ? "0" : Math.round(parseInt(reciboPersonalizado.carbs,10)).toString()} infoLista={carbButtons} screenSize={screenSize} ebooklista={[]}></MacroNutrCard>}>
+    <MacroNutrCard title={"CARBS"} total={reciboPersonalizado.carbs == "" ? "0" : Math.round(parseInt(reciboPersonalizado.carbs,10)).toString()} infoLista={carbButtons} screenSize={screenSize} ebooklista={carbEbooks}></MacroNutrCard>}>
     </CustomCard>}
 
     {screenSize != "" && <CustomCard mt="10px" hijo={ 

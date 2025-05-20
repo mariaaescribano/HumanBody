@@ -112,7 +112,7 @@ export default function ElementoPrimero(props: {
         </HStack>
 
         <Box w="100%" borderBottom="2px solid black" my="20px" />
-        <EBookButton texto={'Fasting'}></EBookButton>
+        <EBookButton texto={'Fasting'} type={6}></EBookButton>
 
         {/* si tiene nutricionista o es el nutricionista, entra */}
         {(sessionStorage.getItem("userNutri") || sessionStorage.getItem("patientTratando")) &&  

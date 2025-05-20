@@ -13,7 +13,7 @@ import { userNutriId } from '@/GlobalHelper';
 import { nutriComentarios } from '../../../../backend/src/dto/nutri.dto';
 
 export default function MacroNutrCard(props: {title:string, total:string, stillNeed?:boolean,
-    reciboObjetivo?: number, verMensajesNutri?:boolean,  
+    reciboObjetivo?: number, verMensajesNutri?:boolean, 
     infoLista?:showMacroNutrSignUp[], screenSize:string, ebooklista?:showEbook[]}) 
 {
 
@@ -27,7 +27,7 @@ export default function MacroNutrCard(props: {title:string, total:string, stillN
         {/* Total large screen */}
         <Flex justify="center" gap="20px" mb="30px" w="100%" fontSize="xl" fontWeight="bold" wrap="wrap">
             {props.ebooklista?.map((item, index) => (
-                <EBookButton key={index} texto={item.title} />
+                <EBookButton key={index} texto={item.title} type={item.type} />
             ))}
         </Flex>
 
@@ -77,7 +77,6 @@ export default function MacroNutrCard(props: {title:string, total:string, stillN
                 <VStack
                     key={index}
                     align="center"
-                
                     fontSize={{ base: "md", sm: "lg" }}
                     mb="20px"
                     justify="center" 

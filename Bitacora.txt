@@ -98,21 +98,5 @@ ORDEN: prote: "#610C04" -fats:"#abdefa" -carbs:"#EDC9AF"
 
 AVENTURAS :D
 
---> put hour to the message
---> recorrer all program
-
-
-USER/PATIENT
---> q user pueda comunicarse con nutri
-
-DESIGN A MEAL
---> q user le pueda mandar sus diseños de dias a su nutri
-
-NUTRI
---> q Nutri pueda ver y responder mensajes de su paciente
-
-
-
-
---> hacer doc explicando programa + fotos
+--> conectar cada boton con su pag
 

@@ -283,7 +283,7 @@ export default function SignUp3()
     const proteinEbooks: showEbook[] = [
     {
         title: "What are amino acids?",
-        onclick: undefined
+        onclick: `${window.location.origin}/ebook?type=${2}`
     },
     {
         title: "How proteins repair my cells?",

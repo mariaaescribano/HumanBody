@@ -28,7 +28,7 @@ import axios from 'axios';
 import React, { useEffect, useState, useRef } from 'react';
 import PurpleSpinner from '@/components/global/random/PurpleSpinner';
 import CustomCard from '@/components/global/cards/CustomCard';
-import { API_URL, calcularPorcentaje, calcularPorcentajes, crearRecibo, dameDatosDelRecibo, formatDateToISOFriendly, getFecha, getTamanyoPantalla, redirigirSiNoHayUserNom } from '../../GlobalHelper';
+import { aminoacidBtnNumber, aminoacidBtnText, API_URL, calcularPorcentaje, calcularPorcentajes, complexCarbsBtnNumber, complexCarbsBtnText, crearRecibo, dameDatosDelRecibo, fiberBtnNumber, fiberBtnText, formatDateToISOFriendly, getFecha, getTamanyoPantalla, proteinBtnNumber, proteinBtnText, redirigirSiNoHayUserNom, simpleCarbsBtnNumber, simpleCarbsBtnText, typesOfFatBtnNumber, typesOfFatBtnText } from '../../GlobalHelper';
 import MacroCalView from '@/components/myday/MacroCalView';
 import { ArrowLeftIcon, ArrowRightIcon } from "@chakra-ui/icons";
 import MacroNutrCard from '@/components/signin/MacroNutrCard';
@@ -280,118 +280,103 @@ export default function mealDiary()
 
 // #region EBOOKS 
    const proteinEbooks: showEbook[] = [
-      {
-          title: "What are amino acids?",
-          onclick: undefined
-      },
-      {
-          title: "How proteins repair my cells?",
-          onclick: undefined
-      }
-      ];
-  
-      let proteinButtons: showMacroNutrSignUp[] = [];
-  
-      if (reciboDeHoy != null) 
-      {
-          proteinButtons = [
-              { 
-              label: "Complete proteins", 
-              price: `${reciboDeHoy.completo == "" ? 0 : reciboDeHoy.completo} grams`, 
-              tooltip: "Contain all essential amino acids your body needs for regeneration." 
-              },
-              { 
-              label: "Incomplete proteins", 
-              price: `${reciboDeHoy.incompleto} grams`, 
-              tooltip: "Lack one or more essential amino acids needed for regeneration." 
-              }
-          ];
-      }
-  
-      const fatEbooks: showEbook[] = [
+         {
+             title: proteinBtnText,
+             onclick: undefined,
+             type: proteinBtnNumber
+         },
+         {
+             title: aminoacidBtnText,
+             onclick: undefined,
+             type: aminoacidBtnNumber
+         }
+         ];
+     
+         let proteinButtons: showMacroNutrSignUp[] = [];
+     
+         if (reciboDeHoy != null) 
+         {
+             proteinButtons = [
+                 { 
+                 label: "Complete proteins", 
+                 price: `${reciboDeHoy.completo == "" ? 0 : reciboDeHoy.completo} grams`, 
+                 tooltip: "Contain all essential amino acids your body needs for regeneration." 
+                 },
+                 { 
+                 label: "Incomplete proteins", 
+                 price: `${reciboDeHoy.incompleto} grams`, 
+                 tooltip: "Lack one or more essential amino acids needed for regeneration." 
+                 }
+             ];
+         }
+     
+         const fatEbooks: showEbook[] = [
+             {
+               title: typesOfFatBtnText,
+               onclick: undefined,
+               type:typesOfFatBtnNumber
+             }
+         ];
+         
+         let fatButtons: showMacroNutrSignUp[] = [];
+         
+         if (reciboDeHoy != null) {
+             fatButtons = [
+                 {
+                 label: "Monounsaturated",
+                 price: `${reciboDeHoy.monoinsaturadas} grams`,
+                 tooltip: "Heart-friendly fats that support cholesterol balance and overall health."
+                 },
+                 {
+                 label: "Polyunsaturated",
+                 price: `${reciboDeHoy.poliinsaturadas} grams`,
+                 tooltip: "Essential fats, including omega-3 and omega-6, crucial for brain and cell function."
+                 },
+                 {
+                 label: "Saturated",
+                 price: `${reciboDeHoy.saturadas} grams`,
+                 tooltip: "Stable fats that provide energy but should be consumed in moderation."
+                 }
+             ];
+         }
+           
+         const carbEbooks: showEbook[] = [
+         {
+           title: complexCarbsBtnText,
+           onclick: undefined,
+           type: complexCarbsBtnNumber
+         },
           {
-            title: "How monounsaturated fats help me?",
-            onclick: undefined
-          },
-          {
-            title: "How polyunsaturated fats help me?",
-            onclick: undefined
-          },
-          {
-            title: "Why saturated fats can hurt me?",
-            onclick: undefined
-          }
-      ];
-      
-      let fatButtons: showMacroNutrSignUp[] = [];
-      
-      if (reciboDeHoy != null) {
-          fatButtons = [
-              {
-              label: "Monounsaturated",
-              price: `${reciboDeHoy.monoinsaturadas} grams`,
-              tooltip: "Heart-friendly fats that support cholesterol balance and overall health."
-              },
-              {
-              label: "Polyunsaturated",
-              price: `${reciboDeHoy.poliinsaturadas} grams`,
-              tooltip: "Essential fats, including omega-3 and omega-6, crucial for brain and cell function."
-              },
-              {
-              label: "Saturated",
-              price: `${reciboDeHoy.saturadas} grams`,
-              tooltip: "Stable fats that provide energy but should be consumed in moderation."
-              }
-          ];
-      }
-        
-      const carbEbooks: showEbook[] = [
-      {
-          title: "Why I need complex carbs?",
-          onclick: undefined
-      },
-      {
-          title: "Do I need simple carbs?",
-          onclick: undefined
-      }
-      ];
-  
-      const fiberEbooks: showEbook[] = [
-      {
-          title: "Fiber and microbiota",
-          onclick: undefined
-      },
-      {
-          title: "Fiber and neurogenesis",
-          onclick: undefined
-      },
-      {
-          title: "Fiber and neurotransmissors",
-          onclick: undefined
-      }
-      ];
-      
-      let carbButtons: showMacroNutrSignUp[] = [];
-      
-      if (reciboDeHoy != null) {
-      carbButtons = [
-          // {
-          // label: "Fiber",
-          // price: `${recibo.fibra} grams`,
-          // tooltip: "Fiber promotes healthy digestion, supports heart health, helps regulate blood sugar levels and supports neuron and brain activity."
-          // },
-          {
-          label: "Complex",
-          price: `${ Math.round(parseInt(reciboDeHoy.complejos, 10)) } grams`,
-          tooltip: "Provide long-lasting energy and fiber, digesting slowly."
-          },
-          {
-          label: "Simples",
-          price: `${reciboDeHoy.simples} grams`,
-          tooltip: "Digest quickly, giving a fast but short energy boost."
-          }
-      ];
-      }
+           title: simpleCarbsBtnText,
+           onclick: undefined,
+           type: simpleCarbsBtnNumber
+         }
+         ];
+     
+         const fiberEbooks: showEbook[] = [
+         {
+             title: fiberBtnText,
+             onclick: undefined,
+             type: fiberBtnNumber
+         }
+         ];
+         
+         let carbButtons: showMacroNutrSignUp[] = [];
+         
+         if (reciboDeHoy != null) {
+         carbButtons = [
+             {
+             label: "Complex",
+             price: `${ Math.round(parseInt(reciboDeHoy.complejos, 10)) } grams`,
+             tooltip: "Provide long-lasting energy and fiber, digesting slowly."
+             },
+             {
+             label: "Simples",
+             price: `${reciboDeHoy.simples} grams`,
+             tooltip: "Digest quickly, giving a fast but short energy boost."
+             }
+         ];
+         }
 
 
 // #endregion EBOOKS 
@@ -516,9 +501,6 @@ export default function mealDiary()
                   </SimpleGrid>
               </Flex>
             </Box>
-           
-            <Box w="100%" borderBottom="2px solid black" my="20px" />
-            <EBookButton texto={'What happens if...?'}></EBookButton>
           </>
         }></CustomCard>
 
